@@ -1,0 +1,36 @@
+{
+  "message": "User updated successfully",
+  "data": {
+    "id": 1,
+    "name": "admin",
+    "email": "admin@test.com",
+    "profile_picture": {
+      "id": 1,
+      "url": "https://spark-api.test.com/storage/1/avatar.png"
+    },
+    "is_active": true,
+    "created_at": {
+      "date": "28-05-2023",
+      "datetime": "28-05-2023 09:03:26 AM",
+      "for_humans": "1 hour ago",
+      "formatted": "Sun, May 28, 2023 9:03 AM"
+    },
+    "roles": [
+      {
+        "id": 1,
+        "name": "admin",
+        "display_name": "Admin"
+      }
+    ],
+    "permissions": {
+      "view": true,
+      "edit": true,
+      "delete": true,
+      "active": true
+    },
+    "sidebar_permissions": {
+      "users": true,
+      "roles": true
+    }
+  }
+}

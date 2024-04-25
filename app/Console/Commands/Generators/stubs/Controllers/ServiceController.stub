@@ -1,0 +1,156 @@
+<?php
+
+namespace App\Http\Controllers\Api\{{studlyPlural}};
+
+use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{{studlySingular}}\Store{{studlySingular}}Request;
+use App\Http\Requests\{{studlySingular}}\Update{{studlySingular}}Request;
+use App\Services\{{studlySingular}}Service;
+use App\Http\Resources\{{studlySingular}}Resource;
+
+/**
+ * @group {{studlyPlural}}
+ * @authenticated
+ */
+class {{studlySingular}}Controller extends Controller
+{
+    use ResponseTrait;
+
+    /**
+     * @var \App\Services\{{studlySingular}}Service
+     */
+    protected ${{camelSingular}}Service;
+
+    public function __construct({{studlySingular}}Service ${{camelSingular}}Service)
+    {
+        $this->{{camelSingular}}Service = ${{camelSingular}}Service;
+    }
+
+    /**
+     * List {{studlyPlural}} For Datatable
+     *
+     * @apiResourceCollection App\Http\Resources\{{studlySingular}}Resource
+     * @apiResourceModel \App\Models\{{studlySingular}}
+     * @apiResourceAdditional draw=0 recordsTotal=1 recordsFiltered=1
+     * @param  Request  $request
+     * @return mixed
+     */
+    public function index(Request $request)
+    {
+        $dataTables = $this->{{camelSingular}}Service->datatable($request);
+
+        return $dataTables->setTransformer(function ($item) {
+            return {{studlySingular}}Resource::make($item)->resolve();
+        })->toJson();
+    }
+
+    /**
+     * List All {{studlyPlural}}
+     *
+     * @apiResourceCollection App\Http\Resources\{{studlySingular}}Resource
+     * @apiResourceModel \App\Models\{{studlySingular}}
+     * @param  Request  $request
+     * @return mixed
+     */
+    public function listAll(Request $request)
+    {
+        ${{lowercasePlural}} = $this->{{camelSingular}}Service->listAll($request);
+
+        return $this->respondWithSuccess(
+            trans('messages.model.list', ['model' => '{{lowercaseDisplaySingular}}']),
+            {{studlySingular}}Resource::collection(${{lowercasePlural}})
+        );
+    }
+
+    /**
+     * Add {{studlySingular}}
+     *
+     * @bodyParam name string required Example:john
+     * @header Content-Type multipart/form-data
+     * @apiResource App\Http\Resources\{{studlySingular}}Resource
+     * @apiResourceModel \App\Models\{{studlySingular}}
+     * @apiResourceAdditional message="{{lowercaseSingular}} have created successfully"
+     * @param  \App\Http\Requests\{{studlySingular}}\Store{{studlySingular}}Request  $request
+     * @return mixed
+     */
+    public function store(Store{{studlySingular}}Request $request)
+    {
+        $validatedData = $request->validated();
+
+        ${{camelPlural}} = $this->{{camelSingular}}Service->store($validatedData);
+        
+        return $this->respondCreated(
+            trans('messages.model.store', ['model' => '{{lowercaseDisplaySingular}}']),
+            new {{studlySingular}}Resource(${{camelPlural}})
+        );
+    }
+
+    /**
+     * Update {{studlySingular}}
+     *
+     * @urlParam id int required Example:1
+     * @bodyParam name string required Example:john
+     * @header Content-Type multipart/form-data
+     * @apiResource App\Http\Resources\{{studlySingular}}Resource
+     * @apiResourceModel \App\Models\{{studlySingular}}
+     * @apiResourceAdditional message="{{lowercaseSingular}} have updated successfully"
+     * @param  \App\Http\Requests\{{studlySingular}}\Update{{studlySingular}}Request  $request
+     * @param $id
+     * @return mixed
+     */
+    public function update(Update{{studlySingular}}Request $request, $id)
+    {
+        $validatedData = $request->validated();
+
+        ${{lowercaseSingular}} = $this->{{camelSingular}}Service->update($id, $validatedData);
+
+        return $this->respondWithSuccess(
+            trans('messages.model.update', ['model' => '{{lowercaseDisplaySingular}}']),
+            new {{studlySingular}}Resource(${{lowercaseSingular}})
+        );
+    }
+
+    /**
+     * Show {{studlySingular}}
+     *
+     * @urlParam id int required Example:1
+     * @apiResource App\Http\Resources\{{studlySingular}}Resource
+     * @apiResourceModel \App\Models\{{studlySingular}}
+     * @param  int  $id
+     * @return array
+     */
+    public function show(int $id)
+    {
+        ${{camelSingular}} = $this->{{camelSingular}}Service->findOrFail($id);
+
+        return $this->respondWithSuccess(
+            trans('messages.model.retrieve', ['model' => '{{lowercaseDisplaySingular}}']),
+            new {{studlySingular}}Resource(${{camelSingular}})
+        );
+    }
+
+    /**
+     * Delete {{studlySingular}}
+     *
+     * @urlParam id int required Example:1
+     * @response {
+     *      "data": {
+     *          "message": "{{lowercaseSingular}} deleted successfully",
+     *          "data": null,
+     *          "status_code": 200
+     *      }
+     *  }
+     * @param  int  $id
+     * @return bool
+     */
+    public function destroy(int $id)
+    {
+        $this->{{camelSingular}}Service->destroy($id);
+
+        return $this->respondWithSuccess(
+            trans('messages.model.destroy', ['model' => '{{lowercaseDisplaySingular}}'])
+        );
+    }
+}

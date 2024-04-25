@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\{{studlySingular}};
+
+class {{studlySingular}}Repository extends BaseRepository
+{
+    protected $model = {{studlySingular}}::class;
+}

@@ -1,0 +1,8 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => '{{lowercasePlural}}' , 'namespace' => '{{studlyPlural}}'], function () {
+    Route::get('list','{{studlySingular}}Controller@listAll')->name('api.{{lowercasePlural}}.list');
+    Route::apiResource('','{{studlySingular}}Controller')->parameters(['' => 'id']);
+});

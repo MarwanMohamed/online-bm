@@ -1,0 +1,35 @@
+{
+  "message": "Permissions retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "name": "add_user",
+      "display_name": "Add User",
+      "ability": true
+    },
+    {
+      "id": 2,
+      "name": "view_user",
+      "display_name": "View User",
+      "ability": true
+    },
+    {
+      "id": 3,
+      "name": "edit_user",
+      "display_name": "Edit User",
+      "ability": true
+    },
+    {
+      "id": 4,
+      "name": "delete_user",
+      "display_name": "Delete User",
+      "ability": true
+    },
+    {
+      "id": 5,
+      "name": "active_user",
+      "display_name": "Active User",
+      "ability": true
+    }
+  ]
+}

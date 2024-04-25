@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Services;
+
+use App\Repositories\{{studlySingular}}Repository;
+
+class {{studlySingular}}Service extends BaseService
+{
+    protected $repository;
+
+    public function __construct({{studlySingular}}Repository ${{camelSingular}}Repository)
+    {
+        $this->repository = ${{camelSingular}}Repository;
+    }
+}
