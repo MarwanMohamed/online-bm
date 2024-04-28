@@ -195,10 +195,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\HorizonServiceProvider::class,
+        App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Laravel\Socialite\SocialiteServiceProvider::class,
-        \App\Providers\SocialServiceProvider::class,
 
         /**
          * Laravel API Documentation
@@ -220,7 +218,6 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'Gravatar' => Creativeorange\Gravatar\Facades\Gravatar::class,
-        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ])->toArray(),
 
 ];
