@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -12,15 +13,16 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use App\Enums\UserAction;
+use Filament\Panel;
+use App\Console\Commands\Generators\Model;
 
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements FilamentUser //,HasMedia
 {
     use Notifiable;
     use HasApiTokens;
     use HasRoles;
     use HasFactory;
-    use InteractsWithMedia;
-    use SoftDeletes;
+//    use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -54,8 +56,14 @@ class User extends Authenticatable implements HasMedia
     ];
 
     protected $with = [
-        'media','roles'
+//        'media',
+        'roles'
     ];
+
+     public function canAccessPanel(Panel $panel): bool
+     {
+         return true;
+     }
 
     public function sendPasswordResetNotification($token)
     {

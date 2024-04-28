@@ -13,14 +13,3 @@ use App\Enums\Feature;
 */
 
 Route::get('/', 'GeneralController@welcome');
-
-Route::group(['prefix' => 'api/auth', 'namespace' => 'Api\Auth'], function ()
-{	
-    Route::post('login', 'LoginController@login')->middleware("feature-state:".Feature::LOGIN().",1");;
-
-    Route::group(['middleware' => 'auth:sanctum'], function ()
-    {
-        Route::post('logout', 'LoginController@logout');        
-    });
-
-});
