@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\VehicleResource\Pages;
-use App\Filament\Resources\VehicleResource\RelationManagers;
-use App\Models\Vehicle;
+use App\Filament\Resources\VehicleColorResource\Pages;
+use App\Filament\Resources\VehicleColorResource\RelationManagers;
+use App\Models\VehicleColor;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class VehicleResource extends Resource
+class VehicleColorResource extends Resource
 {
-    protected static ?string $model = Vehicle::class;
+    protected static ?string $model = VehicleColor::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -59,9 +59,9 @@ class VehicleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVehicles::route('/'),
-            'create' => Pages\CreateVehicle::route('/create'),
-            'edit' => Pages\EditVehicle::route('/{record}/edit'),
+            'index' => Pages\ListVehicleColors::route('/'),
+            'create' => Pages\CreateVehicleColor::route('/create'),
+            'edit' => Pages\EditVehicleColor::route('/{record}/edit'),
         ];
     }
 }
