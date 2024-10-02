@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Password;
 use Rollbar\Laravel\RollbarServiceProvider;
+use Filament\Support\Assets\Js;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
             return Password::min(8)
                 ->rules(['between:8,15']);
         });
+
+        FilamentAsset::register([
+            Js::make('custom', '/js/custom.js'),
+        ]);
     }
 
     /**

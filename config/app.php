@@ -202,7 +202,6 @@ return [
          * Laravel API Documentation
          */
         Creativeorange\Gravatar\GravatarServiceProvider::class,
-        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*

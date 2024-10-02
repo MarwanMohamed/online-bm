@@ -9,6 +9,7 @@ class VehicleColor extends Model
 {
     use HasFactory;
 
+    protected $table = 'vhl_colors';
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $casts = [

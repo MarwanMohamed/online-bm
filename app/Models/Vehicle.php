@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vehicle extends Model
 {
     use HasFactory;
-
+    protected $table = 'vhl_make';
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $casts = [

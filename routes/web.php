@@ -1,5 +1,6 @@
 <?php
 use App\Enums\Feature;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,4 +13,4 @@ use App\Enums\Feature;
 |
 */
 
-Route::get('/', 'GeneralController@welcome');
+Route::get('/', [HomeController::class, 'index']);
