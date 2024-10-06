@@ -23,7 +23,7 @@ class VehicleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('vehicle_make')->required()
+                Forms\Components\TextInput::make('name')->required()->columnSpanFull()
             ]);
     }
 
@@ -32,7 +32,7 @@ class VehicleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
-                Tables\Columns\TextColumn::make('vehicle_make')->searchable()->sortable()
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()
             ])
             ->filters([
                 //
