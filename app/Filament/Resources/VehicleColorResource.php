@@ -16,14 +16,15 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class VehicleColorResource extends Resource
 {
     protected static ?string $model = VehicleColor::class;
-
+    protected static ?string $navigationGroup = 'Manage Vehicles';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?int $navigationSort = 2;
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required()
+                Forms\Components\TextInput::make('name')->label('Color')
+                    ->columnSpanFull()->required()
             ]);
     }
 
@@ -32,7 +33,7 @@ class VehicleColorResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable()
+                Tables\Columns\TextColumn::make('name')->label('Color')->searchable()->sortable()
             ])
             ->filters([
                 //
