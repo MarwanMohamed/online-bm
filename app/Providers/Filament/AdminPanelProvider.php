@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+             ->profile()
             ->path('admin')
             ->login()
             ->colors([
@@ -53,11 +54,11 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-             ->navigationGroups([
-                 'Manage Users',
-                 'Manage Vehicles'
+            ->navigationGroups([
+                'Manage Users',
+                'Manage Vehicles'
             ])
-//            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
+            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->authMiddleware([
                 Authenticate::class,
             ]);
