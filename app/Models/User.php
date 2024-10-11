@@ -19,7 +19,7 @@ class User extends Authenticatable implements FilamentUser //,HasMedia
 
 //    use InteractsWithMedia;
 
-    protected $table = 'adm_users';
+    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
