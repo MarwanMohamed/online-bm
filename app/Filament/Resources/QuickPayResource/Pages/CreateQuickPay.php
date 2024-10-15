@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateQuickPay extends CreateRecord
 {
     protected static string $resource = QuickPayResource::class;
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['created_by'] = Auth()->id();
+        return $data;
+    }
 }

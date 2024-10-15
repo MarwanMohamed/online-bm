@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\QuickPayResource\Pages;
 use App\Filament\Resources\QuickPayResource\RelationManagers;
+use App\Filament\Resources\QuickPayResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Quickpay;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -27,11 +28,22 @@ class QuickPayResource extends Resource
             ->orderBy('id', 'desc');
     }
 
+     public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('deleted', 0)->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('ref_no')->label('Reference Number'),
+                Forms\Components\TextInput::make('name'),
+                Forms\Components\TextInput::make('amount')->numeric()->step('any'),
+                Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
+                Forms\Components\TextInput::make('email'),
+                Forms\Components\TextInput::make('contact'),
+                Forms\Components\Textarea::make('description'),
             ]);
     }
 
@@ -40,8 +52,8 @@ class QuickPayResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->label('Sl')->searchable()->sortable(),
-                TextColumn::make('created')->label('Date')->searchable()->sortable()
-                    ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created))),
+                TextColumn::make('created_at')->label('Date')->searchable()->sortable()
+                    ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
                 TextColumn::make('ref_no')->label('Reference #')->searchable()->sortable(),
                 TextColumn::make('name')->searchable()->sortable(),
@@ -55,13 +67,11 @@ class QuickPayResource extends Resource
                     })
                     ->searchable()->sortable(),
                 TextColumn::make('user.name')->label('Agent')->searchable()->sortable(),
-
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -75,7 +85,7 @@ class QuickPayResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class
         ];
     }
 

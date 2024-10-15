@@ -16,4 +16,10 @@ class EditQuickPay extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['created_by'] = Auth()->id();
+        return $data;
+    }
 }

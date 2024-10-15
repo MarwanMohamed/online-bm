@@ -11,8 +11,15 @@ class Quickpay extends Model
 
     protected $table = 'quickpay';
 
+    protected $guarded = ['id', 'created_at', 'updated_at'];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function transactions()
+    {
+        return $this->belongsTo(Transaction::class, 'ref_no', 'policy_ref');
     }
 }
