@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Quickpay extends Model
 {
     use HasFactory;
+
+    protected $table = 'quickpay';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 }

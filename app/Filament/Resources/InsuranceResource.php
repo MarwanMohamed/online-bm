@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InsuranceResource\Pages;
-use App\Filament\Resources\InsuranceResource\RelationManagers;
 use App\Models\Area;
 use App\Models\Company;
 use App\Models\Insurance;
@@ -31,7 +30,8 @@ class InsuranceResource extends Resource
 {
     protected static ?string $model = Insurance::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'phosphor-invoice';
+    protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
     {
@@ -143,9 +143,11 @@ class InsuranceResource extends Resource
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
-                            KeyValue::make('meta')
-
-
+                            TextInput::make('base_amount')->label('Base Price')->disabled()->readOnly(),
+                            TextInput::make('pass_amount')->label('Passenger Price')->disabled()->readOnly(),
+                            TextInput::make('opt_amount')->label('Optional Price')->disabled()->readOnly(),
+                            TextInput::make('discount')->label('Discount')->disabled()->readOnly(),
+                            TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
                         ]),
                 ])->startOnStep(5)->columnSpanFull()
             ]);
@@ -156,8 +158,8 @@ class InsuranceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('Sl')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('created')->label('Date')->searchable()->sortable()
-                    ->getStateUsing(fn($record) => date('dm/m/Y h:i A', strtotime($record->created))),
+                Tables\Columns\TextColumn::make('created_at')->label('Date')->searchable()->sortable()
+                    ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
                 Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),

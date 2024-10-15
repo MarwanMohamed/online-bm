@@ -18,8 +18,8 @@ class CreateInsurance extends CreateRecord
     {
         do {
             $key = sprintf('QBT%06d', rand(1, 999999));
-            $exitst = Insurance::where('policy_id', $key)->first();
-        } while ($exitst);
+            $exits = Insurance::where('policy_id', $key)->first();
+        } while ($exits);
         $data['policy_id'] = $key;
         $data['end_date'] = Carbon::parse($data['start_date'])->addYear()->subDay();
         if (!isset($data['opt_3'])) {
@@ -37,7 +37,6 @@ class CreateInsurance extends CreateRecord
 
         return array_merge($data, $price);
     }
-
 
     public function getPrice($data)
     {
