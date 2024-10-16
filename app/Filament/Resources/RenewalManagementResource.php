@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RenewalManagementResource\Pages;
 use App\Filament\Resources\RenewalManagementResource\RelationManagers;
+use App\Models\Insurance;
 use App\Models\RenewalManagement;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,10 +17,23 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RenewalManagementResource extends Resource
 {
-    protected static ?string $model = RenewalManagement::class;
+    protected static ?string $model = Insurance::class;
+    protected static ?string $label = 'Renewal Managements';
     protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-currency-dollar';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('deleted', 0)
+            ->with('user');
+        //->orderBy('id', 'desc');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('deleted', 0)->count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -32,13 +47,42 @@ class RenewalManagementResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')->label('Sl')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('start_date')->label('Date')->searchable()->sortable()
+                    ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->start_date))),
+
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('qid')->label('Qatar ID')->searchable()->sortable(),
+
+                Tables\Columns\TextColumn::make('getStatus.status')->label('Status')
+                    ->badge()->searchable()->sortable()
+                    ->color(fn(string $state): string => match ($state) {
+                        'To Renew', 'Verification', 'Expired', 'Lost' => 'danger',
+                        'Paid' => 'info',
+                        'Issued' => 'success',
+                        'In Progress' => 'warning',
+                        'Refunded' => 'gray',
+                    }),
+                Tables\Columns\CheckboxColumn::make('ad_verified')->label('Commit')
+                    ->getStateUsing(function ($record) {
+                        return $record->ad_verified == 'YES' ? 1 : 0;
+                    })
+                    ->searchable()->sortable()->updateStateUsing(function ($record) {
+                        return $record->update(['ad_id' => \Auth::id(), 'ad_verify_date' => Carbon::now(), 'ad_verified' => 'YES']);
+                    }),
+
+                Tables\Columns\TextColumn::make('user.name')
+                    ->getStateUsing(fn($record) => isset($record->user) ? $record->user->name . ' on ' . $record->ad_verify_date : 'New')
+                    ->label('Commit By')->searchable()->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

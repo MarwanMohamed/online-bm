@@ -10,6 +10,11 @@ class EditRenewalManagement extends EditRecord
 {
     protected static string $resource = RenewalManagementResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        dd($data);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
