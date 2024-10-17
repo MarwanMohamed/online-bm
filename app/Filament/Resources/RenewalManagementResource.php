@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -55,7 +56,7 @@ class RenewalManagementResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('qid')->label('Qatar ID')->searchable()->sortable(),
 
-                Tables\Columns\TextColumn::make('getStatus.status')->label('Status')
+                Tables\Columns\TextColumn::make('getStatus.status')->label('Policy Status')
                     ->badge()->searchable()->sortable()
                     ->color(fn(string $state): string => match ($state) {
                         'To Renew', 'Verification', 'Expired', 'Lost' => 'danger',
@@ -77,7 +78,14 @@ class RenewalManagementResource extends Resource
                     ->label('Commit By')->searchable()->sortable(),
             ])
             ->filters([
-                //
+                 SelectFilter::make('status')
+                    ->options([
+                        '2' => 'Paid',
+                        '3' => 'Issued',
+                        '7' => 'Lost',
+                        '4' => 'Pending',
+                    ])
+                    ->placeholder('Select Status')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
