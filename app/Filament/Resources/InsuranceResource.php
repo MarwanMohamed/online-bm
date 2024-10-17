@@ -35,7 +35,12 @@ class InsuranceResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with('user');
+        return parent::getEloquentQuery()->where('deleted', 0)->with('user');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('deleted', 0)->count();
     }
 
     public static function form(Form $form): Form
@@ -43,7 +48,7 @@ class InsuranceResource extends Resource
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('Owner Details')
+                    Wizard\Step::make('Owner Details')->icon('phosphor-user-light')
                         ->schema([
                             Radio::make('owner_type')->options([
                                 'I' => 'Individual', 'O' => 'Organisation',
@@ -55,7 +60,7 @@ class InsuranceResource extends Resource
                             TextInput::make('email')->label('Email'),
                             Select::make('area')->searchable()->options(Area::pluck('area', 'id')),
                         ]),
-                    Wizard\Step::make('Vehicle Details')
+                    Wizard\Step::make('Vehicle Details')->icon('phosphor-car-light')
                         ->schema([
                             TextInput::make('vhl_make')->label('Make'),
                             TextInput::make('vhl_class')->label('Model'),
@@ -74,7 +79,7 @@ class InsuranceResource extends Resource
                                 }),
                             DatePicker::make('end_date')->native(false)->disabled()
                         ]),
-                    Wizard\Step::make('Policy Details')
+                    Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
                         ->schema([
                             RadioButtonImage::make('com_id')
                                 ->label('Company')
@@ -131,7 +136,7 @@ class InsuranceResource extends Resource
                                     return $options;
                                 })->label('Select no. of passengers'),
                         ]),
-                    Wizard\Step::make('Images')
+                    Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
                             SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->required()->collection('image')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->required()->collection('image')->columnSpan(2),
@@ -142,6 +147,7 @@ class InsuranceResource extends Resource
                             SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->required()->collection('image')->columnSpan(2),
                         ]),
                     Wizard\Step::make('Premium Details')
+                        ->hiddenOn('create')
                         ->schema([
                             TextInput::make('base_amount')->label('Base Price')->disabled()->readOnly(),
                             TextInput::make('pass_amount')->label('Passenger Price')->disabled()->readOnly(),
@@ -149,7 +155,7 @@ class InsuranceResource extends Resource
                             TextInput::make('discount')->label('Discount')->disabled()->readOnly(),
                             TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
                         ]),
-                ])->startOnStep(5)->columnSpanFull()
+                ])->columnSpanFull()
             ]);
     }
 

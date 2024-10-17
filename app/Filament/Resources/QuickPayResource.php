@@ -28,7 +28,7 @@ class QuickPayResource extends Resource
             ->orderBy('id', 'desc');
     }
 
-     public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('deleted', 0)->count();
     }
