@@ -31,7 +31,7 @@ class InsuranceHelper
 
     public function getDiscount(): float|int
     {
-        $discount = Discount::where('typeId', '1')->first();
+        $discount = Discount::where('id', '1')->first();
         if ($discount->status == '1')
             return $discount->percent / 100;
         else
