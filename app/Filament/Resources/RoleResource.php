@@ -19,8 +19,10 @@ use Filament\Tables;
 */
 
 class RoleResource extends DefaultRoleResource
+
 {
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Manage Users';
+    protected static ?int $navigationSort = -1;
 
     /*
     |--------------------------------------------------------------------------
