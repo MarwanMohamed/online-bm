@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Manage Users',
+                'Settings',
                 'Manage Vehicles'
             ])
             ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
