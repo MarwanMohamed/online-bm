@@ -19,6 +19,11 @@ class Insurance extends Model implements HasMedia
         return $this->belongsTo(User::class, 'ad_id', 'id');
     }
 
+    public function getArea(): BelongsTo
+    {
+        return $this->belongsTo(Area::class, 'area');
+    }
+
     public function getStatus(): BelongsTo
     {
         return $this->belongsTo(Status::class, 'status', 'id');

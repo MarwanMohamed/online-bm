@@ -15,10 +15,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CustomerReportsResource extends Resource
+class PaymentReportsResource extends Resource
 {
     protected static ?string $model = Insurance::class;
-    protected static ?string $label = 'Customers Reports';
+    protected static ?string $label = 'Payment Reports';
     protected static ?string $navigationGroup = 'Reports';
     protected static ?int $navigationSort = 4;
 
