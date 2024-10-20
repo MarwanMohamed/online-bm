@@ -17,13 +17,7 @@ class VehicleResource extends Resource
 {
     protected static ?string $model = Vehicle::class;
     protected static ?string $navigationIcon = 'phosphor-car-light';
-
     protected static ?string $navigationGroup = 'Manage Vehicles';
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 
     public static function form(Form $form): Form
     {

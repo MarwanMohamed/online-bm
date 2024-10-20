@@ -3,17 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerReportsResource\Pages;
-use App\Filament\Resources\CustomerReportsResource\RelationManagers;
-use App\Models\CustomerReports;
 use App\Models\Insurance;
-use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CustomerReportsResource extends Resource
 {

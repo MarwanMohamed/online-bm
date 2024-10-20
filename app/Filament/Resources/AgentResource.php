@@ -21,10 +21,6 @@ class AgentResource extends Resource
     protected static ?string $label = 'Agent';
     protected static ?string $pluralLabel = 'Agents';
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 
     public static function form(Form $form): Form
     {

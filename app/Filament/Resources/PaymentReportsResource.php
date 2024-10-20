@@ -3,21 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerReportsResource\Pages;
-use App\Filament\Resources\CustomerReportsResource\RelationManagers;
-use App\Models\CustomerReports;
-use App\Models\Insurance;
 use App\Models\Transaction;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PaymentReportsResource extends Resource
 {
-    protected static ?string $model = Insurance::class;
+    protected static ?string $model = Transaction::class;
     protected static ?string $label = 'Payment Reports';
     protected static ?string $navigationGroup = 'Reports';
     protected static ?int $navigationSort = 4;
@@ -26,8 +21,8 @@ class PaymentReportsResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->select(['id', 'name', 'qid', 'email', 'mobile', 'area'])
-            ->where('deleted', 0)->with('getArea')->groupBy('qid');
+        return parent::getEloquentQuery()
+            ->where('status', '!=', 'Pending')->with('quickPay', 'insurance');
     }
 
     public static function form(Form $form): Form
@@ -42,11 +37,14 @@ class PaymentReportsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('qid')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('mobile')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('getArea.area')->label('Area')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('date')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('policy_ref')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('insurance.vendor_policy_no')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('insurance.vhl_reg_no')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('amount')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('trans_key')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('transaction_no')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('status')->sortable()->searchable(),
             ])
             ->filters([
                 //
@@ -71,9 +69,9 @@ class PaymentReportsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomerReports::route('/'),
-            'create' => Pages\CreateCustomerReports::route('/create'),
-            'edit' => Pages\EditCustomerReports::route('/{record}/edit'),
+            'index' => Pages\ListPaymentReports::route('/'),
+            'create' => Pages\CreatePaymentReports::route('/create'),
+            'edit' => Pages\EditPaymentReports::route('/{record}/edit'),
         ];
     }
 }
