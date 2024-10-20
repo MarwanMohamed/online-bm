@@ -29,6 +29,17 @@ class Insurance extends Model implements HasMedia
         return $this->belongsTo(Status::class, 'status', 'id');
     }
 
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'com_id');
+    }
+
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class, 'policy_ref', 'policy_id')
+            ->latest('id');
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('image')->singleFile();
