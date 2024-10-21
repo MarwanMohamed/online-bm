@@ -18,6 +18,12 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->index('name');
         });
+
+        Schema::table('quickpay', function (Blueprint $table) {
+            $table->index('ref_no');
+            $table->index('name');
+            $table->index('amount');
+        });
     }
 
     /**

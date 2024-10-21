@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -19,25 +20,28 @@ class QuickPayResource extends Resource
 {
     protected static ?string $model = QuickPay::class;
     protected static ?int $navigationSort = 4;
-
+    protected static ?string $label = 'Quick Pay';
     protected static ?string $navigationIcon = 'phosphor-currency-dollar';
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('deleted', 0)->with('user')
-            ->orderBy('id', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('deleted', 0)->count();
-    }
+//    public static function getNavigationBadge(): ?string
+//    {
+//        return static::getModel()::where('deleted', 0)->count();
+//    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('ref_no')->label('Reference Number'),
+                Forms\Components\TextInput::make('ref_no')
+                    ->label('Reference Number')
+                    ->disabled(fn($record) => $record !== null)
+                    ->readOnly(fn($record) => $record !== null),
                 Forms\Components\TextInput::make('name'),
                 Forms\Components\TextInput::make('amount')->numeric()->step('any'),
                 Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
@@ -69,9 +73,15 @@ class QuickPayResource extends Resource
                 TextColumn::make('user.name')->label('Agent')->searchable()->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        '1' => 'Unpaid',
+                        '0' => 'Paid',
+                    ])
+                    ->placeholder('Select Status')
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

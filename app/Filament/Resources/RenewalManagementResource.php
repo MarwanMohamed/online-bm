@@ -27,14 +27,14 @@ class RenewalManagementResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('deleted', 0)
-            ->with('user');
-        //->orderBy('id', 'desc');
+            ->where('pb_no', "renewal")
+            ->with('user')->orderBy('id', 'desc');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('deleted', 0)->count();
-    }
+//    public static function getNavigationBadge(): ?string
+//    {
+//        return static::getModel()::where('deleted', 0)->where('pb_no', "renewal")->count();
+//    }
 
     public static function form(Form $form): Form
     {
