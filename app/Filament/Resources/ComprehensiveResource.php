@@ -35,13 +35,15 @@ class ComprehensiveResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('ins_type', 'Comprehensive')->where('deleted', 0)->with('user');
+        return parent::getEloquentQuery()->where('ins_type', 'Comprehensive')
+            ->where('deleted', 0)->with('user')
+            ->orderBy('created_at', 'desc');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('ins_type', 'Comprehensive')->where('deleted', 0)->count();
-    }
+//    public static function getNavigationBadge(): ?string
+//    {
+//        return static::getModel()::where('ins_type', 'Comprehensive')->where('deleted', 0)->count();
+//    }
 
     public static function form(Form $form): Form
     {
@@ -77,7 +79,8 @@ class ComprehensiveResource extends Resource
                                     $endDate = $startDate->addYear()->subDay();
                                     $set('end_date', $endDate);
                                 }),
-                            DatePicker::make('end_date')->native(false)->disabled()
+                            DatePicker::make('end_date')->native(false)->disabled(),
+                            TextInput::make('vhl_value')->label("Insured's Declared Value:")->disabled()->readOnly(),
                         ]),
                     Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
                         ->schema([
@@ -138,13 +141,13 @@ class ComprehensiveResource extends Resource
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->required()->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->collection('image')->columnSpan(2),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->hiddenOn('create')
@@ -154,6 +157,25 @@ class ComprehensiveResource extends Resource
                             TextInput::make('opt_amount')->label('Optional Price')->disabled()->readOnly(),
                             TextInput::make('discount')->label('Discount')->disabled()->readOnly(),
                             TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
+                        ]),
+                    Wizard\Step::make('Status Details')
+                        ->hiddenOn('create')
+                        ->schema([
+                            Radio::make('active')->label('Admin Status')->options([
+                                '1' => 'Active',
+                                '0' => 'Inactive',
+                            ])->inline(),
+                            Radio::make('status')->label('Policy Status')->options([
+                                '4' => 'In Progress',
+                                '2' => 'Paid',
+                                '6' => 'Verification',
+                                '7' => 'Lost'
+                            ])->inline()->reactive(),
+
+                            TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
+                                ->hidden(fn($get) => $get('status') == 7),
+                            TextInput::make('description')->label('Reason')
+                                ->visible(fn($get) => $get('status') == 7),
                         ]),
                 ])->columnSpanFull()
             ]);

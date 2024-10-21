@@ -142,13 +142,13 @@ class InsuranceResource extends Resource
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->required()->collection('image')->columnSpan(2)->collection('qid_img'),
-                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->required()->collection('image')->columnSpan(2)->collection('isb_img'),
-                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->required()->collection('image')->columnSpan(2)->collection('isf_img'),
-                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->required()->collection('image')->columnSpan(2)->collection('vhl_fnt'),
-                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->required()->collection('image')->columnSpan(2)->collection('vhl_bck'),
-                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->required()->collection('image')->columnSpan(2)->collection('vhl_lft'),
-                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->required()->collection('image')->columnSpan(2)->collection('vhl_rgt'),
+                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->collection('image')->columnSpan(2)->collection('qid_img'),
+                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->collection('image')->columnSpan(2)->collection('isb_img'),
+                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->collection('image')->columnSpan(2)->collection('isf_img'),
+                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->collection('image')->columnSpan(2)->collection('vhl_fnt'),
+                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->collection('image')->columnSpan(2)->collection('vhl_bck'),
+                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->collection('image')->columnSpan(2)->collection('vhl_lft'),
+                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->collection('image')->columnSpan(2)->collection('vhl_rgt'),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->hiddenOn('create')
