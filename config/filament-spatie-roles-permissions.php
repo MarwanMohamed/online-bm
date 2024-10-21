@@ -4,12 +4,12 @@ return [
 
     'resources' => [
         'PermissionResource' => \Althinect\FilamentSpatieRolesPermissions\Resources\PermissionResource::class,
-        'RoleResource' => \Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource::class,
+        'RoleResource' => \App\Filament\Resources\RoleResource::class,
     ],
 
     'preload_roles' => true,
 
-    'preload_permissions' => false,
+    'preload_permissions' => true,
 
     'navigation_section_group' => 'Manage Users', // Default uses language constant
 

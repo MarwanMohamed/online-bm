@@ -25,8 +25,8 @@ class User extends Authenticatable implements FilamentUser //,HasMedia
      *
      * @var array<string>
      */
-    protected $fillable = [
-        'name', 'email', 'password', 'profile_picture_path', 'is_email_verified', 'is_active'
+    protected $guarded = [
+        'id', 'created_at', 'updated_at',
     ];
 
     /**

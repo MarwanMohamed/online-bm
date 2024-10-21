@@ -4,9 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AgentResource\Pages;
 use App\Filament\Resources\AgentResource\RelationManagers;
+use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,27 +30,17 @@ class AgentResource extends Resource
     {
         return $form
             ->schema([
-//                Forms\Components\TextInput::make('fullname')->label('Name'),
-//                Forms\Components\TextInput::make('username'),
-//                Forms\Components\TextInput::make('email'),
-//                Forms\Components\TextInput::make('mobile_no')->label('Mobile'),
-//                Forms\Components\TextInput::make('qid')->label('QID'),
-//                Forms\Components\TextInput::make('owner_type')->label('Profile Type')
-//                    ->formatStateUsing(function ($state) {
-//                        return $state == 'I' ? 'Individual' : 'Organization';
-//                    }),
-//                Forms\Components\TextInput::make('active')->label('Status')
-//                    ->formatStateUsing(function ($state) {
-//                        return $state == '1' ? 'Active' : 'Inactive';
-//                    }),
-//                Forms\Components\TextInput::make('created_at')
-//                    ->formatStateUsing(function ($state) {
-//                        return Carbon::parse($state)->format('Y-m-d H:i:s');
-//                    }),
-//                Forms\Components\TextInput::make('updated_at')->label('Last Updated')
-//                    ->formatStateUsing(function ($state) {
-//                        return Carbon::parse($state)->format('Y-m-d H:i:s');
-//                    }),
+                TextInput::make('name'),
+                TextInput::make('phone'),
+                TextInput::make('email'),
+                TextInput::make('username'),
+                TextInput::make('password')->password(),
+                TextInput::make('passwordConformation')->visibleOn('create')->password()->same('password')->dehydrated(),
+                Select::make('role')->options(Role::get()->pluck('title', 'id'))
+                ->searchable()
+                ->preload()
+                ->required(),
+                Toggle::make('status')->inline(false),
             ]);
     }
 

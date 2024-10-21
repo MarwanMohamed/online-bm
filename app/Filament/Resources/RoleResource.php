@@ -3,10 +3,13 @@
 namespace App\Filament\Resources;
 
 use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource as DefaultRoleResource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,11 +41,20 @@ class RoleResource extends DefaultRoleResource
     public static function form(Form $form): Form
     {
         return $form->schema([
-//            AppFormsComponents\RoleName::make()
-//                ->columnSpanFull(),
-//            AppFormsComponents\PermissionSelect::make()
-//                ->columnSpanFull(),
-//            AppFormsComponents\PermissionSelectAll::make()
+
+            TextInput::make('title')->label('Name')->required()
+                ->columnSpanFull(),
+
+            Select::make('permissions')
+                ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->title)
+                ->preload()
+                ->columnSpanFull()
+                ->relationship(
+                    name: 'permissions',
+                    modifyQueryUsing: fn(Builder $query) => $query->orderBy('title'),
+                )
+                ->multiple()
+                ->searchable()
         ]);
     }
 
@@ -61,19 +73,14 @@ class RoleResource extends DefaultRoleResource
     {
         return $table
             ->columns([
-                AppTablesComponents\IDColumn::make(),
-                AppTablesComponents\RoleNameColumn::make(),
-                AppTablesComponents\PermissionsCountColumn::make(),
-                AppTablesComponents\GuardNameColumn::make(),
-                AppTablesComponents\CreatedAtColumn::make(),
-                AppTablesComponents\UpdatedAtColumn::make(),
+                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('title')->label('Name'),
             ])
             ->filters([
 
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -105,21 +112,5 @@ class RoleResource extends DefaultRoleResource
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | getEloquentQuery Method
-    |--------------------------------------------------------------------------
-    |
-    | Override the getEloquentQuery method to customize the query.
-    | This method returns the parent query with an additional condition
-    | to filter records where 'tema_id' is NULL.
-    |
-    | @return \Illuminate\Database\Eloquent\QueryBuilder
-    |
-    */
-    public static function getEloquentQuery(): Builder
-    {
-        // Get the parent query and add a condition
-        return parent::getEloquentQuery()->whereNull('team_id');
-    }
+
 }
