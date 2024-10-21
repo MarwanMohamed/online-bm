@@ -40,8 +40,18 @@ class Insurance extends Model implements HasMedia
             ->latest('id');
     }
 
+     public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'policy_ref', 'policy_id');
+    }
+
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('image')->singleFile();
+        $this->addMediaCollection('qid_img')->singleFile();
+        $this->addMediaCollection('isb_img')->singleFile();
+        $this->addMediaCollection('isf_img')->singleFile();
+        $this->addMediaCollection('vhl_fnt')->singleFile();
+        $this->addMediaCollection('vhl_bck')->singleFile();
+        $this->addMediaCollection('vhl_lft')->singleFile();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InsuranceResource\Pages;
+use App\Filament\Resources\InsuranceResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Area;
 use App\Models\Company;
 use App\Models\Insurance;
@@ -35,13 +36,14 @@ class InsuranceResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('deleted', 0)->with('user');
+        return parent::getEloquentQuery()->where('deleted', 0)
+            ->with('user')->orderBy('created_at', 'desc');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('deleted', 0)->count();
-    }
+//    public static function getNavigationBadge(): ?string
+//    {
+//        return static::getModel()::where('deleted', 0)->count();
+//    }
 
     public static function form(Form $form): Form
     {
@@ -81,6 +83,8 @@ class InsuranceResource extends Resource
                         ]),
                     Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
                         ->schema([
+                            TextInput::make('policy_id')->label('Reference Number')->hiddenOn(['create', 'edit']),
+                            TextInput::make('ins_type')->label('Type of Insurance')->hiddenOn(['create', 'edit']),
                             RadioButtonImage::make('com_id')
                                 ->label('Company')
                                 ->options(
@@ -138,13 +142,13 @@ class InsuranceResource extends Resource
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->required()->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))->required()->collection('image')->columnSpan(2)->collection('qid_img'),
+                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))->required()->collection('image')->columnSpan(2)->collection('isb_img'),
+                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))->required()->collection('image')->columnSpan(2)->collection('isf_img'),
+                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))->required()->collection('image')->columnSpan(2)->collection('vhl_fnt'),
+                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))->required()->collection('image')->columnSpan(2)->collection('vhl_bck'),
+                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))->required()->collection('image')->columnSpan(2)->collection('vhl_lft'),
+                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))->required()->collection('image')->columnSpan(2)->collection('vhl_rgt'),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->hiddenOn('create')
@@ -154,6 +158,25 @@ class InsuranceResource extends Resource
                             TextInput::make('opt_amount')->label('Optional Price')->disabled()->readOnly(),
                             TextInput::make('discount')->label('Discount')->disabled()->readOnly(),
                             TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
+                        ]),
+                    Wizard\Step::make('Status Details')
+                        ->hiddenOn('create')
+                        ->schema([
+                            Radio::make('active')->label('Admin Status')->options([
+                                '1' => 'Active',
+                                '0' => 'Inactive',
+                            ])->inline(),
+                            Radio::make('status')->label('Policy Status')->options([
+                                '4' => 'In Progress',
+                                '2' => 'Paid',
+                                '6' => 'Verification',
+                                '7' => 'Lost'
+                            ])->inline()->reactive(),
+
+                            TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
+                               ->hidden(fn ($get) => $get('status') == 7),
+                            TextInput::make('description')->label('Reason')
+                              ->visible(fn ($get) => $get('status') == 7),
                         ]),
                 ])->columnSpanFull()
             ]);
@@ -198,7 +221,7 @@ class InsuranceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class
         ];
     }
 
@@ -209,15 +232,5 @@ class InsuranceResource extends Resource
             'create' => Pages\CreateInsurance::route('/create'),
             'edit' => Pages\EditInsurance::route('/{record}/edit'),
         ];
-    }
-
-    function getMaxPassNumber(Get $get): array
-    {
-        $maxPass = $get('passengers');
-        $options = [];
-        for ($i = 1; $i <= $maxPass; $i++) {
-            $options[$i] = $i;
-        }
-        return $options;
     }
 }
