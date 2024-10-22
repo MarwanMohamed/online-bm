@@ -14,6 +14,22 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
            $table->string('password')->change();
         });
+
+        Schema::table('blacklists', function (Blueprint $table) {
+           $table->timestamps();
+        });
+
+         Schema::table('discounts', function (Blueprint $table) {
+           $table->timestamps();
+        });
+
+         Schema::table('companies', function (Blueprint $table) {
+           $table->timestamps();
+        });
+
+         Schema::table('settings', function (Blueprint $table) {
+           $table->timestamp('updated_at')->nullable();
+        });
     }
 
     /**

@@ -43,7 +43,11 @@ class DiscountsResource extends Resource
                     ->color(fn(string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success',
-                    }), Tables\Columns\TextColumn::make('percent'),
+                    }),
+
+                Tables\Columns\TextColumn::make('percent')
+                    ->getStateUsing(fn($record) => $record->percent . '%'),
+
             ])
             ->filters([
                 //

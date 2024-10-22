@@ -37,16 +37,16 @@ class ActivityLogsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('user.name')->searchable()->sortable()
                 ->url(fn ($record) => 'agents/'.$record->user_id.'/edit' ),
-                Tables\Columns\TextColumn::make('ip_address')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('title')->label('message')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('ip_address')->searchable()->sortable()->label('IP Address'),
+                Tables\Columns\TextColumn::make('title')->label('Message')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->label('Date & Time')->searchable()->sortable(),
             ])
             ->filters([
 
-                SelectFilter::make('user')
+                SelectFilter::make('user_id')
                     ->label('Filter by User')
                     ->options(User::all()->pluck('name', 'id')->map(function ($name, $id) {
                         return "{$name} # {$id}"; // Concatenate ID to the name

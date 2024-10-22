@@ -126,6 +126,7 @@ return new class extends Migration {
             ]);
         }
         Schema::drop('old_roles');
+
         $users = \App\Models\User::all();
         foreach ($users as $user) {
             DB::table('model_has_roles')->insert([
@@ -134,6 +135,16 @@ return new class extends Migration {
                 'model_id' => $user->id
             ]);
         }
+
+
+        $permissions = \Illuminate\Support\Facades\DB::table('adm_permissions')->get();
+        foreach ($permissions as $permission) {
+            \App\Models\Permission::create([
+                'name' => $permission->title,
+                'guard_name' => 'web'
+            ]);
+        }
+        Schema::drop('adm_permissions');
     }
 
 

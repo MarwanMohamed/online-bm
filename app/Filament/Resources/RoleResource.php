@@ -42,16 +42,16 @@ class RoleResource extends DefaultRoleResource
     {
         return $form->schema([
 
-            TextInput::make('title')->label('Name')->required()
+            TextInput::make('name')->required()
                 ->columnSpanFull(),
 
             Select::make('permissions')
-                ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->title)
+                ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->name)
                 ->preload()
                 ->columnSpanFull()
                 ->relationship(
                     name: 'permissions',
-                    modifyQueryUsing: fn(Builder $query) => $query->orderBy('title'),
+                    modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
                 )
                 ->multiple()
                 ->searchable()
@@ -74,7 +74,7 @@ class RoleResource extends DefaultRoleResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('title')->label('Name'),
+                Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
 
