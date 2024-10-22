@@ -24,6 +24,12 @@ return new class extends Migration {
             $table->index('name');
             $table->index('amount');
         });
+
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->index('trans_key');
+            $table->index('policy_ref');
+            $table->index('amount');
+        });
     }
 
     /**

@@ -4,12 +4,17 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PolicyReportsResource\Pages;
 use App\Filament\Resources\PolicyReportsResource\RelationManagers;
+use App\Models\Company;
 use App\Models\Insurance;
 use App\Models\PolicyReports;
+use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -42,13 +47,13 @@ class PolicyReportsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('policy_id')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('ins_type')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('company.name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('transaction.amount')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('user.name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('getStatus.status')->label('Policy Status')
+                Tables\Columns\TextColumn::make('created_at')->sortable()->searchable()->label('created_at'),
+                Tables\Columns\TextColumn::make('policy_id')->sortable()->searchable()->label('Ref #'),
+                Tables\Columns\TextColumn::make('ins_type')->sortable()->searchable()->label('Type'),
+                Tables\Columns\TextColumn::make('company.name')->sortable()->searchable()->label('Insurance company'),
+                Tables\Columns\TextColumn::make('transaction.amount')->sortable()->searchable()->label('Amount'),
+                Tables\Columns\TextColumn::make('user.name')->sortable()->searchable()->label('Agent'),
+                Tables\Columns\TextColumn::make('getStatus.status')->label('Status')
                     ->badge()->searchable()->sortable()
                     ->color(fn(string $state): string => match ($state) {
                         'To Renew', 'Verification', 'Expired', 'Lost' => 'danger',
@@ -57,10 +62,38 @@ class PolicyReportsResource extends Resource
                         'In Progress' => 'warning',
                         'Refunded' => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('transaction.status')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('transaction.status')->sortable()->searchable()->label('Payment Status'),
             ])
             ->filters([
-                //
+                SelectFilter::make('ad_id')->label('Agent')
+                    ->options(
+                        User::get()->pluck('name', 'id')
+                    ),
+
+                SelectFilter::make('com_id')->label('Insurance Provider')
+                    ->options(
+                        Company::get()->pluck('name', 'id')
+                    ),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
+                        DatePicker::make('created_until')->label('Date From')->displayFormat('d-m-Y')
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),
