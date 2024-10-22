@@ -3,11 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerReportsResource\Pages;
+use App\Models\Area;
 use App\Models\Insurance;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -39,22 +43,44 @@ class CustomerReportsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('qid')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('qid')->sortable()->searchable()->label('QID'),
                 Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('mobile')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('getArea.area')->label('Area')->sortable()->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('area')->label('Area')
+                    ->options(Area::get()->pluck('area', 'id')),
+
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
+                        DatePicker::make('created_until')->label('Date From')->displayFormat('d-m-Y')
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
+    ])
+        ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
 //                ]),
-            ]);
+        ]);
     }
 
     public static function getRelations(): array

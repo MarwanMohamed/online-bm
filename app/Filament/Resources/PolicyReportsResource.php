@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Insurance;
 use App\Models\PolicyReports;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
@@ -47,7 +48,10 @@ class PolicyReportsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')->sortable()->searchable()->label('created_at'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->formatStateUsing(function ($state) {
+                        return Carbon::parse($state)->format('d/m/Y');
+                    })->sortable()->searchable()->label('created_at'),
                 Tables\Columns\TextColumn::make('policy_id')->sortable()->searchable()->label('Ref #'),
                 Tables\Columns\TextColumn::make('ins_type')->sortable()->searchable()->label('Type'),
                 Tables\Columns\TextColumn::make('company.name')->sortable()->searchable()->label('Insurance company'),
@@ -66,14 +70,11 @@ class PolicyReportsResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('ad_id')->label('Agent')
-                    ->options(
-                        User::get()->pluck('name', 'id')
-                    ),
+                    ->options(User::get()->pluck('name', 'id')),
 
                 SelectFilter::make('com_id')->label('Insurance Provider')
-                    ->options(
-                        Company::get()->pluck('name', 'id')
-                    ),
+                    ->options(Company::get()->pluck('name', 'id')),
+
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')
