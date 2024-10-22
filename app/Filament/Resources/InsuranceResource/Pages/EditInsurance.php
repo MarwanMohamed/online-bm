@@ -10,6 +10,7 @@ use App\Models\Thirdparty;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditInsurance extends EditRecord
 {
@@ -43,6 +44,8 @@ class EditInsurance extends EditRecord
         }
         $price = (new InsuranceHelper())->getPrice($data);
 
+        createLog('Insurance ' . $data['policy_id'] . ' Updated by User:' . Auth::user()->name);
         return array_merge($data, $price);
     }
+
 }

@@ -42,7 +42,8 @@ class CustomerReportsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable()
+                    ->url(fn($record) => 'insurances/' . $record->id . '/edit'),
                 Tables\Columns\TextColumn::make('qid')->sortable()->searchable()->label('QID'),
                 Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('mobile')->sortable()->searchable(),
@@ -75,12 +76,12 @@ class CustomerReportsResource extends Resource
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),
-    ])
-        ->bulkActions([
+            ])
+            ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
 //                ]),
-        ]);
+            ]);
     }
 
     public static function getRelations(): array

@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-//        Schema::table('customers', function (Blueprint $table) {
-//            $table->renameColumn('created', 'created_at');
-//            $table->renameColumn('updated', 'updated_at');
-//        });
-//        Schema::table('users', function (Blueprint $table) {
-//            $table->renameColumn('role', 'role_id');
-//        });
+        Schema::table('customers', function (Blueprint $table) {
+            $table->renameColumn('created', 'created_at');
+            $table->renameColumn('updated', 'updated_at');
+        });
+        Schema::table('users', function (Blueprint $table) {
+            $table->renameColumn('role', 'role_id');
+        });
 
         Schema::table('activity_logs', function (Blueprint $table) {
             $table->integer('user')->index()->change();
@@ -24,6 +24,10 @@ return new class extends Migration {
 
         Schema::table('activity_logs', function (Blueprint $table) {
             $table->renameColumn('user', 'user_id');
+        });
+
+        Schema::table('activity_logs', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 

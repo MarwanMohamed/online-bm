@@ -9,11 +9,11 @@ class InsuranceHelper
 {
     public function getPrice($data): array
     {
-        if ($data['opt_4'] > 0) {
+        if (isset($data['opt_4']) && $data['opt_4'] > 0) {
             $priceId = $data['opt_4'];
-        } elseif ($data['opt_3'] > 0) {
+        } elseif (isset($data['opt_3']) && $data['opt_3'] > 0) {
             $priceId = $data['opt_3'];
-        } elseif ($data['opt_2'] > 0) {
+        } elseif (isset($data['opt_2']) && $data['opt_2'] > 0) {
             $priceId = $data['opt_2'];
         }
         $discount = $this->getDiscount();

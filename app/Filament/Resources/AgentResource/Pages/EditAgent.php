@@ -24,6 +24,8 @@ class EditAgent extends EditRecord
         } else {
             unset($data['password']);
         }
+        createLog("User " . $data['email']. "Updated by User:". \Auth::user()->name);
+
         return $data;
     }
 }

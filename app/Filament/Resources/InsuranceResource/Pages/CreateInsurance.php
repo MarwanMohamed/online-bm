@@ -4,7 +4,9 @@ namespace App\Filament\Resources\InsuranceResource\Pages;
 
 use App\Filament\Resources\InsuranceResource;
 use App\Helpers\InsuranceHelper;
+use App\Models\ActivityLog;
 use App\Models\Insurance;
+use Auth;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -34,6 +36,10 @@ class CreateInsurance extends CreateRecord
         }
         $price = (new InsuranceHelper())->getPrice($data);
 
+
+        createLog('New Insurance ' . $data['policy_id'] . ' Created by User:' . Auth::user()->name);
         return array_merge($data, $price);
     }
+
+
 }

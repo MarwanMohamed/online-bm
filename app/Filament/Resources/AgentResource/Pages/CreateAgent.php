@@ -13,6 +13,8 @@ class CreateAgent extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['password'] = \Hash::make($data['password']);
+
+        createLog('New User '.$data['email'].' Created by User:'. \Auth::user()->name);
         return $data;
     }
 }

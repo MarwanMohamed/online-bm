@@ -55,25 +55,25 @@ class InsuranceResource extends Resource
                         ->schema([
                             Radio::make('owner_type')->options([
                                 'I' => 'Individual', 'O' => 'Organisation',
-                            ])->inline(),
-                            TextInput::make('name')->label('Full Name'),
-                            TextInput::make('qid')->label('EID/QID'),
-                            TextInput::make('mobile')->label('Mobile Number'),
-                            TextInput::make('phone')->label('Phone Number'),
-                            TextInput::make('email')->label('Email'),
-                            Select::make('area')->searchable()->options(Area::pluck('area', 'id')),
+                            ])->inline()->required(),
+                            TextInput::make('name')->label('Full Name')->required(),
+                            TextInput::make('qid')->label('EID/QID')->required(),
+                            TextInput::make('mobile')->label('Mobile Number')->required(),
+                            TextInput::make('phone')->label('Phone Number')->required(),
+                            TextInput::make('email')->label('Email')->required(),
+                            Select::make('area')->searchable()->options(Area::pluck('area', 'id'))->required(),
                         ]),
                     Wizard\Step::make('Vehicle Details')->icon('phosphor-car-light')
                         ->schema([
-                            TextInput::make('vhl_make')->label('Make'),
-                            TextInput::make('vhl_class')->label('Model'),
-                            TextInput::make('vhl_chassis')->label('Chassis #'),
-                            TextInput::make('vhl_engine')->label('Engine #'),
-                            TextInput::make('vhl_reg_no')->label('Plate #'),
-                            TextInput::make('vhl_color')->label('Color'),
+                            TextInput::make('vhl_make')->label('Make')->required(),
+                            TextInput::make('vhl_class')->label('Model')->required(),
+                            TextInput::make('vhl_chassis')->label('Chassis #')->required(),
+                            TextInput::make('vhl_engine')->label('Engine #')->required(),
+                            TextInput::make('vhl_reg_no')->label('Plate #')->required(),
+                            TextInput::make('vhl_color')->label('Color')->required(),
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),
 
-                            DatePicker::make('start_date')->native(false)
+                            DatePicker::make('start_date')->native(false)->required()
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);
@@ -86,17 +86,17 @@ class InsuranceResource extends Resource
                         ->schema([
                             TextInput::make('policy_id')->label('Reference Number')->hiddenOn(['create', 'edit']),
                             TextInput::make('ins_type')->label('Type of Insurance')->hiddenOn(['create', 'edit']),
-                            RadioButtonImage::make('com_id')
+                            RadioButtonImage::make('com_id')->required()
                                 ->label('Company')
                                 ->options(
                                     Company::orderBy('priority')->where('active', 1)->get()->pluck('logo', 'id')->toArray()
                                 ),
 
-                            Select::make('opt_1')->label('Type of Vehicle ')->searchable()
+                            Select::make('opt_1')->label('Type of Vehicle ')->searchable()->required()
                                 ->options(Thirdparty::where('parent_id', 0)->pluck('value', 'id'))
                                 ->live(),
 
-                            Select::make('opt_2')->hidden(fn(Get $get): bool => !filled($get('opt_1')))
+                            Select::make('opt_2')->required()->hidden(fn(Get $get): bool => !filled($get('opt_1')))
                                 ->options(fn(Get $get) => Thirdparty::where('parent_id', $get('opt_1'))->pluck('value', 'id'))
                                 ->label('Select vehicle class')
                                 ->afterStateUpdated(function ($state, $set) {

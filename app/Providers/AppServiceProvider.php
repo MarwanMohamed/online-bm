@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Insurance;
+use App\Models\User;
+use App\Observers\InsuranceObserver;
+use App\Observers\UserObserver;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
@@ -29,6 +33,9 @@ class AppServiceProvider extends ServiceProvider
             Js::make('custom', '/js/custom.js'),
         ]);
 
+
+        Insurance::observe(InsuranceObserver::class);
+        User::observe(UserObserver::class);
 
 //        $recipient = auth()->user(); edit module
 //        Notification::make()
