@@ -9,11 +9,13 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
 class AgentResource extends Resource
@@ -30,16 +32,18 @@ class AgentResource extends Resource
     {
         return $form
             ->schema([
+                SpatieMediaLibraryFileUpload::make('image')->maxSize(3000)->collection('image')->columnSpanFull(),
                 TextInput::make('name'),
-                TextInput::make('phone'),
+                TextInput::make('phone')->label('Contact Number'),
                 TextInput::make('email'),
-                TextInput::make('username'),
+                TextInput::make('username')->label('Username'),
                 TextInput::make('password')->password(),
                 TextInput::make('passwordConformation')->visibleOn('create')->password()->same('password')->dehydrated(),
-                Select::make('role')->options(Role::get()->pluck('title', 'id'))
-                ->searchable()
-                ->preload()
-                ->required(),
+                Select::make('roles')->options(Role::get()->pluck('name', 'id'))
+                    ->searchable()
+                    ->relationship('roles', 'name')
+                    ->preload()
+                    ->required(),
                 Toggle::make('status')->inline(false),
             ]);
     }
@@ -49,10 +53,10 @@ class AgentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
-                Tables\Columns\TextColumn::make('image'),
+                SpatieMediaLibraryImageColumn::make('image')->collection('image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('role')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('last_login')
                     ->getStateUsing(function ($record) {
                         return Carbon::parse($record->last_login)->format('d F, Y');

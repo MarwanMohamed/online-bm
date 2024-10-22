@@ -16,4 +16,14 @@ class EditAgent extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (isset($data['password'])) {
+            $data['password'] = \Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+        return $data;
+    }
 }

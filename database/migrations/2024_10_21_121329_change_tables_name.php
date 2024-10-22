@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::rename('adm_users', 'users');
         Schema::rename('adm_activity_logs', 'activity_logs');
-        Schema::rename('adm_roles', 'roles');
+        Schema::rename('adm_roles', 'old_roles');
         Schema::rename('dat_area', 'areas');
         Schema::rename('adm_settings', 'settings');
         Schema::rename('ins_discounts', 'discounts');

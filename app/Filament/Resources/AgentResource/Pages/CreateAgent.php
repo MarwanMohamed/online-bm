@@ -9,4 +9,10 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateAgent extends CreateRecord
 {
     protected static string $resource = AgentResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['password'] = \Hash::make($data['password']);
+        return $data;
+    }
 }

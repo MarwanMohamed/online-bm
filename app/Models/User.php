@@ -4,35 +4,28 @@ namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Filament\Panel;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser //,HasMedia
+class User extends Authenticatable implements FilamentUser, HasMedia
 {
     use Notifiable;
     use HasApiTokens;
-//    use HasRoles;
+    use HasRoles;
     use HasFactory;
+    use InteractsWithMedia;
 
-//    use InteractsWithMedia;
-
-    protected $table = 'users';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $guarded = [
         'id', 'created_at', 'updated_at',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -42,8 +35,8 @@ class User extends Authenticatable implements FilamentUser //,HasMedia
     ];
 
     protected $with = [
-//        'media',
-//        'roles'
+        'media',
+        'roles'
     ];
 
     public function canAccessPanel(Panel $panel): bool
@@ -56,15 +49,8 @@ class User extends Authenticatable implements FilamentUser //,HasMedia
         $this->notify(new ResetPasswordNotification($token, request()));
     }
 
-    /**
-     * Define the media collections.
-     *
-     * @return void
-     */
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('profile_picture')->singleFile();
+        $this->addMediaCollection('image')->singleFile();
     }
-
-
 }

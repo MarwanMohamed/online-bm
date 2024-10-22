@@ -14,6 +14,9 @@ return new class extends Migration {
             $table->renameColumn('created', 'created_at');
             $table->renameColumn('updated', 'updated_at');
         });
+        Schema::table('users', function (Blueprint $table) {
+            $table->renameColumn('role', 'role_id');
+        });
     }
 
     /**
