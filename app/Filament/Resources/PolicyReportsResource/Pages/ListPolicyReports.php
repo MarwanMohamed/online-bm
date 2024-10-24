@@ -28,7 +28,7 @@ class ListPolicyReports extends ListRecords
                 }, 'policy-reports.pdf');
             })->icon('heroicon-o-arrow-up-on-square'),
 
-            ExportAction::make()->label('Export')
+            ExportAction::make()->label('Export Excel')
                 ->exporter(PolicyReportsExporter::class)->formats([
                     ExportFormat::Csv,
                     ExportFormat::Xlsx,
