@@ -29,9 +29,9 @@ class AppServiceProvider extends ServiceProvider
                 ->rules(['between:8,15']);
         });
 
-        FilamentAsset::register([
-            Js::make('custom', '/js/custom.js'),
-        ]);
+//        FilamentAsset::register([
+//            Js::make('custom', '/js/custom.js'),
+//        ]);
 
 
         Insurance::observe(InsuranceObserver::class);

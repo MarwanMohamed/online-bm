@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Pages\Backups;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -18,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -26,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-             ->profile()
+            ->profile()
             ->path('admin')
             ->login()
             ->colors([
@@ -60,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                 'Manage Vehicles'
             ])
             ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
+            ->plugin(FilamentSpatieLaravelBackupPlugin::make()->usingPage(Backups::class))
             ->authMiddleware([
                 Authenticate::class,
             ]);
