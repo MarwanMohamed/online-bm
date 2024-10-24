@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\CustomerReportsResource\Pages;
+namespace App\Filament\Resources\PaymentReportsResource\Pages;
 
 use App\Filament\Resources\PaymentReportsResource;
 use Filament\Resources\Pages\CreateRecord;

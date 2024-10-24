@@ -24,7 +24,7 @@ class ListRenewalManagement extends ListRecords
                     ExportFormat::Xlsx,
                 ])
                 ->modifyQueryUsing(function (Builder $query) {
-                    return $this->getTableRecords()->toQuery();
+                    return $query->whereIn('id', collect($this->getTableRecords()->items())->pluck('id'));
                 })
                 ->icon('heroicon-o-arrow-up-on-square'),
                 //->visible(Auth::user()->hasPermissionTo('export Workspace'))

@@ -26,7 +26,8 @@ class CustomerReportsResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->select(['id', 'name', 'qid', 'email', 'mobile', 'area'])
+        return parent::getEloquentQuery()->select(['id', 'name', 'qid', 'email', 'mobile', 'area', 'created_at'])
+            ->orderBy('created_at', 'DESC')
             ->where('deleted', 0)->with('getArea')->groupBy('qid');
     }
 

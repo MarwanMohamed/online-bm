@@ -44,6 +44,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         return true;
     }
 
+    public function Activities()
+    {
+        return $this->hasMany(ActivityLog::class , 'user_id')->orderBy('id', 'DESC');
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token, request()));

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AgentResource\Pages;
 use App\Filament\Resources\AgentResource\RelationManagers;
+use App\Filament\Resources\AgentResource\RelationManagers\ActivitiesRelationManager;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -82,7 +83,7 @@ class AgentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivitiesRelationManager::class
         ];
     }
 

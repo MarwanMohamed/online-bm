@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CustomerReportsResource\Pages;
+use App\Filament\Resources\PaymentReportsResource\Pages;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -76,11 +76,11 @@ class PaymentReportsResource extends Resource
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')
-                                  ->placeholder('dd-mm-yyyy')
-                                  ->native(false),
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
                         DatePicker::make('created_until')->label('Date From')->displayFormat('d-m-Y')
-                                  ->placeholder('dd-mm-yyyy')
-                                  ->native(false),
+                            ->placeholder('dd-mm-yyyy')
+                            ->native(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -116,7 +116,7 @@ class PaymentReportsResource extends Resource
         return [
             'index' => Pages\ListPaymentReports::route('/'),
             'create' => Pages\CreatePaymentReports::route('/create'),
-            'edit' => Pages\EditPaymentReports::route('/{record}/edit'),
+//            'edit' => Pages\EditPaymentReports::route('/{record}/edit'),
         ];
     }
 }
