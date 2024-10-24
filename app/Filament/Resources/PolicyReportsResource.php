@@ -51,7 +51,7 @@ class PolicyReportsResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->formatStateUsing(function ($state) {
                         return Carbon::parse($state)->format('d/m/Y');
-                    })->sortable()->searchable()->label('created_at'),
+                    })->sortable()->searchable()->label('Date'),
                 Tables\Columns\TextColumn::make('policy_id')->sortable()->searchable()->label('Ref #'),
                 Tables\Columns\TextColumn::make('ins_type')->sortable()->searchable()->label('Type'),
                 Tables\Columns\TextColumn::make('company.name')->sortable()->searchable()->label('Insurance company'),

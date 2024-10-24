@@ -8,6 +8,7 @@
         "php": "^8.2",
         "althinect/filament-spatie-roles-permissions": "*",
         "archtechx/enums": "^0.3.2",
+        "barryvdh/laravel-dompdf": "^3.0",
         "codeat3/blade-phosphor-icons": "^2.0",
         "creativeorange/gravatar": "~1.0.24",
         "doctrine/dbal": "^3.8.3",

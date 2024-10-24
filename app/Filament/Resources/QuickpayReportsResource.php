@@ -112,7 +112,7 @@ class QuickpayReportsResource extends Resource
         return [
             'index' => Pages\ListQuickpayReports::route('/'),
             'create' => Pages\CreateQuickpayReports::route('/create'),
-            'edit' => Pages\EditQuickpayReports::route('/{record}/edit'),
+//            'edit' => Pages\EditQuickpayReports::route('/{record}/edit'),
         ];
     }
 }
