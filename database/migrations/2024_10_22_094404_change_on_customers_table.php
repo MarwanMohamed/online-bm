@@ -25,10 +25,6 @@ return new class extends Migration {
         Schema::table('activity_logs', function (Blueprint $table) {
             $table->renameColumn('user', 'user_id');
         });
-
-        Schema::table('activity_logs', function (Blueprint $table) {
-            $table->timestamps();
-        });
     }
 
     /**

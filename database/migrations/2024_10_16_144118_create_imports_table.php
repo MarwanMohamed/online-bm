@@ -10,9 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-//        Schema::table('adm_users', function (Blueprint $table) {
-//            $table->id()->change();
-//        });
+        Schema::table('adm_users', function (Blueprint $table) {
+            $table->id()->change();
+        });
 
         Schema::create('imports', function (Blueprint $table) {
             $table->id();
