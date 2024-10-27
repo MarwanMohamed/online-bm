@@ -52,7 +52,10 @@ class PolicyReportsResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return Carbon::parse($state)->format('d/m/Y');
                     })->sortable()->searchable()->label('Date'),
-                Tables\Columns\TextColumn::make('policy_id')->sortable()->searchable()->label('Ref #'),
+                Tables\Columns\TextColumn::make('policy_id')
+                    ->url(function ($record) {
+                            return 'insurances/' . $record->id . '/edit';
+                    })->sortable()->searchable()->label('Ref #'),
                 Tables\Columns\TextColumn::make('ins_type')->sortable()->searchable()->label('Type'),
                 Tables\Columns\TextColumn::make('company.name')->sortable()->searchable()->label('Insurance company'),
                 Tables\Columns\TextColumn::make('transaction.amount')->sortable()->searchable()->label('Amount'),
@@ -118,7 +121,7 @@ class PolicyReportsResource extends Resource
         return [
             'index' => Pages\ListPolicyReports::route('/'),
             'create' => Pages\CreatePolicyReports::route('/create'),
-            'edit' => Pages\EditPolicyReports::route('/{record}/edit'),
+//            'edit' => Pages\EditPolicyReports::route('/{record}/edit'),
         ];
     }
 }

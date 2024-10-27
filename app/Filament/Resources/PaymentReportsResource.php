@@ -47,7 +47,16 @@ class PaymentReportsResource extends Resource
                     ->formatStateUsing(function ($state) {
                         return Carbon::parse($state)->format('d/m/Y');
                     }),
-                Tables\Columns\TextColumn::make('policy_ref')->label('Ref')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('policy_ref')->label('Ref')
+                    ->url(function ($record) {
+
+                        if ($record->quickPay != null) {
+                            return 'quick-pays/' . $record->quickPay->id . '/edit';
+                        }
+                        if ($record->insurance != null) {
+                            return 'insurances/' . $record->insurance->id . '/edit';
+                        }
+                    })->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('quickPay.description')->label('Policy/Description')->searchable(),
                 Tables\Columns\TextColumn::make('quickPay.ref_no')->label('Plate')->searchable(),
                 Tables\Columns\TextColumn::make('amount')->sortable()->searchable(),

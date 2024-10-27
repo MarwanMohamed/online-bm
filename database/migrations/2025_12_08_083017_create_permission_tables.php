@@ -145,6 +145,7 @@ return new class extends Migration {
             ]);
         }
         Schema::drop('adm_permissions');
+        Schema::drop('adm_role_permissions');
     }
 
 

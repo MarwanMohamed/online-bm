@@ -52,7 +52,11 @@ class QuickpayReportsResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->formatStateUsing(function ($state) {
                     return Carbon::parse($state)->format('d/m/Y');
                 })->sortable()->searchable()->label('Date'),
-                Tables\Columns\TextColumn::make('ref_no')->sortable()->searchable()->label('Ref #'),
+                Tables\Columns\TextColumn::make('ref_no')
+                     ->url(function ($record) {
+                            return 'quick-pays/' . $record->id . '/edit';
+                    })
+                    ->sortable()->searchable()->label('Ref #'),
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('amount')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('user.name')->sortable()->searchable()->label('Agent'),
