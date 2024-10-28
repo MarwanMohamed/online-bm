@@ -73,7 +73,7 @@ class ActivityLogsResource extends Resource
         return [
             'index' => Pages\ListActivityLogs::route('/'),
             'create' => Pages\CreateActivityLogs::route('/create'),
-            'edit' => Pages\EditActivityLogs::route('/{record}/edit'),
+//            'edit' => Pages\EditActivityLogs::route('/{record}/edit'),
         ];
     }
 }

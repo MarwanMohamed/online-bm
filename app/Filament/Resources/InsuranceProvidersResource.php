@@ -18,6 +18,10 @@ class InsuranceProvidersResource extends Resource
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $label = 'Insurance Providers';
 
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('General Settings');
+    }
 
     public static function form(Form $form): Form
     {
@@ -34,7 +38,7 @@ class InsuranceProvidersResource extends Resource
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\ImageColumn::make('logo')
-                    ->getStateUsing(function($record) {
+                    ->getStateUsing(function ($record) {
                         return url(asset('/imgs/companies/' . $record->logo));
                     }),
                 Tables\Columns\ToggleColumn::make('active')

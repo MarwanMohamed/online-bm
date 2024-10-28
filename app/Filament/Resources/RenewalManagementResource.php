@@ -4,24 +4,25 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RenewalManagementResource\Pages;
 use App\Models\Insurance;
-use App\Models\RenewalManagement;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RenewalManagementResource extends Resource
 {
     protected static ?string $model = Insurance::class;
     protected static ?string $label = 'Renewal Managements';
     protected static ?int $navigationSort = 3;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-currency-dollar';
+
+    public static function canViewAny(): bool
+    {
+        return \Auth::user()->hasPermissionTo('Renewal Management');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -77,7 +78,7 @@ class RenewalManagementResource extends Resource
                     ->label('Commit By')->searchable()->sortable(),
             ])
             ->filters([
-                 SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->options([
                         '2' => 'Paid',
                         '3' => 'Issued',

@@ -20,6 +20,11 @@ class DiscountsResource extends Resource
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationIcon = 'phosphor-percent';
 
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('General Settings');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

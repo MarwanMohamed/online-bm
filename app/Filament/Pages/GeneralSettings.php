@@ -27,6 +27,11 @@ class GeneralSettings extends Page implements HasForms
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationGroup = 'Settings';
 
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('General Settings');
+    }
+
     public ?array $data = [];
 
     public function mount(): void

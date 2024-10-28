@@ -20,6 +20,11 @@ class BlacklistResource extends Resource
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationIcon = 'heroicon-o-no-symbol';
 
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('General Settings');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

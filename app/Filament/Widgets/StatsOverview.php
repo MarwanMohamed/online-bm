@@ -23,7 +23,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Quick Pay Pending', Quickpay::where('created_at', '>=', Carbon::today())
                 ->where('status', 1)->count()),
 
-            Stat::make('Total Sales Today', 'QAR :'. Transaction::where('date', '>=', Carbon::today())
+            Stat::make('Total Sales Today', 'QAR: '. Transaction::where('date', '>=', Carbon::today())
                 ->where('status', 'Approved')->sum('amount')),
         ];
     }

@@ -21,6 +21,7 @@ class Permission extends \Spatie\Permission\Models\Permission
         'name',
         'display_name',
         'mandatory_permissions',
+        'guard_name'
     ];
 
     protected $casts = [
