@@ -22,6 +22,11 @@ class PaymentReportsResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationIcon = 'phosphor-table';
 
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('Insurance List');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

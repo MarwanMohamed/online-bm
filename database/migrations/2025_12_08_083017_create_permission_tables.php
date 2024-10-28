@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -120,18 +123,18 @@ return new class extends Migration {
 
         $roles = \Illuminate\Support\Facades\DB::table('old_roles')->get();
         foreach ($roles as $role) {
-            \App\Models\Role::create([
+            Role::create([
                 'name' => $role->title,
                 'guard_name' => 'web'
             ]);
         }
         Schema::drop('old_roles');
 
-        $users = \App\Models\User::all();
+        $users = User::all();
         foreach ($users as $user) {
             DB::table('model_has_roles')->insert([
-               'role_id' => $user->role_id,
-               'model_type' => 'App\Models\User',
+                'role_id' => $user->role_id,
+                'model_type' => 'App\Models\User',
                 'model_id' => $user->id
             ]);
         }
@@ -139,15 +142,52 @@ return new class extends Migration {
 
         $permissions = \Illuminate\Support\Facades\DB::table('adm_permissions')->get();
         foreach ($permissions as $permission) {
-            \App\Models\Permission::create([
+            \Illuminate\Support\Facades\DB::table('permissions')->insert([
                 'name' => $permission->title,
                 'guard_name' => 'web'
             ]);
         }
+
+         $roles = \Illuminate\Support\Facades\DB::table('adm_role_permissions')->get();
+        foreach ($roles as $role) {
+            \Illuminate\Support\Facades\DB::table('role_has_permissions')->insert([
+                'role_id' => $role->role,
+                'permission_id' => \Illuminate\Support\Facades\DB::table('adm_permissions')->where('code', $role->permission)->first()->id ?? null,
+            ]);
+        }
+
+
         Schema::drop('adm_permissions');
         Schema::drop('adm_role_permissions');
-    }
 
+        \Illuminate\Support\Facades\DB::table('permissions')->insert([
+            'name' => 'Vehicles Management',
+            'guard_name' => 'web'
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('permissions')->insert([
+            'name' => 'Vehicles Colors Management',
+            'guard_name' => 'web'
+        ]);
+
+        $role = Role::where('name', 'Admin')->first();
+        $role->givePermissionTo('Vehicles Management');
+        $role->givePermissionTo('Vehicles Colors Management');
+
+        Permission::where('name','Permissions List')->delete();
+        Permission::where('name','Add Permissions')->delete();
+        Permission::where('name','Permissions Edit')->delete();
+        Permission::where('name','Delete Permissions')->delete();
+        Permission::where('name','Login Theme')->delete();
+        Permission::where('name','Manage Email Templates')->delete();
+
+        $user = User::create([
+            'name' => 'Admin',
+            'email' => 'admin@test.com',
+            'password' => Hash::make('password')
+        ]);
+        $user->assignRole('Admin');
+    }
 
 
     /**
