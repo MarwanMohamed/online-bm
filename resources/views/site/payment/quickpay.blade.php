@@ -16,7 +16,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                @if($errors->any())
+                    @if($errors->any())
                         @foreach ($errors->all() as $error)
                             <div class="alert alert-danger">
                                 {{ $error }}
@@ -40,7 +40,8 @@
                     <div id="mkPayGif"></div>
                     <div id="reDetails" style="display:none;" class="pull-right">
 
-                        <form class="cmxform" id="SubFrm" name="SubFrm" action="/payment/selectpayment" method="post">
+                        <form class="cmxform" id="SubFrm" name="SubFrm" action="/payment/select-payment" method="post">
+                            @csrf
                             <div class="form-group">
                                 <p id="quickpaydltsid">Your motor insurance policy for Car Vehicle plate #<span
                                             id="vehiclePlate"></span> has been issued. Kindly pay the policy amount to
@@ -52,6 +53,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlInput1"></label>
+                                <input type="hidden" class="btn btn-dark" name="policy" id="policy_input"
+                                       value="policy">
+                                <input type="hidden" class="btn btn-dark" name="total_amount" id="total_amount_input"
+                                       value="total_amount">
                                 <input type="button" class="btn btn-dark" name="cancel" id="cancel" value="Cancel">
                                 <input type="submit" class="btn btn-common" name="submit" id="submit" value="Pay Now">
                             </div>
@@ -73,7 +78,7 @@
             $("#quickpaydltsid").hide();
             //cancel button click------------------------------------------
             $("#cancel").click(() => {
-                //window.location.href = "/";
+                window.location.href = "/";
             });
 
             $("#SubFrm").submit(function () {
@@ -90,15 +95,17 @@
             $(document).on('click', '#viewDetail', function (e) {
                 e.preventDefault();
                 var policy_id = $('#policy_id').val();
+                $('#policy_input').val(policy_id);
                 if (policy_id == 0 || policy_id == "") {
                     $('#infMsg').remove();
                     $('#policy_id').after('<span style="color: red;font-style:italic;"  id="infMsg">Please Enter Reference number</span>');
                     return false;
                 } else {
                     $.post({
-                        url: "payment/getPolicyPayDetails",
+                        url: "/payment/getPolicyPayDetails",
                         data: {
-                            policy_id: policy_id
+                            policy_id: policy_id,
+                            _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token here
                         },
                         dataType: "json",
                         success: function (res) {
@@ -133,6 +140,7 @@
                                     setTimeout(function () {
                                         $('#mkPayGif').hide();
                                         $('#totalPrice').text(amount);
+                                        $('#total_amount_input').val(amount);
                                         $('#vehiclePlate').text("");
                                         $('#payAmount1').text(amount);
                                         $('#reDetails').show();
@@ -144,6 +152,7 @@
                                     setTimeout(function () {
                                         $('#mkPayGif').hide();
                                         $('#totalPrice').text(amount);
+                                        $('#total_amount_input').val(amount);
                                         $('#vehiclePlate').text(res.vhl_reg_no);
                                         $('#payAmount').text(amount);
                                         $('#reDetails').show();

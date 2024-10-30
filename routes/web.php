@@ -16,14 +16,18 @@ use App\Http\Controllers\InsuranceController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
-
-Route::get('/insurance/new', [InsuranceController::class, 'index']);
-Route::get('/insurance/thirdparty', [InsuranceController::class, 'thirdparty']);
-Route::get('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
-
-
-Route::get('renew', [RenewController::class, 'renew']);
+//Route::get('/', [HomeController::class, 'index']);
+//
+//Route::get('/insurance/new', [InsuranceController::class, 'index']);
+//Route::get('/insurance/thirdparty', [InsuranceController::class, 'thirdparty']);
+//Route::get('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
+//
+//
+//Route::get('renew', [RenewController::class, 'renew']);
 
 
 Route::get('payment/quickpay', [QuickPayController::class, 'quickPay']);
+Route::post('payment/select-payment', [QuickPayController::class, 'selectPayment']);
+Route::post('payment/getPolicyPayDetails', [QuickPayController::class, 'getPolicyPayDetails']);
+Route::post('payment/qcbankpayment', [QuickPayController::class, 'qcbankpayment']);
+Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpayment']);

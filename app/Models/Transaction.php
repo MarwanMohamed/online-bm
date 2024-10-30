@@ -9,6 +9,8 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id', 'created_at', 'updated_at'];
+
     public function quickPay()
     {
         return $this->hasOne(Quickpay::class, 'ref_no', 'policy_ref');

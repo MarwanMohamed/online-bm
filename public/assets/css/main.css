@@ -2094,10 +2094,10 @@ footer #copyright .nav-inline {
     content: "ï„ƒ";
 }
 .accordionSmall .panel-default .panel-heading a::after {
-    content: "ï?¨";
+    content: "ï¿½?ï¿½";
 }
 .accordionSmall .panel-default .panel-heading .collapsed::after {
-    content: "ï?§";
+    content: "ï¿½?ï¿½";
 }
 .panel-default .panel-collapse .panel-body {
     background-color: #fafafa;
@@ -2352,7 +2352,7 @@ ul.nav-tabs li a {
 }
 #single-testimonial-item .testimonial-inner::before {
     color: #fff;
-    content: "ï„?";
+    content: "ï¿½?";
     font-family: fontawesome;
     font-size: 45px;
     left: 25px;
