@@ -20,6 +20,12 @@ use App\Http\Controllers\InsuranceController;
 //
 //Route::get('/insurance/new', [InsuranceController::class, 'index']);
 //Route::get('/insurance/thirdparty', [InsuranceController::class, 'thirdparty']);
+//Route::get('/insurance/getVhlModels/{id}', [InsuranceController::class, 'getVhlModels']);
+//Route::get('/insurance/getPrice/{id}', [InsuranceController::class, 'getPrice']);
+//Route::get('/insurance/allowQid', [InsuranceController::class, 'allowQid']);
+//Route::get('/insurance/addThirdparty', [InsuranceController::class, 'addThirdparty']);
+//
+//
 //Route::get('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
 //
 //

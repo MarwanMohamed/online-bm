@@ -214,7 +214,7 @@
 @yield('content')
 
 
-<footer class="footer-bottom">
+<footer class="<?= (!empty($footerchk)) ? 'footer-bottom' : ''; ?>">
     <div>
         <div class="container">
             <div class="row">
