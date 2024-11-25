@@ -5,9 +5,14 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InsuranceProvidersResource\Pages;
 use App\Filament\Resources\InsuranceProvidersResource\RelationManagers;
 use App\Models\Company;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
 class InsuranceProvidersResource extends Resource
@@ -27,7 +32,9 @@ class InsuranceProvidersResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')->columnSpanFull()->required(),
+                SpatieMediaLibraryFileUpload::make('logo'),
+                Toggle::make('active')
             ]);
     }
 
@@ -36,18 +43,16 @@ class InsuranceProvidersResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\ImageColumn::make('logo')
-                    ->getStateUsing(function ($record) {
-                        return url(asset('/imgs/companies/' . $record->logo));
-                    }),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                SpatieMediaLibraryImageColumn::make('logo'),
                 Tables\Columns\ToggleColumn::make('active')
             ])
             ->filters([
                 //
             ])
             ->actions([
-//                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([

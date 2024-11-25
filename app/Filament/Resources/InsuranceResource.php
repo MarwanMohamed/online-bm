@@ -8,6 +8,7 @@ use App\Models\Area;
 use App\Models\Company;
 use App\Models\Insurance;
 use App\Models\Thirdparty;
+use App\Models\VehicleColor;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -70,7 +71,10 @@ class InsuranceResource extends Resource
                             TextInput::make('vhl_chassis')->label('Chassis #')->required(),
                             TextInput::make('vhl_engine')->label('Engine #')->required(),
                             TextInput::make('vhl_reg_no')->label('Plate #')->required(),
-                            TextInput::make('vhl_color')->label('Color')->required(),
+                            Select::make('vhl_color')->label('Color')
+                                ->options(VehicleColor::where('deleted', 0)->pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),
 
                             DatePicker::make('start_date')->native(false)->required()

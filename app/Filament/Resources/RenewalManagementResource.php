@@ -28,7 +28,8 @@ class RenewalManagementResource extends Resource
     {
         return parent::getEloquentQuery()->where('deleted', 0)
             ->where('pb_no', "renewal")
-            ->with('user')->orderBy('id', 'desc');
+            ->with('user');
+            //->orderBy('id', 'desc');
     }
 
 //    public static function getNavigationBadge(): ?string

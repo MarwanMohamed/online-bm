@@ -40,14 +40,17 @@ class QuickPayResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('ref_no')
                     ->label('Reference Number')
+                    ->required()
+                    ->unique(QuickPay::class, 'ref_no', ignoreRecord: true)
                     ->disabled(fn($record) => $record !== null)
                     ->readOnly(fn($record) => $record !== null),
-                Forms\Components\TextInput::make('name'),
-                Forms\Components\TextInput::make('amount')->numeric()->step('any'),
-                Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
-                Forms\Components\TextInput::make('email'),
-                Forms\Components\TextInput::make('contact'),
-                Forms\Components\Textarea::make('description'),
+                Forms\Components\TextInput::make('name')->required(),
+                Forms\Components\TextInput::make('amount')->numeric()->step('any')->required(),
+                Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->required()
+                    ->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
+                Forms\Components\TextInput::make('email')->required(),
+                Forms\Components\TextInput::make('contact')->required()->maxValue(8),
+                Forms\Components\Textarea::make('description')->required(),
             ]);
     }
 
