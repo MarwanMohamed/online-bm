@@ -97,7 +97,7 @@ class InsuranceResource extends Resource
                                 ),
 
                             Select::make('opt_1')->label('Type of Vehicle ')->searchable()->required()
-                                ->options(Thirdparty::where('parent_id', 0)->pluck('value', 'id'))
+                                ->options(Thirdparty::where('parent_id', 0)->where('deleted', 0)->pluck('value', 'id'))
                                 ->live(),
 
                             Select::make('opt_2')->required()->hidden(fn(Get $get): bool => !filled($get('opt_1')))

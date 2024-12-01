@@ -91,7 +91,7 @@ class PaymentReportsResource extends Resource
                         DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')
                             ->placeholder('dd-mm-yyyy')
                             ->native(false),
-                        DatePicker::make('created_until')->label('Date From')->displayFormat('d-m-Y')
+                        DatePicker::make('created_until')->label('Date To')->displayFormat('d-m-Y')
                             ->placeholder('dd-mm-yyyy')
                             ->native(false),
                     ])

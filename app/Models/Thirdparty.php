@@ -10,4 +10,6 @@ class Thirdparty extends Model
     use HasFactory;
 
     protected $table = 'thirdparty';
+
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 }
