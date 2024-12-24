@@ -85,9 +85,13 @@
                 $.ajax({
                     type: "POST",
                     url: "/renew/getPolicyDetails",
-                    data: {search_with3: search_with3},
+                    data: {
+                        search_with3: search_with3,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
                     dataType: "json",
                     success: function (data) {
+                        console.log(data);
                         $('#mkPayGif').html('<img src="/assets/img/spin.gif">');
                         $('#mkPayGif').show();
                         $('#reDetails').hide();
@@ -134,7 +138,7 @@
             $(document).on('click', '.viewPolicy', function (e) {
                 e.preventDefault();
                 var encryId = $(this).val();
-                window.location.href = "/renew/renewview?token=" + encryId;
+                window.location.href = "/renew/view?token=" + encryId;
 
             });
 

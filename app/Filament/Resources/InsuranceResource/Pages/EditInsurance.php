@@ -23,6 +23,20 @@ class EditInsurance extends EditRecord
         ];
     }
 
+    public function mount(int|string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+        if ($this->record->read == 0) {
+            $this->record->update(['read' => 1]);
+        }
+        $this->authorizeAccess();
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
+    }
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         do {

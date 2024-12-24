@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Discount;
+use App\Models\Insurance;
 use App\Models\Thirdparty;
 
 class InsuranceHelper
@@ -36,5 +37,14 @@ class InsuranceHelper
             return $discount->percent / 100;
         else
             return 0;
+    }
+
+    public function getUniqueRefNo()
+    {
+        do {
+            $key = sprintf('QBT%06d', rand(1, 999999));
+            $exits = Insurance::where('policy_id', $key)->first();
+        } while ($exits);
+        return $key;
     }
 }

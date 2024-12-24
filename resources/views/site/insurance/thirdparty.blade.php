@@ -80,7 +80,7 @@
         </div>
     </div>
     <div id="free-promo">
-        <form id="thirdPartFrm" autocomplete="off" name="thirdPartFrm" action="/insurance/addThirdparty" method="post">
+        <form id="thirdPartFrm" autocomplete="off" name="thirdPartFrm" action="/insurance/confirm" method="post">
             @csrf
             <div class="container">
                 <div class="row">

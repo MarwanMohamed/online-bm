@@ -38,14 +38,22 @@ class InsuranceResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('deleted', 0)
-            ->where('pb_no', '!=', 'renewal')
+            ->where(function ($query) {
+                $query->where('pb_no', '!=', 'renewal')
+                    ->orWhereNull('pb_no');
+            })
             ->with('user')->orderBy('created_at', 'desc');
     }
 
-//    public static function getNavigationBadge(): ?string
-//    {
-//        return static::getModel()::where('deleted', 0)->where('pb_no', '!=', 'renewal')->count();
-//    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('read', 0)
+            ->where(function ($query) {
+                $query->where('pb_no', '!=', 'renewal')
+                    ->orWhereNull('pb_no');
+            })
+            ->count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -179,9 +187,9 @@ class InsuranceResource extends Resource
                             ])->inline()->reactive(),
 
                             TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
-                               ->hidden(fn ($get) => $get('status') == 7),
+                                ->hidden(fn($get) => $get('status') == 7),
                             TextInput::make('description')->label('Reason')
-                              ->visible(fn ($get) => $get('status') == 7),
+                                ->visible(fn($get) => $get('status') == 7),
                         ]),
                 ])->columnSpanFull()
             ]);
@@ -212,7 +220,7 @@ class InsuranceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()->visible(fn($record) => $record->read === 0),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

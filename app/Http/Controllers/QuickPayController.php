@@ -11,7 +11,8 @@ class QuickPayController extends Controller
 {
     public function quickPay()
     {
-        return view('site.payment.quickpay')->with(['title' => 'Make Direct Payment']);
+        $footerchk = 1;
+        return view('site.payment.quickpay')->with(['title' => 'Make Direct Payment', 'footerchk' => $footerchk]);
     }
 
     public function getPolicyPayDetails(Request $request)
@@ -51,9 +52,10 @@ class QuickPayController extends Controller
 
     public function selectPayment(Request $request)
     {
-        $total_amount = $request->total_amount;
-        $policyRef = $request->policy;
-        return view('site.payment.select-payment')->with(['title' => 'Select Payment', 'policyRef' => $policyRef, 'total_amount' => $total_amount]);
+        $total_amount = $request->nmi_total_price;
+        $policyRef = $request->nmi_referno;
+        $footerchk = 1;
+        return view('site.payment.select-payment')->with(['title' => 'Select Payment', 'policyRef' => $policyRef, 'total_amount' => $total_amount, 'footerchk' => $footerchk]);
     }
 
     public function qcbankpayment(Request $request)

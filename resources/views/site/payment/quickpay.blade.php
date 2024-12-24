@@ -43,20 +43,16 @@
                         <form class="cmxform" id="SubFrm" name="SubFrm" action="/payment/select-payment" method="post">
                             @csrf
                             <div class="form-group">
-                                <p id="quickpaydltsid">Your motor insurance policy for Car Vehicle plate #<span
-                                            id="vehiclePlate"></span> has been issued. Kindly pay the policy amount to
-                                    activate your policy.</p>
-                                <p id="quickpaydltsid1">Your insurance policy for the given reference number has been
-                                    issued. Kindly pay the policy amount to activate your policy.</p>
+                                <p id="quickpaydltsid">Your insurance policy has been issued. Kindly pay the policy amount to activate your policy</p>
                                 <h4 style="color: #b50555"><b>Policy Amount : QAR <span id="totalPrice">0.00</span></b>
                                 </h4><span id="amounttext"></span>
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlInput1"></label>
-                                <input type="hidden" class="btn btn-dark" name="policy" id="policy_input"
-                                       value="policy">
-                                <input type="hidden" class="btn btn-dark" name="total_amount" id="total_amount_input"
-                                       value="total_amount">
+                                <input type="hidden" class="btn btn-dark" name="nmi_referno" id="policy_input"
+                                       value="nmi_referno">
+                                <input type="hidden" class="btn btn-dark" name="nmi_total_price" id="total_amount_input"
+                                       value="nmi_total_price">
                                 <input type="button" class="btn btn-dark" name="cancel" id="cancel" value="Cancel">
                                 <input type="submit" class="btn btn-common" name="submit" id="submit" value="Pay Now">
                             </div>
@@ -74,7 +70,6 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#quickpaydltsid1").hide();
             $("#quickpaydltsid").hide();
             //cancel button click------------------------------------------
             $("#cancel").click(() => {
@@ -130,7 +125,6 @@
                             } else {
                                 let amount = res.amount;
                                 if (amount && res.policy_id) {
-                                    $("#quickpaydltsid1").show();
                                     $("#quickpaydltsid").hide();
                                     //$("#amounttext").text("(Additional amount " + amount + ")");
                                     $('#nmi_total_price').val(amount);
@@ -146,7 +140,6 @@
                                         $('#reDetails').show();
                                     }, 600);
                                 } else {
-                                    $("#quickpaydltsid1").hide();
                                     $("#quickpaydltsid").show();
                                     $('#infMsg').remove();
                                     setTimeout(function () {
