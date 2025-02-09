@@ -87,7 +87,6 @@ class QuickPayController extends Controller
         }
         $data['secureHash'] = hash('sha256', $orderedString, false);
         $data['QPUrl'] = $qpay->url;
-
         if (isset($refNo) && $trxType = 'debit') {
             Transaction::create([
                 'policy_ref' => $refNo,
@@ -99,6 +98,7 @@ class QuickPayController extends Controller
                 'active' => 1
             ]);
         }
+        return  redirect('https://qbima.qa/payment/qcbankpayment')->with('data', $data); // will delete it
         return view('site.payment.qcb_redirect')->with('data', $data);
     }
 
@@ -122,7 +122,6 @@ class QuickPayController extends Controller
             'txn_type' => 'Credit',
             'active' => 1
         ];
-
         Transaction::create($data);
 
         $orginalAmount = $vpc_amount * 100;
@@ -132,6 +131,7 @@ class QuickPayController extends Controller
             $vpcURL .= "&vpc_SecureHash=" . strtoupper(hash_hmac('sha256', $vpcURL, $hexstr));
             $vpcURL .= "&vpc_SecureHashType=sha256";
             $redirect_url = $bkdtls->url . "?" . $vpcURL;
+            return  redirect('https://qbima.qa/payment/dohabankpayment')->with('data', $data); // will delete it
             return redirect($redirect_url);
         }
     }

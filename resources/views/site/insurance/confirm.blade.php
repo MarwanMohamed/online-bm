@@ -274,7 +274,7 @@
     <div class="row">
       <hr>
       <div class="col-sm-12">
-        <label style="color: #b50555" for="example-text-input" class="col-form-label"><strong>
+        <label style="color: #b50555" for="termsNdCondn" class="col-form-label"><strong>
         <input id="termsNdCondn" type="checkbox"> I have read and agree to the Terms and Conditions. I hereby agree that i am fully responsible for the information furnished above. I also understand that any false information will lead to non-issuance of my policy.</strong></label>
       </div>
     </div>
