@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\VehicleColor;
 use App\Models\VehicleModel;
+use App\Models\VehicleModelDetails;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 
@@ -27,6 +28,32 @@ class InsuranceController extends Controller
     public function getVhlModels($id)
     {
         return VehicleModel::where('make_id', $id)->get();
+    }
+
+    public function getVhlDetails($make)
+    {
+        $model = VehicleModel::where('model_name', $make)->first();
+
+        $results = VehicleModelDetails::where('model_id', $model->id)
+            ->selectRaw('year, seats, cylinder')
+            ->distinct()
+            ->get();
+
+        $years = [];
+        $seats = [];
+        $cylinders = [];
+
+        foreach ($results as $result) {
+            $years[] = $result->year;
+            $seats[] = $result->seats;
+            $cylinders[] = $result->cylinder;
+        }
+        sort($years);
+        return [
+            'years' => $years,
+            'seats' => array_unique($seats),
+            'cylinders' => array_unique($cylinders),
+        ];
     }
 
     public function thirdparty()

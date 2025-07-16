@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuickPayController;
 use App\Http\Controllers\RenewController;
 use App\Http\Controllers\InsuranceController;
+use App\Imports\VehiclesImport;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/insurance/new', [InsuranceController::class, 'index']);
 Route::get('/insurance/thirdparty', [InsuranceController::class, 'thirdparty']);
 Route::get('/insurance/getVhlModels/{id}', [InsuranceController::class, 'getVhlModels']);
+Route::get('/insurance/getVhlDetails/{make}', [InsuranceController::class, 'getVhlDetails']);
 Route::get('/insurance/getPrice/{id}', [InsuranceController::class, 'getPrice']);
 Route::get('/insurance/allowQid', [InsuranceController::class, 'allowQid']);
 Route::post('/insurance/confirm', [InsuranceController::class, 'confirm']);
@@ -59,3 +61,12 @@ Route::get('/check-new-recording', function () {
 Route::get('/update-last-checked/{id}', function ($id) {
     session(['last_checked_recording_id' => $id]);
 });
+
+Route::get('/vehicles/import', function () {
+    return view('site.import');
+})->name('vehicles.import.form');
+
+Route::post('/vehicles/import', function (\Illuminate\Http\Request $request) {
+        Excel::import(new VehiclesImport, $request->file('file'));
+
+})->name('vehicles.import');

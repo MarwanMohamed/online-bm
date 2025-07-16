@@ -279,8 +279,41 @@
                     <hr/>
                     <!--*************Vehicle B**************-->
                     <!--********************************************body parent calculation started**********************************************************-->
+                    <div class="col-md-12" style="margin-bottom: 10px;" id="">
+
+                        <div class="col-md-4" id="year">
+                            <div class="form-group">
+                                <label for="">Vehicle Model Year</label><label class="pull-right">سنه الصنع</label>
+                                <select class="form-control" name="year" id="year_count">
+                                    <option value="">Please Select</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" id="seats">
+                            <div class="form-group">
+                                <label for="">Seats</label><label class="pull-right">عدد الكراسى</label>
+                                <select class="form-control" name="seats" id="seats_count">
+                                    <option value="">Please Select</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" id="cylinders">
+                            <div class="form-group">
+                                <label for=""> no. of cylinders</label><label class="pull-right">عدد السلندرات</label>
+                                <select class="form-control" name="cylinders_count" id="cylinders_count">
+                                    <option value="">Please Select</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12" style="margin-bottom: 10px;" id="vhl_type_select">
                         <p style="font-weight:500">C. Select vehicle options</p>
+
+
                         <div class="col-md-4 vhl_opt" id="vhl_opt_1">
                             <div class="form-group">
                                 <label for="opt_1">Type of vehicle</label><label class="pull-right" for="opt_1">نوع
@@ -426,6 +459,29 @@
                     });
                 }
             });
+
+            $('#vhl_class').change(function (event) {
+                let make = $(this).val();
+                if (make) {
+                    $.get("/insurance/getVhlDetails/" + make, function (data) {
+                        if (data.years) {
+                            let years = data.years.map((year) => '<option value="' + year + '">' + year + '</option>');
+                            $('#year_count').append(years.join(''));
+                        }
+
+                          if (data.seats) {
+                            let seats = data.seats.map((seat) => '<option value="' + seat + '">' + seat + '</option>');
+                            $('#seats_count').append(seats.join(''));
+                        }
+
+                            if (data.cylinders) {
+                            let cylinders = data.cylinders.map((cylinder) => '<option value="' + cylinder + '">' + cylinder + '</option>');
+                            $('#cylinders_count').append(cylinders.join(''));
+                        }
+                    });
+                }
+            });
+
             //start date end date from bootstrap
             $('#start_date').datepicker({
                 dateFormat: 'dd/mm/yy',
