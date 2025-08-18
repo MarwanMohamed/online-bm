@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         FilamentAsset::register([
-            Js::make('custom', '/js/custom.js'),
+            Js::make('custom', public_path('/js/custom.js')),
         ]);
 
 
