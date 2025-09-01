@@ -220,7 +220,7 @@ class InsuranceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->visible(fn($record) => $record->read === 0),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -243,6 +243,7 @@ class InsuranceResource extends Resource
         return [
             'index' => Pages\ListInsurances::route('/'),
             'create' => Pages\CreateInsurance::route('/create'),
+            'view' => Pages\ViewInsurance::route('/{record}'),
             'edit' => Pages\EditInsurance::route('/{record}/edit'),
         ];
     }
