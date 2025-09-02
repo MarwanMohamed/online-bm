@@ -3,7 +3,7 @@
 return [
 
     'resources' => [
-        'PermissionResource' => \Althinect\FilamentSpatieRolesPermissions\Resources\PermissionResource::class,
+        'PermissionResource' => \App\Filament\Resources\PermissionResource::class,
         'RoleResource' => \App\Filament\Resources\RoleResource::class,
     ],
 
@@ -21,7 +21,7 @@ return [
      * Set as false to remove from navigation.
      */
     'should_register_on_navigation' => [
-        'permissions' => false,
+        'permissions' => true,
         'roles' => true,
     ],
 

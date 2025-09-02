@@ -24,6 +24,7 @@ use IbrahimBougaoua\RadioButtonImage\Actions\RadioButtonImage;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Illuminate\Database\Eloquent\Model;
 
 class ComprehensiveResource extends Resource
 {
@@ -40,6 +41,18 @@ class ComprehensiveResource extends Resource
             ->orderBy('created_at', 'desc');
     }
 
+    public static function canView($record): bool
+    {
+        // Allow viewing if record exists and is comprehensive type
+        return $record && $record->ins_type === 'Comprehensive' && $record->deleted == 0;
+    }
+
+    public static function canEdit($record): bool
+    {
+        // Allow editing if record exists and is comprehensive type
+        return $record && $record->ins_type === 'Comprehensive' && $record->deleted == 0;
+    }
+
 //    public static function getNavigationBadge(): ?string
 //    {
 //        return static::getModel()::where('ins_type', 'Comprehensive')->where('deleted', 0)->count();
@@ -49,6 +62,7 @@ class ComprehensiveResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Hidden::make('ins_type')->default('Comprehensive'),
                 Wizard::make([
                     Wizard\Step::make('Owner Details')->icon('phosphor-user-light')
                         ->schema([
@@ -73,6 +87,7 @@ class ComprehensiveResource extends Resource
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),
 
                             DatePicker::make('start_date')->native(false)
+                                ->minDate(now())
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);

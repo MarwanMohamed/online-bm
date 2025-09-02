@@ -81,10 +81,11 @@ class PaymentReportsResource extends Resource
                         }
                     }),
 
-                SelectFilter::make('payment_gateway')
+                SelectFilter::make('txn_type')
+                    ->label('Payment Gateway')
                     ->options([
-                        'DB' => 'Credit Card',
-                        'QCB' => 'Debit Card'
+                        'Credit' => 'Credit Card (Visa & Master)',
+                        'Debit' => 'Debit Card (Salary Card - NAPS)'
                     ])->placeholder('Select Payment Gateway'),
                 Filter::make('created_at')
                     ->form([

@@ -5,6 +5,8 @@ use App\Http\Controllers\QuickPayController;
 use App\Http\Controllers\RenewController;
 use App\Http\Controllers\InsuranceController;
 use App\Imports\VehiclesImport;
+use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------

@@ -37,8 +37,12 @@ class InsuranceWidgets extends BaseWidget
     protected function getTableQuery(): Builder
     {
         return Insurance::where('deleted', 0)
-            ->where('pb_no', '!=', 'renewal')
-            ->with(['user', 'getStatus']);
+            ->where(function ($query) {
+                $query->where('pb_no', '!=', 'renewal')
+                    ->orWhereNull('pb_no');
+            })
+            ->with(['user', 'getStatus'])
+            ->orderBy('created_at', 'desc');
     }
 
     protected function getDefaultTableSortColumn(): ?string
