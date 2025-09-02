@@ -86,6 +86,7 @@ class InsuranceResource extends Resource
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),
 
                             DatePicker::make('start_date')->native(false)->required()
+                                ->minDate(now())
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);

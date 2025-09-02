@@ -50,6 +50,18 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            // Handle Filament admin panel requests
+            if ($request->is('admin/*')) {
+                // Extract resource name from URL for better redirect
+                $path = $request->path();
+                if (preg_match('/admin\/([^\/]+)/', $path, $matches)) {
+                    $resourceName = $matches[1];
+                    return redirect("/admin/{$resourceName}")
+                        ->with('error', 'The requested record was not found or may have been deleted.');
+                }
+                return redirect('/admin')->with('error', 'Record not found.');
+            }
+            
             $exception = new ItemNotFoundException($exception->getModel(), $exception->getIds());
         }
 
