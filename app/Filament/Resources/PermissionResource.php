@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource as DefaultRoleResource;
+use Althinect\FilamentSpatieRolesPermissions\Resources\PermissionResource as DefaultPermissionResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -13,26 +13,26 @@ use Illuminate\Database\Eloquent\Model;
 
 /*
 |--------------------------------------------------------------------------
-| RoleResource Class
+| PermissionResource Class
 |--------------------------------------------------------------------------
 |
-| Represents a role resource and extends the DefaultRoleResource class.
+| Represents a permission resource and extends the DefaultPermissionResource class.
 | Provides definitions for forms, tables, and resource-specific pages.
 |
 */
 
-class RoleResource extends DefaultRoleResource
+class PermissionResource extends DefaultPermissionResource
 
 {
     protected static ?string $navigationGroup = 'Manage Users';
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 2;
 
     /*
     |--------------------------------------------------------------------------
     | Form Definition
     |--------------------------------------------------------------------------
     |
-    | Defines the form schema for creating and editing roles.
+    | Defines the form schema for creating and editing permissions.
     |
     | @param Form $form The form instance.
     | @return Form
@@ -45,12 +45,12 @@ class RoleResource extends DefaultRoleResource
             TextInput::make('name')->required()
                 ->columnSpanFull(),
 
-            Select::make('permissions')
+            Select::make('roles')
                 ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->name)
                 ->preload()
                 ->columnSpanFull()
                 ->relationship(
-                    name: 'permissions',
+                    name: 'roles',
                     modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
                 )
                 ->multiple()
@@ -63,7 +63,7 @@ class RoleResource extends DefaultRoleResource
     | Table Definition
     |--------------------------------------------------------------------------
     |
-    | Defines the table schema for displaying roles.
+    | Defines the table schema for displaying permissions.
     |
     | @param Table $table The table instance.
     | @return Table
@@ -81,16 +81,16 @@ class RoleResource extends DefaultRoleResource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\EditAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ]);
     }
 
@@ -107,9 +107,10 @@ class RoleResource extends DefaultRoleResource
     public static function getPages(): array
     {
         return [
-            'index' => RoleResource\Pages\ListRoles::route('/'),
-            'create' => RoleResource\Pages\CreateRole::route('/create'),
-            'edit' => RoleResource\Pages\EditRole::route('/{record}/edit'),
+            'index' => PermissionResource\Pages\ListPermissions::route('/'),
+            'view' => PermissionResource\Pages\ViewPermission::route('/{record}'),
+            // 'create' => PermissionResource\Pages\CreatePermission::route('/create'),
+            // 'edit' => PermissionResource\Pages\EditPermission::route('/{record}/edit'),
         ];
     }
 
