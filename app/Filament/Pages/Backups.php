@@ -19,6 +19,7 @@ class Backups extends Page
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Backups';
     protected static ?string $title = 'Backups';
+    protected static ?string $navigationGroup = 'Settings';
     
     public static function canAccess(): bool
     {
