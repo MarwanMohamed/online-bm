@@ -91,6 +91,7 @@ class RenewController extends Controller
             'vhl_class' => $insData->vhl_class,
             'vhl_year' => $insData->vhl_year,
             'vhl_color' => $insData->vhl_color,
+            'vhl_body_type' => isset($insData->vhl_body_type) ? $insData->vhl_body_type : null,
             'vhl_chassis' => $insData->vhl_chassis,
             'vhl_engine' => $insData->vhl_engine,
             'vhl_reg_no' => $insData->vhl_reg_no,

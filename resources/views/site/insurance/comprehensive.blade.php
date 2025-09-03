@@ -214,6 +214,20 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                <label for="vhl_body_type">Body Type</label><label class="pull-right"
+                                                                                   for="vhl_body_type">نوع الهيكل</label>
+                                <select class="form-control" name="vhl_body_type" id="vhl_body_type">
+                                    <option value="">--Select--</option>
+                                    @foreach($bodyTypes as $bodyType)
+                                        <option value="{{$bodyType['name']}}">{{$bodyType['name']}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 10px;">
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 <?php $tenYearBack = date("Y") - 50;  $currentYear = date("Y"); ?>
                                 <label for="vhl_year">Year of Manufacture</label><label class="pull-right"
                                                                                         for="vhl_year">سنة الصنع</label>
@@ -639,6 +653,9 @@
                     },
                     vhl_color: {
                         required: "Select Color"
+                    },
+                    vhl_body_type: {
+                        required: "Select Body Type"
                     },
                     vhl_year: {
                         required: "Select Year of manufacture"

@@ -12,6 +12,7 @@ use App\Models\Optional;
 use App\Models\Thirdparty;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VehicleBodyType;
 use App\Models\VehicleColor;
 use App\Models\VehicleModel;
 use App\Models\VehicleModelDetails;
@@ -65,6 +66,7 @@ class InsuranceController extends Controller
         $vhlTypes = Thirdparty::where('parent_id', 0)->get();
         $make = Vehicle::all();
         $colors = VehicleColor::where('deleted', 0)->get();
+        $bodyTypes = VehicleBodyType::where('active', 1)->get();
         $companies = Company::where('deleted', 0)->orderBy('priority', 'asc')->where('active', 1)->get();
         $discount = Discount::where('id', '1')->first();
         if ($discount->status == '1') {
@@ -72,7 +74,7 @@ class InsuranceController extends Controller
         } else {
             $discount = 0;
         }
-        return view('site.insurance.thirdparty', compact('title', 'qb_opt', 'areas', 'vhlTypes', 'make', 'colors', 'companies', 'discount'));
+        return view('site.insurance.thirdparty', compact('title', 'qb_opt', 'areas', 'vhlTypes', 'make', 'colors', 'bodyTypes', 'companies', 'discount'));
     }
 
     public function getPrice($id)
@@ -107,6 +109,7 @@ class InsuranceController extends Controller
             'vhl_class' => $request->input('vhl_class'),
             'vhl_year' => $request->input('vhl_year'),
             'vhl_color' => $request->input('vhl_color'),
+            'vhl_body_type' => $request->input('vhl_body_type'),
             'vhl_chassis' => $request->input('vhl_chassis'),
             'vhl_engine' => $request->input('vhl_engine'),
             'vhl_reg_no' => $request->input('vhl_reg_no'),
@@ -179,6 +182,7 @@ class InsuranceController extends Controller
         $vhlTypes = Thirdparty::where('parent_id', 0)->get();
         $make = Vehicle::all();
         $colors = VehicleColor::where('deleted', 0)->get();
+        $bodyTypes = VehicleBodyType::where('active', 1)->get();
         $companies = Company::where('deleted', 0)->orderBy('priority', 'asc')->where('active', 1)->get();
         $discount = Discount::where('id', '1')->first();
         if ($discount->status == '1') {
@@ -186,6 +190,6 @@ class InsuranceController extends Controller
         } else {
             $discount = 0;
         }
-        return view('site.insurance.comprehensive', compact('title', 'areas', 'make', 'colors', 'companies', 'qb_opt', 'vhlTypes', 'discount'));
+        return view('site.insurance.comprehensive', compact('title', 'areas', 'make', 'colors', 'bodyTypes', 'companies', 'qb_opt', 'vhlTypes', 'discount'));
     }
 }
