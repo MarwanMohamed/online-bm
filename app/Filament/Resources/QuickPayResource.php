@@ -38,6 +38,33 @@ class QuickPayResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('category')
+                    ->label('Category')
+                    ->options([
+                        'general' => 'General',
+                        'medical' => 'Medical',
+                        'mvhi' => 'MVHI',
+                        'life' => 'Life',
+                        'motor' => 'Motor',
+                    ])->required()
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                        $refNoMap = [
+                            'general' => 'genr',
+                            'medical' => 'med',
+                            'mvhi' => 'mhi',
+                            'life' => 'lfe',
+                            'motor' => 'mot',
+                        ];
+                        
+                        if (isset($refNoMap[$state])) {
+                            $value = $refNoMap[$state];
+                            $set('ref_no', $value);
+                            $set('description', $value);
+                        }
+                    })
+                    ->dehydrated(false)
+                    ->hiddenOn('edit'),
                 Forms\Components\TextInput::make('ref_no')
                     ->label('Reference Number')
                     ->required()
