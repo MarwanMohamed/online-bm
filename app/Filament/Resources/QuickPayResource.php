@@ -7,6 +7,7 @@ use App\Filament\Resources\QuickPayResource\RelationManagers;
 use App\Filament\Resources\QuickPayResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Quickpay;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -103,6 +104,24 @@ class QuickPayResource extends Resource
                 TextColumn::make('user.name')->label('Agent')->searchable()->sortable(),
             ])
             ->filters([
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')
+                            ->label('Created From'),
+                        DatePicker::make('created_until')
+                            ->label('Created Until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
                 SelectFilter::make('status')
                     ->options([
                         '1' => 'Unpaid',

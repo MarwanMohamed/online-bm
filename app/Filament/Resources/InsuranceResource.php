@@ -218,7 +218,30 @@ class InsuranceResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')->label('Agent')->searchable()->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')
+                            ->label('Created From'),
+                        DatePicker::make('created_until')
+                            ->label('Created Until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
+                Tables\Filters\SelectFilter::make('ad_verified')
+                    ->label('Verification Status')
+                    ->options([
+                        'YES' => 'Verified',
+                        'NO' => 'Pending',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
