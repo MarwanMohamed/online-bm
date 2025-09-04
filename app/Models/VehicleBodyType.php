@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleModel extends Model
+class VehicleBodyType extends Model
 {
     use HasFactory;
 
@@ -15,14 +15,4 @@ class VehicleModel extends Model
         'created_at' => 'datetime:d-m-Y H:i:s',
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
-
-    public function vehicle()
-    {
-        return $this->belongsTo(Vehicle::class, 'make_id');
-    }
-
-    public function details()
-    {
-        return $this->hasMany(VehicleModelDetails::class, 'model_id');
-    }
 }

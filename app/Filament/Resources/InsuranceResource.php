@@ -9,6 +9,9 @@ use App\Models\Company;
 use App\Models\Insurance;
 use App\Models\Thirdparty;
 use App\Models\VehicleColor;
+use App\Models\Vehicle;
+use App\Models\VehicleModel;
+use App\Models\VehicleBodyType;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -74,13 +77,32 @@ class InsuranceResource extends Resource
                         ]),
                     Wizard\Step::make('Vehicle Details')->icon('phosphor-car-light')
                         ->schema([
-                            TextInput::make('vhl_make')->label('Make')->required(),
-                            TextInput::make('vhl_class')->label('Model')->required(),
+                            Select::make('vhl_make')->label('Make')
+                                ->options(Vehicle::where('active', 1)->pluck('name', 'id'))
+                                ->searchable()
+                                ->required()
+                                ->live(),
+                            Select::make('vhl_class')->label('Model')
+                                ->options(function (Get $get) {
+                                    $makeId = $get('vhl_make');
+                                    if ($makeId) {
+                                        return VehicleModel::where('make_id', $makeId)
+                                            ->where('active', 1)
+                                            ->pluck('model_name', 'id');
+                                    }
+                                    return [];
+                                })
+                                ->searchable()
+                                ->required()
+                                ->hidden(fn(Get $get): bool => !filled($get('vhl_make'))),
+                            Select::make('vhl_body_type')->label('Body Type')
+                                ->options(VehicleBodyType::where('active', 1)->pluck('name', 'id'))
+                                ->searchable(),
                             TextInput::make('vhl_chassis')->label('Chassis #')->required(),
                             TextInput::make('vhl_engine')->label('Engine #')->required(),
                             TextInput::make('vhl_reg_no')->label('Plate #')->required(),
                             Select::make('vhl_color')->label('Color')
-                                ->options(VehicleColor::where('deleted', 0)->pluck('name', 'id'))
+                                ->options(VehicleColor::pluck('name', 'id'))
                                 ->searchable()
                                 ->required(),
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),

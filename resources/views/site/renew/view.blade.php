@@ -130,6 +130,15 @@
                             <label for="example-text-input" class="col-form-label"><?= $data['insurance']->vhl_color ?></label>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <label for="example-text-input" class="col-form-label"><strong>Body Type</strong></label>
+                        </div>
+                        <div class="col-sm-1">:</div>
+                        <div class="col-sm-5">
+                            <label for="example-text-input" class="col-form-label"><?= isset($data['insurance']->vhl_body_type) ? $data['insurance']->vhl_body_type : 'N/A' ?></label>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group row">
