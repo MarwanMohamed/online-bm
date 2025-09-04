@@ -21,10 +21,10 @@ class VehicleBodyTypeResource extends Resource
     protected static ?int $navigationSort = 4;
     protected static ?string $label = 'Vehicle Body Types';
 
-//    public static function canAccess(): bool
-//    {
-//        return true; // سنعود لاحقاً لتطبيق الصلاحيات
-//    }
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('Vehicles Body Types Management');
+    }
 
     public static function form(Form $form): Form
     {

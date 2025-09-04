@@ -19,10 +19,10 @@ class VehicleModelResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $label = 'Vehicle Models';
 
-//    public static function canAccess(): bool
-//    {
-//        return true; // سنعود لاحقاً لتطبيق الصلاحيات
-//    }
+    public static function canAccess(): bool
+    {
+        return \Auth::user()->hasPermissionTo('Vehicles Models Management');
+    }
 
     public static function form(Form $form): Form
     {

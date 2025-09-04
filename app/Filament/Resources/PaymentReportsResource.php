@@ -78,6 +78,9 @@ class PaymentReportsResource extends Resource
                     ->query(function (Builder $query, array $data) {
                         if (isset($data['value']) && $data['value'] === 'Failed') {
                             $query->where('status', '!=', 'Approved');
+                        }elseif (isset($data['value']) && $data['value'] === 'Approved') {
+                            $query->where('status', '=', 'paid')->orWhere('status', '=', 'Approved');
+
                         }
                     }),
 
