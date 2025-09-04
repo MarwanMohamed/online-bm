@@ -56,15 +56,13 @@ class QuickPayResource extends Resource
                             'life' => 'lfe',
                             'motor' => 'mot',
                         ];
-                        
+
                         if (isset($refNoMap[$state])) {
                             $value = $refNoMap[$state];
                             $set('ref_no', $value);
                             $set('description', $value);
                         }
-                    })
-                    ->dehydrated(false)
-                    ->hiddenOn('edit'),
+                    })->hiddenOn('edit'),
                 Forms\Components\TextInput::make('ref_no')
                     ->label('Reference Number')
                     ->required()
@@ -89,6 +87,24 @@ class QuickPayResource extends Resource
                 TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
+                TextColumn::make('category')->label('Category')->searchable()->sortable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'general' => 'gray',
+                        'medical' => 'blue',
+                        'mvhi' => 'green',
+                        'life' => 'purple',
+                        'motor' => 'orange',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'general' => 'General',
+                        'medical' => 'Medical',
+                        'mvhi' => 'MVHI',
+                        'life' => 'Life',
+                        'motor' => 'Motor',
+                        default => ucfirst($state),
+                    }),
                 TextColumn::make('ref_no')->label('Reference #')->searchable()->sortable(),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('amount')->searchable()->sortable(),
@@ -114,11 +130,11 @@ class QuickPayResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
                 SelectFilter::make('status')
@@ -126,7 +142,17 @@ class QuickPayResource extends Resource
                         '1' => 'Unpaid',
                         '0' => 'Paid',
                     ])
-                    ->placeholder('Select Status')
+                    ->placeholder('Select Status'),
+                SelectFilter::make('category')
+                    ->label('Category')
+                    ->options([
+                        'general' => 'General',
+                        'medical' => 'Medical',
+                        'mvhi' => 'MVHI',
+                        'life' => 'Life',
+                        'motor' => 'Motor',
+                    ])
+                    ->placeholder('Select Category')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
