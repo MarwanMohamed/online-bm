@@ -35,18 +35,15 @@ class CreateComprehensive extends CreateRecord
             'qid' => $data['qid'],
             'mobile_no' => $data['mobile'] ?? null,
             'email' => $data['email'] ?? null,
-            'owner_type' => $data['owner_type'] ?? null,
+            'owner_type' => $data['owner_type'] ?? "O",
             'active' => 1,
         ];
 
-        // Try to find existing customer by QID
         $customer = Customer::where('qid', $data['qid'])->first();
 
         if ($customer) {
-            // Update existing customer with new information
             $customer->update($customerData);
         } else {
-            // Create new customer
             Customer::create($customerData);
         }
     }

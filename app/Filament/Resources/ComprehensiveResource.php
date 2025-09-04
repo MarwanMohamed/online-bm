@@ -47,13 +47,11 @@ class ComprehensiveResource extends Resource
 
     public static function canView($record): bool
     {
-        // Allow viewing if record exists and is comprehensive type
         return $record && $record->ins_type === 'Comprehensive' && $record->deleted == 0;
     }
 
     public static function canEdit($record): bool
     {
-        // Allow editing if record exists and is comprehensive type
         return $record && $record->ins_type === 'Comprehensive' && $record->deleted == 0;
     }
 
@@ -72,7 +70,7 @@ class ComprehensiveResource extends Resource
                         ->schema([
                             Radio::make('owner_type')->options([
                                 'I' => 'Individual', 'O' => 'Organisation',
-                            ])->inline(),
+                            ])->inline()->required(),
                             TextInput::make('name')->label('Full Name'),
                             TextInput::make('qid')->label('EID/QID'),
                             TextInput::make('mobile')->label('Mobile Number'),
@@ -110,7 +108,6 @@ class ComprehensiveResource extends Resource
                             Select::make('vhl_year')->options(array_combine(range(now()->year, now()->year - 50), range(now()->year, now()->year - 50))),
 
                             DatePicker::make('start_date')->native(false)
-                                ->minDate(now())
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);
