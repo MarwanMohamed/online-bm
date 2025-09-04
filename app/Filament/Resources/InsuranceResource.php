@@ -46,7 +46,7 @@ class InsuranceResource extends Resource
                     $q->where('pb_no', '!=', 'renewal')->orWhereNull('pb_no');
                 })->where('ins_type', '!=' ,'Comprehensive');
             })
-            ->with('user')->orderBy('created_at', 'desc');
+            ->with('user');
     }
 
     public static function getNavigationBadge(): ?string
@@ -270,6 +270,7 @@ class InsuranceResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

@@ -41,8 +41,7 @@ class ComprehensiveResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('ins_type', 'Comprehensive')
-            ->where('deleted', 0)->with('user')
-            ->orderBy('created_at', 'desc');
+            ->where('deleted', 0)->with('user');
     }
 
     public static function canView($record): bool
@@ -245,6 +244,7 @@ class ComprehensiveResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

@@ -42,8 +42,7 @@ class InsuranceWidgets extends BaseWidget
                     $q->where('pb_no', '!=', 'renewal')->orWhereNull('pb_no');
                 })->where('ins_type', '!=' ,'Comprehensive');
             })
-            ->with(['user', 'getStatus'])
-            ->orderBy('created_at', 'desc');
+            ->with(['user', 'getStatus']);
     }
 
     protected function getDefaultTableSortColumn(): ?string

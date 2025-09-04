@@ -26,8 +26,7 @@ class QuickPayResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('deleted', 0)->with('user')
-            ->orderBy('created_at', 'desc');
+        return parent::getEloquentQuery()->where('deleted', 0)->with('user');
     }
 
 //    public static function getNavigationBadge(): ?string
@@ -134,6 +133,7 @@ class QuickPayResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
