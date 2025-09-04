@@ -38,8 +38,9 @@ class InsuranceWidgets extends BaseWidget
     {
         return Insurance::where('deleted', 0)
             ->where(function ($query) {
-                $query->where('pb_no', '!=', 'renewal')
-                    ->orWhereNull('pb_no');
+                $query->where(function ($q) {
+                    $q->where('pb_no', '!=', 'renewal')->orWhereNull('pb_no');
+                })->where('ins_type', '!=' ,'Comprehensive');
             })
             ->with(['user', 'getStatus'])
             ->orderBy('created_at', 'desc');

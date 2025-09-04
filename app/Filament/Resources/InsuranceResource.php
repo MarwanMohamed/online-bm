@@ -42,8 +42,9 @@ class InsuranceResource extends Resource
     {
         return parent::getEloquentQuery()->where('deleted', 0)
             ->where(function ($query) {
-                $query->where('pb_no', '!=', 'renewal')
-                    ->orWhereNull('pb_no');
+                $query->where(function ($q) {
+                    $q->where('pb_no', '!=', 'renewal')->orWhereNull('pb_no');
+                })->where('ins_type', '!=' ,'Comprehensive');
             })
             ->with('user')->orderBy('created_at', 'desc');
     }
