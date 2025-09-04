@@ -21,10 +21,10 @@ class VehicleBodyTypeResource extends Resource
     protected static ?int $navigationSort = 4;
     protected static ?string $label = 'Vehicle Body Types';
 
-    public static function canAccess(): bool
-    {
-        return true; // سنعود لاحقاً لتطبيق الصلاحيات
-    }
+//    public static function canAccess(): bool
+//    {
+//        return true; // سنعود لاحقاً لتطبيق الصلاحيات
+//    }
 
     public static function form(Form $form): Form
     {
@@ -32,8 +32,6 @@ class VehicleBodyTypeResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')->label('Body Type Name')
                     ->required()->columnSpanFull(),
-                Forms\Components\Toggle::make('active')->label('Active')
-                    ->default(true)
             ]);
     }
 
@@ -43,15 +41,13 @@ class VehicleBodyTypeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
                 Tables\Columns\TextColumn::make('name')->label('Body Type')->searchable()->sortable(),
-                Tables\Columns\ToggleColumn::make('active')->label('Active'),
-                Tables\Columns\TextColumn::make('created_at')->label('Created')->dateTime('d-m-Y H:i'),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active')
-                    ->placeholder('All')
-                    ->trueLabel('Active')
-                    ->falseLabel('Inactive'),
+//                Tables\Filters\TernaryFilter::make('active')
+//                    ->label('Active')
+//                    ->placeholder('All')
+//                    ->trueLabel('Active')
+//                    ->falseLabel('Inactive'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

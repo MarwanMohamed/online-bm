@@ -14,7 +14,6 @@ class VehiclePermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        // إنشاء الصلاحيات الجديدة
         $permissions = [
             'Vehicles Models Management',
             'Vehicles Body Types Management'
@@ -27,7 +26,6 @@ class VehiclePermissionsSeeder extends Seeder
             ]);
         }
 
-        // إعطاء الصلاحيات للأدمين
         $adminRole = Role::where('name', 'Admin')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo($permissions);

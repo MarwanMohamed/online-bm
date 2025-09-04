@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\VehicleModelResource\Pages;
-use App\Filament\Resources\VehicleModelResource\RelationManagers;
 use App\Models\VehicleModel;
 use App\Models\Vehicle;
 use Filament\Forms;
@@ -11,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class VehicleModelResource extends Resource
 {
@@ -22,23 +19,27 @@ class VehicleModelResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $label = 'Vehicle Models';
 
-    public static function canAccess(): bool
-    {
-        return true; // سنعود لاحقاً لتطبيق الصلاحيات
-    }
+//    public static function canAccess(): bool
+//    {
+//        return true; // سنعود لاحقاً لتطبيق الصلاحيات
+//    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('model_name')->label('Model Name')
-                    ->required()->columnSpanFull(),
-                Forms\Components\Select::make('make_id')->label('Vehicle Make')
-                    ->options(Vehicle::pluck('name', 'id'))
+                Forms\Components\TextInput::make('model_name')
+                    ->label('Model Name')
+                    ->required()
+                    ->columnSpanFull(),
+                Forms\Components\Select::make('make_id')
+                    ->label('Vehicle')
+                    ->options(Vehicle::where('active', 1)->pluck('name', 'id'))
                     ->searchable()
-                    ->required(),
-                Forms\Components\Toggle::make('active')->label('Active')
-                    ->default(true)
+                    ->required()
+                    ->placeholder('Select a vehicle')
+                    ->native(false)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -48,19 +49,14 @@ class VehicleModelResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
                 Tables\Columns\TextColumn::make('model_name')->label('Model Name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('vehicle.name')->label('Vehicle Make')->searchable()->sortable(),
-                Tables\Columns\ToggleColumn::make('active')->label('Active'),
-                Tables\Columns\TextColumn::make('created_at')->label('Created')->dateTime('d-m-Y H:i'),
+                Tables\Columns\TextColumn::make('vehicle.name')->label('Vehicle')->searchable()->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('make_id')
-                    ->label('Vehicle Make')
-                    ->options(Vehicle::pluck('name', 'id')),
-                Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active')
-                    ->placeholder('All')
-                    ->trueLabel('Active')
-                    ->falseLabel('Inactive'),
+                    ->label('Vehicle')
+                    ->options(function () {
+                        return Vehicle::where('active', 1)->pluck('name', 'id')->toArray();
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
