@@ -41,11 +41,11 @@ class QuickPayResource extends Resource
                 Forms\Components\Select::make('category')
                     ->label('Category')
                     ->options([
+                        'motor' => 'Motor',
                         'general' => 'General',
                         'medical' => 'Medical',
-                        'mvhi' => 'MVHI',
-                        'life' => 'Life',
-                        'motor' => 'Motor',
+                        'mvhi' => 'Health',
+                        'life' => 'Marine',
                     ])->required()
                     ->live()
                     ->afterStateUpdated(function ($state, Forms\Set $set) {
