@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('quickpay', function (Blueprint $table) {
             $table->string('category')->nullable()->after('id');
+            $table->string('policy_type')->nullable()->after('category');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('quickpay', function (Blueprint $table) {
-            $table->dropColumn('category');
+            $table->dropColumn(['category', 'policy_type']);
         });
     }
 };

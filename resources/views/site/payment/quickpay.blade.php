@@ -124,10 +124,10 @@
                                 }, 600);
                             } else {
                                 let amount = res.amount;
-                                let categoryDisplay = res.category_display || 'Insurance';
+                                let policyTypeDisplay = res.policy_type_display || 'Insurance';
                                 
                                 // Update the message dynamically
-                                let dynamicMessage = `Your ${categoryDisplay} insurance policy has been issued. Kindly pay the policy amount to activate your policy`;
+                                let dynamicMessage = `Your ${policyTypeDisplay} insurance policy has been issued. Kindly pay the policy amount to activate your policy`;
                                 $("#quickpaydltsid").text(dynamicMessage);
                                 
                                 if (amount && res.policy_id) {

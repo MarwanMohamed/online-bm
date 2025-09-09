@@ -30,8 +30,8 @@ class QuickPayController extends Controller
                     'policy_id' => $isExist->ref_no,
                     'quickpay' => true
                 );
-                // Add category information for dynamic message
-                $isExist->category_display = $this->getCategoryDisplayName($isExist->category ?? 'general');
+                // Add policy type information for dynamic message
+                $isExist->policy_type_display = $isExist->policy_type ?? 'Insurance';
                 return $isExist;
 //                $this->session->set_userdata('policyData', $qpayData);
 //                echo json_encode($isExist);
@@ -41,8 +41,8 @@ class QuickPayController extends Controller
                     'policy_id' => $isExist->policy_id,
                     'quickpay' => false
                 );
-                // Add category information for dynamic message
-                $isExist->category_display = 'Insurance'; // Default for regular insurance
+                // Add policy type information for dynamic message
+                $isExist->policy_type_display = 'Insurance'; // Default for regular insurance
                 return $isExist;
 //                $this->session->set_userdata('policyData', $qpayData);
 //                echo json_encode($isExist);

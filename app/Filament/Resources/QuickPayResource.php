@@ -39,30 +39,73 @@ class QuickPayResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('category')
-                    ->label('Category')
+                    ->label('Policy Group')
                     ->options([
-                        'motor' => 'Motor',
-                        'general' => 'General',
-                        'medical' => 'Medical',
-                        'mvhi' => 'Health',
-                        'life' => 'Marine',
+                        'Motor' => 'Motor',
+                        'General' => 'General',
+                        'Health' => 'Health',
+                        'Marine' => 'Marine',
                     ])->required()
                     ->live()
                     ->afterStateUpdated(function ($state, Forms\Set $set) {
-                        $refNoMap = [
-                            'general' => 'genr',
-                            'medical' => 'med',
-                            'mvhi' => 'mhi',
-                            'life' => 'lfe',
-                            'motor' => 'mot',
-                        ];
-
-                        if (isset($refNoMap[$state])) {
-                            $value = $refNoMap[$state];
-                            $set('ref_no', $value);
-                            $set('description', $value);
-                        }
-                    })->hiddenOn('edit'),
+                        $set('policy_type', null);
+                    }),
+                Forms\Components\Select::make('policy_type')
+                    ->label('Policy Type')
+                    ->options(function (Forms\Get $get) {
+                        $category = $get('category');
+                        
+                        return match ($category) {
+                            'Motor' => [
+                                'Motor Comprehensive' => 'Motor Comprehensive',
+                                'Motor Third Party' => 'Motor Third Party',
+                                'Motor Export' => 'Motor Export',
+                            ],
+                            'Marine' => [
+                                'Marine Cargo' => 'Marine Cargo',
+                                'Marine Hull & Machinery' => 'Marine Hull & Machinery',
+                            ],
+                            'Health' => [
+                                'MRHI (60+)' => 'MRHI (60+)',
+                                'Travel Insurance Inbound' => 'Travel Insurance Inbound',
+                                'Travel Insurance Outbound' => 'Travel Insurance Outbound',
+                                'Household Workers/ Personal Accident' => 'Household Workers/ Personal Accident',
+                                'Individual Medical Insurance' => 'Individual Medical Insurance',
+                            ],
+                            'General' => [
+                                'FAP' => 'FAP',
+                                'WCA' => 'WCA',
+                                'TPL' => 'TPL',
+                                'PAR' => 'PAR',
+                                'CAR' => 'CAR',
+                                'Professional Indemnity' => 'Professional Indemnity',
+                                'Fire & Lightning' => 'Fire & Lightning',
+                                'Public Liability' => 'Public Liability',
+                                'CAR/TPL' => 'CAR/TPL',
+                                'Combined Casualty' => 'Combined Casualty',
+                                'CPM' => 'CPM',
+                                'PAR & TPL' => 'PAR & TPL',
+                                'PAR & PL' => 'PAR & PL',
+                                'TPL & PI' => 'TPL & PI',
+                                'MB' => 'MB',
+                                'FG' => 'FG',
+                                'MON' => 'MON',
+                                'COMBINED POLICY' => 'COMBINED POLICY',
+                                'Professional Indemnity_Reinsurance' => 'Professional Indemnity_Reinsurance',
+                                'Public All Risk- Reinsurance' => 'Public All Risk- Reinsurance',
+                                'Public Liability Reinsurance' => 'Public Liability Reinsurance',
+                                'Business Secure' => 'Business Secure',
+                                'PCL (Property All Risk Consequential Loss)' => 'PCL (Property All Risk Consequential Loss)',
+                                'All Risk-Machinery (ARM) - Equipment Insurance' => 'All Risk-Machinery (ARM) - Equipment Insurance',
+                                'Travel Medical Assistance (TMA)' => 'Travel Medical Assistance (TMA)',
+                                'Bankers Blanket Bond (BBB)' => 'Bankers Blanket Bond (BBB)',
+                                'Electronic Equipment Insurance (EEI)' => 'Electronic Equipment Insurance (EEI)',
+                                'Erection All Risk (EAR)' => 'Erection All Risk (EAR)',
+                            ],
+                            default => [],
+                        };
+                    })
+                    ->required(),
                 Forms\Components\TextInput::make('ref_no')
                     ->label('Reference Number')
                     ->required()
@@ -87,24 +130,18 @@ class QuickPayResource extends Resource
                 TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
-                TextColumn::make('category')->label('Category')->searchable()->sortable()
+                TextColumn::make('category')->label('Policy Group')->searchable()->sortable()
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'general' => 'gray',
-                        'medical' => 'blue',
-                        'mvhi' => 'green',
-                        'life' => 'purple',
-                        'motor' => 'orange',
+                        'General' => 'gray',
+                        'Health' => 'blue',
+                        'Motor' => 'orange',
+                        'Marine' => 'green',
                         default => 'gray',
-                    })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'general' => 'General',
-                        'medical' => 'Medical',
-                        'mvhi' => 'MVHI',
-                        'life' => 'Life',
-                        'motor' => 'Motor',
-                        default => ucfirst($state),
                     }),
+                TextColumn::make('policy_type')->label('Policy Type')->searchable()->sortable()
+                    ->badge()
+                    ->color('info'),
                 TextColumn::make('ref_no')->label('Reference #')->searchable()->sortable(),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('amount')->searchable()->sortable(),
@@ -144,15 +181,14 @@ class QuickPayResource extends Resource
                     ])
                     ->placeholder('Select Status'),
                 SelectFilter::make('category')
-                    ->label('Category')
+                    ->label('Policy Group')
                     ->options([
-                        'general' => 'General',
-                        'medical' => 'Medical',
-                        'mvhi' => 'MVHI',
-                        'life' => 'Life',
-                        'motor' => 'Motor',
+                        'General' => 'General',
+                        'Health' => 'Health',
+                        'Motor' => 'Motor',
+                        'Marine' => 'Marine',
                     ])
-                    ->placeholder('Select Category')
+                    ->placeholder('Select Policy Group')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
