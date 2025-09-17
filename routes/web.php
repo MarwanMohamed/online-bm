@@ -72,3 +72,18 @@ Route::post('/vehicles/import', function (\Illuminate\Http\Request $request) {
         Excel::import(new VehiclesImport, $request->file('file'));
 
 })->name('vehicles.import');
+
+// Custom delete route for insurance records - shows confirmation page
+Route::get('/admin/insurances/{id}/delete', function($id) {
+    $insurance = \App\Models\Insurance::findOrFail($id);
+    return view('filament.widgets.delete-confirmation', compact('insurance'));
+})->name('admin.insurances.delete');
+
+// Actual delete route
+Route::post('/admin/insurances/{id}/confirm-delete', function($id) {
+    \Log::info('Delete route called for insurance ID: ' . $id);
+    $insurance = \App\Models\Insurance::findOrFail($id);
+    $insurance->delete();
+    \Log::info('Insurance deleted successfully');
+    return redirect('/admin')->with('success', 'Insurance record deleted successfully');
+})->name('admin.insurances.confirm-delete');

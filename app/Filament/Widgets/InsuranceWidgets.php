@@ -79,6 +79,21 @@ class InsuranceWidgets extends BaseWidget
                     default => 'secondary',
                 }),
             
+            Tables\Columns\TextColumn::make('actions')
+                ->label('Policy Type')
+                ->getStateUsing(function ($record) {
+                    $viewUrl = InsuranceResource::getUrl('view', ['record' => $record]);
+                    $editUrl = InsuranceResource::getUrl('edit', ['record' => $record]);
+                    
+                    return '
+                    <div style="display: flex; gap: 8px;">
+                        <a href="' . $viewUrl . '" style="display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; text-decoration: none; font-size: 18px;" title="View">👁️</a>
+                        <a href="' . $editUrl . '" style="display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; text-decoration: none; font-size: 18px;" title="Edit">✏️</a>
+                        <a href="/admin/insurances/' . $record->id . '/delete" onclick="return confirm(\'Are you sure you want to delete this record?\')" style="display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; text-decoration: none; font-size: 18px;" title="Delete">🗑️</a>
+                    </div>';
+                })
+                ->html(),
+            
             Tables\Columns\CheckboxColumn::make('ad_verified')->label('Commit')
                 ->getStateUsing(function ($record) {
                     return $record->ad_verified == 'YES' ? 1 : 0;
@@ -116,25 +131,6 @@ class InsuranceWidgets extends BaseWidget
         ];
     }
 
-    protected function getTableActions(): array
-    {
-        return [
-            Tables\Actions\ViewAction::make()
-                ->url(fn($record) => InsuranceResource::getUrl('view', ['record' => $record]))
-                ->openUrlInNewTab(),
-            Tables\Actions\EditAction::make()
-                ->url(fn($record) => InsuranceResource::getUrl('edit', ['record' => $record]))
-                ->openUrlInNewTab(),
-            Tables\Actions\DeleteAction::make()
-                ->requiresConfirmation()
-                ->action(fn($record) => $record->delete()),
-        ];
-    }
-
-    protected function getTableActionsPosition(): ?string
-    {
-        return 'before_columns';
-    }
 
     public function getTable(): Table
     {
