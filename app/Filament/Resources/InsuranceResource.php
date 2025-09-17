@@ -110,6 +110,8 @@ class InsuranceResource extends Resource
 
                             DatePicker::make('start_date')->native(false)->required()
                                 ->reactive()
+                                ->minDate(today())
+                                ->default(today())
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);
                                     $endDate = $startDate->addYear()->subDay();
