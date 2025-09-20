@@ -24,7 +24,11 @@ class VehicleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required()->columnSpanFull()
+                Forms\Components\TextInput::make('name')->required()->columnSpanFull(),
+                Forms\Components\Toggle::make('active')
+                    ->label('Active')
+                    ->default(true)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -33,12 +37,27 @@ class VehicleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable()->label('ID'),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable()
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\IconColumn::make('active')
+                    ->boolean()
+                    ->label('Active')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('active')
+                    ->label('Active')
+                    ->placeholder('All')
+                    ->trueLabel('Active')
+                    ->falseLabel('Inactive'),
             ])
             ->actions([
+                Tables\Actions\Action::make('toggle_active')
+                    ->label(fn ($record) => $record->active ? 'Deactivate' : 'Activate')
+                    ->icon(fn ($record) => $record->active ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
+                    ->color(fn ($record) => $record->active ? 'danger' : 'success')
+                    ->action(fn ($record) => $record->update(['active' => !$record->active]))
+                    ->requiresConfirmation()
+                    ->modalDescription(fn ($record) => 'Are you sure you want to ' . ($record->active ? 'deactivate' : 'activate') . ' this vehicle?'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

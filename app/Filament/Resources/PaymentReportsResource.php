@@ -88,7 +88,9 @@ class PaymentReportsResource extends Resource
                     ->label('Payment Gateway')
                     ->options([
                         'Credit' => 'Credit Card (Visa & Master)',
-                        'Debit' => 'Debit Card (Salary Card - NAPS)'
+                        'Debit' => 'Debit Card (Salary Card - NAPS)',
+                        'ApplePay' => 'ApplePay',
+                        'GPay' => 'GPay',
                     ])->placeholder('Select Payment Gateway'),
                 Filter::make('created_at')
                     ->form([
