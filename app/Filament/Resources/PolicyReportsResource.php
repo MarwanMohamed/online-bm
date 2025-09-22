@@ -7,6 +7,7 @@ use App\Filament\Resources\PolicyReportsResource\RelationManagers;
 use App\Models\Company;
 use App\Models\Insurance;
 use App\Models\PolicyReports;
+use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -77,6 +78,9 @@ class PolicyReportsResource extends Resource
 
                 SelectFilter::make('com_id')->label('Insurance Provider')
                     ->options(Company::get()->pluck('name', 'id')),
+
+                SelectFilter::make('status')->label('Status')
+                    ->relationship('getStatus', 'status'),
 
                 Filter::make('created_at')
                     ->form([

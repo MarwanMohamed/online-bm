@@ -30,8 +30,7 @@ class QuickPayController extends Controller
                     'policy_id' => $isExist->ref_no,
                     'quickpay' => true
                 );
-                // Add policy type information for dynamic message
-                $isExist->policy_type_display = $isExist->policy_type ?? 'Insurance';
+                $isExist->policy_type_display = ($isExist->category && $isExist->policy_type) ? "{$isExist->category}/{$isExist->policy_type}" : 'Insurance';
                 return $isExist;
 //                $this->session->set_userdata('policyData', $qpayData);
 //                echo json_encode($isExist);

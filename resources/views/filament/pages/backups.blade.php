@@ -33,6 +33,15 @@
                         <div class="text-lg font-medium text-blue-600 dark:text-blue-400 mb-2">{{ $destination->used_storage }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Storage used</div>
                     </div>
+                    <div class="text-center">
+                        @if($this->getQueuedJobsCount() > 0)
+                            <div class="text-lg font-medium text-orange-600 dark:text-orange-400 mb-2 animate-pulse">{{ $this->getQueuedJobsCount() }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Queued backups</div>
+                        @else
+                            <div class="text-lg font-medium text-green-600 dark:text-green-400 mb-2">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Queued backups</div>
+                        @endif
+                    </div>
                 @endforeach
             </div>
         </div>
