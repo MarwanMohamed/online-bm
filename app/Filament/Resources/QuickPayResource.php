@@ -45,10 +45,22 @@ class QuickPayResource extends Resource
                         'General' => 'General',
                         'Health' => 'Health',
                         'Marine' => 'Marine',
+                        'Personal Accident' => 'Personal Accident',
                     ])->required()
                     ->live()
-                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                         $set('policy_type', null);
+                        
+                        $currentDescription = $get('description') ?? '';
+                        
+                        $existingContent = '';
+                        if (preg_match('/^[^\n]*\n(.*)$/s', $currentDescription, $matches)) {
+                            $existingContent = $matches[1];
+                        } elseif (!preg_match('/^[^\n]*\n/', $currentDescription)) {
+                            $existingContent = $currentDescription;
+                        }
+                        
+                        $set('description', $existingContent);
                     }),
                 Forms\Components\Select::make('policy_type')
                     ->label('Policy Type')
@@ -102,10 +114,30 @@ class QuickPayResource extends Resource
                                 'Electronic Equipment Insurance (EEI)' => 'Electronic Equipment Insurance (EEI)',
                                 'Erection All Risk (EAR)' => 'Erection All Risk (EAR)',
                             ],
+                            'Personal Accident' => [
+                                'Household Workers' => 'Household Workers',
+                            ],
                             default => [],
                         };
                     })
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                        $category = $get('category');
+                        $policyType = $state;
+                        $currentDescription = $get('description') ?? '';
+                        
+                        $existingContent = '';
+                        if (preg_match('/^[^\n]*\n(.*)$/s', $currentDescription, $matches)) {
+                            $existingContent = $matches[1];
+                        } elseif (!preg_match('/^[^\n]*\n/', $currentDescription)) {
+                            $existingContent = $currentDescription;
+                        }
+                        
+                        $newPrefix = ($category && $policyType) ? "\"{$category}/{$policyType}\"\n" : '';
+                        
+                        $set('description', $newPrefix . $existingContent);
+                    }),
                 Forms\Components\TextInput::make('ref_no')
                     ->label('Reference Number')
                     ->required()
@@ -118,7 +150,47 @@ class QuickPayResource extends Resource
                     ->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
                 Forms\Components\TextInput::make('email')->required(),
                 Forms\Components\TextInput::make('contact')->required()->maxValue(8),
-                Forms\Components\Textarea::make('description')->required(),
+                Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->live()
+                    ->formatStateUsing(function ($state, $record, Forms\Get $get) {
+                        $category = $get('category');
+                        $policyType = $get('policy_type');
+                        
+                        if ($category && $policyType) {
+                            $expectedPrefix = "\"{$category}/{$policyType}\"\n";
+                            if (strpos($state, $expectedPrefix) === 0) {
+                                return $state;
+                            }
+                            return $expectedPrefix . $state;
+                        }
+                        
+                        return $state;
+                    })
+                    ->dehydrateStateUsing(function ($state, Forms\Get $get) {
+                        $category = $get('category');
+                        $policyType = $get('policy_type');
+                        
+                        if ($category && $policyType) {
+                            $prefix = "\"{$category}/{$policyType}\"\n";
+                            if (strpos($state, $prefix) === 0) {
+                                return substr($state, strlen($prefix));
+                            }
+                        }
+                        
+                        return $state;
+                    })
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                        $category = $get('category');
+                        $policyType = $get('policy_type');
+                        
+                        if ($category && $policyType) {
+                            $prefix = "\"{$category}/{$policyType}\"\n";
+                            if (strpos($state, $prefix) !== 0) {
+                                $set('description', $prefix . $state);
+                            }
+                        }
+                    }),
             ]);
     }
 
@@ -134,9 +206,10 @@ class QuickPayResource extends Resource
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'General' => 'gray',
-                        'Health' => 'blue',
-                        'Motor' => 'orange',
-                        'Marine' => 'green',
+                        'Health' => 'success',
+                        'Motor' => 'warning',
+                        'Marine' => 'info',
+                        'Personal Accident' => 'primary',
                         default => 'gray',
                     }),
                 TextColumn::make('policy_type')->label('Policy Type')->searchable()->sortable()
@@ -187,6 +260,7 @@ class QuickPayResource extends Resource
                         'Health' => 'Health',
                         'Motor' => 'Motor',
                         'Marine' => 'Marine',
+                        'Personal Accident' => 'Personal Accident',
                     ])
                     ->placeholder('Select Policy Group')
             ])

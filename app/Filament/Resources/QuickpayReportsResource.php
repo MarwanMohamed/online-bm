@@ -73,6 +73,9 @@ class QuickpayReportsResource extends Resource
                 SelectFilter::make('created_by')->label('Agent')
                     ->options(User::get()->pluck('name', 'id')),
 
+                SelectFilter::make('status')->label('Status')
+                    ->options([0 => 'Paid', 1 => 'Unpaid']),
+
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')->label('Date From')->displayFormat('d-m-Y')

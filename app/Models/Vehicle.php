@@ -11,6 +11,7 @@ class Vehicle extends Model
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $casts = [
+        'active' => 'boolean',
         'created_at' => 'datetime:d-m-Y H:i:s',
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];

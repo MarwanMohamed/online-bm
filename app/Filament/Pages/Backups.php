@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Livewire\Attributes\Computed;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\DB;
 
 class Backups extends Page
 {
@@ -57,7 +58,7 @@ class Backups extends Page
     public function downloadBackup($filename)
     {
         try {
-            $filePath = storage_path('app/OnlineBimaTest/' . $filename);
+            $filePath = storage_path('app/' . env('APP_NAME', 'laravel-backup') . '/' . $filename);
             
             if (!file_exists($filePath)) {
                 Notification::make()
@@ -81,7 +82,7 @@ class Backups extends Page
     public function deleteBackup($filename)
     {
         try {
-            $filePath = storage_path('app/OnlineBimaTest/' . $filename);
+            $filePath = storage_path('app/' . env('APP_NAME', 'laravel-backup') . '/' . $filename);
             
             if (!file_exists($filePath)) {
                 Notification::make()
@@ -124,7 +125,7 @@ class Backups extends Page
                 $destinations->push((object) [
                     'name' => config('backup.backup.name'),
                     'disk' => $disk,
-                    'healthy' => $backups->count() > 0, // Simple health check based on backup count
+                    'healthy' => $backups->count() > 0,
                     'amount' => $backups->count(),
                     'newest' => $backups->count() > 0 ? $backups->first()->date()->diffForHumans() : 'No backups',
                     'used_storage' => $this->formatBytes($backups->sum(fn($backup) => $backup->sizeInBytes())),
@@ -141,7 +142,7 @@ class Backups extends Page
     public function getBackups()
     {
         try {
-            $backupPath = storage_path('app/OnlineBimaTest');
+            $backupPath = storage_path('app/' . env('APP_NAME', 'laravel-backup'));
             $backups = collect();
             
             if (is_dir($backupPath)) {
@@ -149,7 +150,7 @@ class Backups extends Page
                 
                 foreach ($files as $file) {
                     $backups->push((object) [
-                        'path' => 'OnlineBimaTest/' . basename($file),
+                        'path' => env('APP_NAME', 'laravel-backup') . '/' . basename($file),
                         'filename' => basename($file),
                         'disk' => 'local',
                         'date' => date('M j, Y H:i:s', filemtime($file)),
@@ -166,6 +167,16 @@ class Backups extends Page
         }
     }
     
+    #[Computed]
+    public function getQueuedJobsCount()
+    {
+        try {
+            return DB::table('jobs')->where('payload', 'like', '%backup:run%')->count();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
     private function formatBytes($size, $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
