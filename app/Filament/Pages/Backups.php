@@ -57,7 +57,7 @@ class Backups extends Page
     public function downloadBackup($filename)
     {
         try {
-            $filePath = storage_path('app/OnlineBima/' . $filename);
+            $filePath = storage_path('app/QatarBima/' . $filename);
 
             if (!file_exists($filePath)) {
                 Notification::make()
@@ -81,7 +81,7 @@ class Backups extends Page
     public function deleteBackup($filename)
     {
         try {
-            $filePath = storage_path('app/OnlineBima/' . $filename);
+            $filePath = storage_path('app/QatarBima/' . $filename);
 
             if (!file_exists($filePath)) {
                 Notification::make()
@@ -141,7 +141,7 @@ class Backups extends Page
     public function getBackups()
     {
         try {
-            $backupPath = storage_path('app/OnlineBima');
+            $backupPath = storage_path('app/QatarBima');
             $backups = collect();
 
             if (is_dir($backupPath)) {
@@ -149,7 +149,7 @@ class Backups extends Page
 
                 foreach ($files as $file) {
                     $backups->push((object) [
-                        'path' => 'OnlineBima/' . basename($file),
+                        'path' => 'QatarBima/' . basename($file),
                         'filename' => basename($file),
                         'disk' => 'local',
                         'date' => date('M j, Y H:i:s', filemtime($file)),
