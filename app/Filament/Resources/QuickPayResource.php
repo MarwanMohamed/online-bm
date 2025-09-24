@@ -198,7 +198,6 @@ class QuickPayResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('Sl')->searchable()->sortable(),
                 TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
@@ -265,9 +264,15 @@ class QuickPayResource extends Resource
                     ->placeholder('Select Policy Group')
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->label(''),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label(''),
             ])
             ->defaultSort('created_at', 'desc')
             ->bulkActions([

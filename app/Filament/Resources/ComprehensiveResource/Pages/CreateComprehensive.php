@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ComprehensiveResource\Pages;
 
 use App\Filament\Resources\ComprehensiveResource;
 use App\Models\Customer;
+use App\Models\Insurance;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -13,6 +14,13 @@ class CreateComprehensive extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        // Generate unique policy_id
+        do {
+            $key = sprintf('QBT%06d', rand(1, 999999));
+            $exits = Insurance::where('policy_id', $key)->first();
+        } while ($exits);
+        $data['policy_id'] = $key;
+        
         $data['ins_type'] = 'Comprehensive';
         
         // Create or update customer record
