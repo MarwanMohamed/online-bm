@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Livewire\Attributes\Computed;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\Support\Facades\DB;
 
 class Backups extends Page
 {
@@ -21,7 +20,7 @@ class Backups extends Page
     protected static ?string $navigationLabel = 'Backups';
     protected static ?string $title = 'Backups';
     protected static ?string $navigationGroup = 'Settings';
-    
+
     public static function canAccess(): bool
     {
         return Auth::check();
@@ -38,7 +37,7 @@ class Backups extends Page
                     try {
                         // Run backup in background
                         Artisan::queue('backup:run');
-                        
+
                         Notification::make()
                             ->title('Backup Started')
                             ->body('Your backup has been queued and will be processed in the background.')
@@ -58,8 +57,8 @@ class Backups extends Page
     public function downloadBackup($filename)
     {
         try {
-            $filePath = storage_path('app/' . env('APP_NAME', 'laravel-backup') . '/' . $filename);
-            
+            $filePath = storage_path('app/OnlineBima/' . $filename);
+
             if (!file_exists($filePath)) {
                 Notification::make()
                     ->title('Download Failed')
@@ -82,8 +81,8 @@ class Backups extends Page
     public function deleteBackup($filename)
     {
         try {
-            $filePath = storage_path('app/' . env('APP_NAME', 'laravel-backup') . '/' . $filename);
-            
+            $filePath = storage_path('app/OnlineBima/' . $filename);
+
             if (!file_exists($filePath)) {
                 Notification::make()
                     ->title('Delete Failed')
@@ -94,13 +93,13 @@ class Backups extends Page
             }
 
             unlink($filePath);
-            
+
             Notification::make()
                 ->title('Backup Deleted')
                 ->body('Backup file has been deleted successfully.')
                 ->success()
                 ->send();
-                
+
             $this->dispatch('$refresh');
         } catch (\Exception $e) {
             Notification::make()
@@ -117,21 +116,21 @@ class Backups extends Page
         try {
             $destinations = collect();
             $disks = config('backup.backup.destination.disks', ['local']);
-            
+
             foreach ($disks as $disk) {
                 $backupDestination = BackupDestination::create($disk, config('backup.backup.name'));
                 $backups = $backupDestination->backups();
-                
+
                 $destinations->push((object) [
                     'name' => config('backup.backup.name'),
                     'disk' => $disk,
-                    'healthy' => $backups->count() > 0,
+                    'healthy' => $backups->count() > 0, // Simple health check based on backup count
                     'amount' => $backups->count(),
                     'newest' => $backups->count() > 0 ? $backups->first()->date()->diffForHumans() : 'No backups',
                     'used_storage' => $this->formatBytes($backups->sum(fn($backup) => $backup->sizeInBytes())),
                 ]);
             }
-            
+
             return $destinations;
         } catch (\Exception $e) {
             return collect();
@@ -142,15 +141,15 @@ class Backups extends Page
     public function getBackups()
     {
         try {
-            $backupPath = storage_path('app/' . env('APP_NAME', 'laravel-backup'));
+            $backupPath = storage_path('app/OnlineBima');
             $backups = collect();
-            
+
             if (is_dir($backupPath)) {
                 $files = glob($backupPath . '/backup_*.zip');
-                
+
                 foreach ($files as $file) {
                     $backups->push((object) [
-                        'path' => env('APP_NAME', 'laravel-backup') . '/' . basename($file),
+                        'path' => 'OnlineBima/' . basename($file),
                         'filename' => basename($file),
                         'disk' => 'local',
                         'date' => date('M j, Y H:i:s', filemtime($file)),
@@ -160,31 +159,21 @@ class Backups extends Page
                     ]);
                 }
             }
-            
+
             return $backups->sortByDesc('date_timestamp');
         } catch (\Exception $e) {
             return collect();
         }
     }
-    
-//    #[Computed]
-//    public function getQueuedJobsCount()
-//    {
-//        try {
-//            return DB::table('jobs')->where('payload', 'like', '%backup:run%')->count();
-//        } catch (\Exception $e) {
-//            return 0;
-//        }
-//    }
 
     private function formatBytes($size, $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
-        
+
         for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
             $size /= 1024;
         }
-        
+
         return round($size, $precision) . ' ' . $units[$i];
     }
 }
