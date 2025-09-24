@@ -167,15 +167,15 @@ class Backups extends Page
         }
     }
     
-    #[Computed]
-    public function getQueuedJobsCount()
-    {
-        try {
-            return DB::table('jobs')->where('payload', 'like', '%backup:run%')->count();
-        } catch (\Exception $e) {
-            return 0;
-        }
-    }
+//    #[Computed]
+//    public function getQueuedJobsCount()
+//    {
+//        try {
+//            return DB::table('jobs')->where('payload', 'like', '%backup:run%')->count();
+//        } catch (\Exception $e) {
+//            return 0;
+//        }
+//    }
 
     private function formatBytes($size, $precision = 2)
     {
