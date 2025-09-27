@@ -10,6 +10,7 @@ class InsuranceHelper
 {
     public function getPrice($data): array
     {
+        $priceId = 0;
         if (isset($data['opt_4']) && $data['opt_4'] > 0) {
             $priceId = $data['opt_4'];
         } elseif (isset($data['opt_3']) && $data['opt_3'] > 0) {
@@ -33,7 +34,7 @@ class InsuranceHelper
     public function getDiscount(): float|int
     {
         $discount = Discount::where('id', '1')->first();
-        if ($discount->status == '1')
+        if ($discount && $discount->status == '1')
             return $discount->percent / 100;
         else
             return 0;

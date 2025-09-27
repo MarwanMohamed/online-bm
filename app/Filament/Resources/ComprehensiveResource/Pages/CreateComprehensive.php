@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ComprehensiveResource\Pages;
 use App\Filament\Resources\ComprehensiveResource;
 use App\Models\Customer;
 use App\Models\Insurance;
+use App\Helpers\InsuranceHelper;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -22,6 +23,10 @@ class CreateComprehensive extends CreateRecord
         $data['policy_id'] = $key;
         
         $data['ins_type'] = 'Comprehensive';
+        
+        // Calculate pricing based on opt_ values
+        $pricingData = $this->calculatePricing($data);
+        $data = array_merge($data, $pricingData);
         
         // Create or update customer record
         $this->createOrUpdateCustomer($data);
@@ -54,5 +59,33 @@ class CreateComprehensive extends CreateRecord
         } else {
             Customer::create($customerData);
         }
+    }
+
+    /**
+     * Calculate pricing based on opt_ values using InsuranceHelper
+     */
+    private function calculatePricing(array $data): array
+    {
+        // Check if we have the required opt_ values
+        if (!isset($data['opt_1']) || !$data['opt_1']) {
+            return [
+                'base_amount' => 0,
+                'pass_amount' => 0,
+                'opt_amount' => 0,
+                'discount' => 0,
+                'total_amount' => 0,
+            ];
+        }
+
+        $pricingData = [
+            'opt_1' => $data['opt_1'],
+            'opt_2' => $data['opt_2'] ?? null,
+            'opt_3' => $data['opt_3'] ?? null,
+            'opt_4' => $data['opt_4'] ?? null,
+            'passengers' => $data['passengers'] ?? 1,
+        ];
+
+        $helper = new InsuranceHelper();
+        return $helper->getPrice($pricingData);
     }
 }
