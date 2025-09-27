@@ -117,7 +117,7 @@ class InsuranceResource extends Resource
                                     $endDate = $startDate->addYear()->subDay();
                                     $set('end_date', $endDate);
                                 }),
-                            DatePicker::make('end_date')->native(false)->disabled()
+                            DatePicker::make('end_date')->default(today()->addYear()->subDay())->native(false)->readOnly()
                         ]),
                     Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
                         ->schema([

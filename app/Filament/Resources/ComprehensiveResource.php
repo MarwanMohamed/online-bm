@@ -115,7 +115,7 @@ class ComprehensiveResource extends Resource
                                     $endDate = $startDate->addYear()->subDay();
                                     $set('end_date', $endDate);
                                 }),
-                            DatePicker::make('end_date')->native(false)->disabled(),
+                            DatePicker::make('end_date')->default(today()->addYear()->subDay())->native(false)->readOnly(),
                             TextInput::make('vhl_value')->label("Insured's Declared Value:")->disabled()->readOnly(),
                         ]),
                     Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
@@ -177,23 +177,22 @@ class ComprehensiveResource extends Resource
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('qid_img')->maxSize(3000)->label(__('QID'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_fnt')->maxSize(3000)->label(__('Front'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_bck')->maxSize(3000)->label(__('Back'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_lft')->maxSize(3000)->label(__('Left'))
-                                ->required()->collection('image')->columnSpan(2),
-                            SpatieMediaLibraryFileUpload::make('vhl_rgt')->maxSize(3000)->label(__('Right'))
-                                ->required()->collection('image')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_qid_img')->maxSize(3000)->label(__('QID'))
+                                ->required()->collection('image_qid_img')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))
+                                ->required()->collection('image_isb_img')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))
+                                ->required()->collection('image_isf_img')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_vhl_fnt')->maxSize(3000)->label(__('Front'))
+                                ->required()->collection('image_vhl_fnt')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_vhl_bck')->maxSize(3000)->label(__('Back'))
+                                ->required()->collection('image_vhl_bck')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_vhl_lft')->maxSize(3000)->label(__('Left'))
+                                ->required()->collection('image_vhl_lft')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('image_vhl_rgt')->maxSize(3000)->label(__('Right'))
+                                ->required()->collection('image_vhl_rgt')->columnSpan(2),
                         ]),
                     Wizard\Step::make('Premium Details')
-                        ->hiddenOn('create')
                         ->schema([
                             TextInput::make('base_amount')->label('Base Price')->disabled()->readOnly(),
                             TextInput::make('pass_amount')->label('Passenger Price')->disabled()->readOnly(),
@@ -202,12 +201,11 @@ class ComprehensiveResource extends Resource
                             TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
                         ]),
                     Wizard\Step::make('Status Details')
-                        ->hiddenOn('create')
                         ->schema([
                             Radio::make('active')->label('Admin Status')->options([
                                 '1' => 'Active',
                                 '0' => 'Inactive',
-                            ])->inline(),
+                            ])->inline()->default(1),
                             Radio::make('status')->label('Policy Status')->options([
                                 '4' => 'In Progress',
                                 '2' => 'Paid',
@@ -220,7 +218,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()
+                ])->columnSpanFull()->startOnStep(4)
             ]);
     }
 

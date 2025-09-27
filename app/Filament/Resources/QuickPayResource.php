@@ -65,55 +65,7 @@ class QuickPayResource extends Resource
                 Forms\Components\Select::make('policy_type')
                     ->label('Policy Type')
                     ->options(function (Forms\Get $get) {
-                        $category = $get('category');
-                        
-                        return match ($category) {
-                            'Motor' => [
-                                'Comprehensive' => 'Comprehensive',
-                                'Export' => 'Export',
-                                'Third Party' => 'Third Party',
-                            ],
-                            'Marine' => [
-                                'Cargo' => 'Cargo',
-                                'Hull & Machinery' => 'Hull & Machinery',
-                            ],
-                            'Health' => [
-                                'Individual Medical Insurance' => 'Individual Medical Insurance',
-                                'MRHI (60+)' => 'MRHI (60+)',
-                                'Travel Insurance Inbound' => 'Travel Insurance Inbound',
-                                'Travel Insurance Outbound' => 'Travel Insurance Outbound',
-                            ],
-                            'General' => [
-                                'Bankers Blanket Bond (BBB)' => 'Bankers Blanket Bond (BBB)',
-                                'Business Secure' => 'Business Secure',
-                                'Combined Casualty' => 'Combined Casualty',
-                                'COMBINED POLICY' => 'COMBINED POLICY',
-                                'Contractor All Risks (CAR)' => 'Contractor All Risks (CAR)',
-                                'Contractors Plant & Machinery (CPM)' => 'Contractors Plant & Machinery (CPM)',
-                                'Cyber Liability' => 'Cyber Liability',
-                                'Electronic Equipment Insurance (EEI)' => 'Electronic Equipment Insurance (EEI)',
-                                'Erection All Risk (EAR)' => 'Erection All Risk (EAR)',
-                                'Event Insurance' => 'Event Insurance',
-                                'Fidelity Guarantee (FG)' => 'Fidelity Guarantee (FG)',
-                                'Fire & Lightning' => 'Fire & Lightning',
-                                'Fire and Allied Perils (FAP)' => 'Fire and Allied Perils (FAP)',
-                                'Group Life + Personal Accident (GLPA)' => 'Group Life + Personal Accident (GLPA)',
-                                'Group Personal Accident' => 'Group Personal Accident',
-                                'Home Insurance' => 'Home Insurance',
-                                'Machinery Breakdown (MB)' => 'Machinery Breakdown (MB)',
-                                'Medical Malpractice' => 'Medical Malpractice',
-                                'Money (MON)' => 'Money (MON)',
-                                'Professional Indemnity (PI)' => 'Professional Indemnity (PI)',
-                                'Property All Risks (PAR)' => 'Property All Risks (PAR)',
-                                'SME - Small Medium Enterprise' => 'SME - Small Medium Enterprise',
-                                'Third Party Liability (TPL)' => 'Third Party Liability (TPL)',
-                                'Workmen\'s Compensation Assurance (WCA)' => 'Workmen\'s Compensation Assurance (WCA)',
-                            ],
-                            'Personal Accident' => [
-                                'Household Workers' => 'Household Workers',
-                            ],
-                            default => [],
-                        };
+                        return static::getPolicyTypeOptions($get('category'));
                     })
                     ->required()
                     ->live()
@@ -291,5 +243,65 @@ class QuickPayResource extends Resource
             'create' => Pages\CreateQuickPay::route('/create'),
             'edit' => Pages\EditQuickPay::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * Get policy type options based on category
+     */
+    private static function getPolicyTypeOptions(?string $category): array
+    {
+        $policyTypes = [
+            'Motor' => [
+                'Comprehensive',
+                'Export',
+                'Third Party',
+            ],
+            'Marine' => [
+                'Cargo',
+                'Hull & Machinery',
+            ],
+            'Health' => [
+                'Individual Medical Insurance',
+                'MRHI (60+)',
+                'Travel Insurance Inbound',
+                'Travel Insurance Outbound',
+            ],
+            'General' => [
+                'Bankers Blanket Bond (BBB)',
+                'Business Secure',
+                'Combined Casualty',
+                'COMBINED POLICY',
+                'Contractor All Risks (CAR)',
+                'Contractors Plant & Machinery (CPM)',
+                'Cyber Liability',
+                'Electronic Equipment Insurance (EEI)',
+                'Erection All Risk (EAR)',
+                'Event Insurance',
+                'Fidelity Guarantee (FG)',
+                'Fire & Lightning',
+                'Fire and Allied Perils (FAP)',
+                'Group Life + Personal Accident (GLPA)',
+                'Group Personal Accident',
+                'Home Insurance',
+                'Machinery Breakdown (MB)',
+                'Medical Malpractice',
+                'Money (MON)',
+                'Professional Indemnity (PI)',
+                'Property All Risks (PAR)',
+                'SME - Small Medium Enterprise',
+                'Third Party Liability (TPL)',
+                'Workmen\'s Compensation Assurance (WCA)',
+            ],
+            'Personal Accident' => [
+                'Household Workers',
+            ],
+        ];
+
+        if (!$category || !isset($policyTypes[$category])) {
+            return [];
+        }
+
+        // Convert array to key-value pairs for select options
+        return array_combine($policyTypes[$category], $policyTypes[$category]);
     }
 }

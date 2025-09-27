@@ -52,11 +52,12 @@ class Insurance extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('qid_img')->singleFile();
-        $this->addMediaCollection('isb_img')->singleFile();
-        $this->addMediaCollection('isf_img')->singleFile();
-        $this->addMediaCollection('vhl_fnt')->singleFile();
-        $this->addMediaCollection('vhl_bck')->singleFile();
-        $this->addMediaCollection('vhl_lft')->singleFile();
+        $this->addMediaCollection('image_qid_img')->singleFile();
+        $this->addMediaCollection('image_isb_img')->singleFile();
+        $this->addMediaCollection('image_isf_img')->singleFile();
+        $this->addMediaCollection('image_vhl_fnt')->singleFile();
+        $this->addMediaCollection('image_vhl_bck')->singleFile();
+        $this->addMediaCollection('image_vhl_lft')->singleFile();
+        $this->addMediaCollection('image_vhl_rgt')->singleFile();
     }
 }
