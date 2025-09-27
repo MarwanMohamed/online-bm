@@ -116,7 +116,7 @@ class ComprehensiveResource extends Resource
                                     $set('end_date', $endDate);
                                 }),
                             DatePicker::make('end_date')->default(today()->addYear()->subDay())->native(false)->readOnly(),
-                            TextInput::make('vhl_value')->label("Insured's Declared Value:")->disabled()->readOnly(),
+//                            TextInput::make('vhl_value')->label("Insured's Declared Value:")->disabled()->readOnly(),
                         ]),
                     Wizard\Step::make('Policy Details')->icon('phosphor-invoice')
                         ->schema([
@@ -194,11 +194,11 @@ class ComprehensiveResource extends Resource
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
-                            TextInput::make('base_amount')->label('Base Price')->disabled()->readOnly(),
-                            TextInput::make('pass_amount')->label('Passenger Price')->disabled()->readOnly(),
-                            TextInput::make('opt_amount')->label('Optional Price')->disabled()->readOnly(),
-                            TextInput::make('discount')->label('Discount')->disabled()->readOnly(),
-                            TextInput::make('total_amount')->label('Total')->disabled()->readOnly(),
+                            TextInput::make('base_amount')->label('Base Price'),
+                            TextInput::make('pass_amount')->label('Passenger Price'),
+                            TextInput::make('opt_amount')->label('Optional Price'),
+                            TextInput::make('discount')->label('Discount'),
+                            TextInput::make('total_amount')->label('Total'),
                         ]),
                     Wizard\Step::make('Status Details')
                         ->schema([
@@ -218,7 +218,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()->startOnStep(4)
+                ])->columnSpanFull()
             ]);
     }
 
