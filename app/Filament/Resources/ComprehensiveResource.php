@@ -28,7 +28,6 @@ use IbrahimBougaoua\RadioButtonImage\Actions\RadioButtonImage;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Illuminate\Database\Eloquent\Model;
 
 class ComprehensiveResource extends Resource
 {
@@ -140,7 +139,6 @@ class ComprehensiveResource extends Resource
                         $set('opt_3', null);
                         $set('opt_4', null);
                         $set('passengers', null);
-                        static::updatePricing($get, $set);
                     }),
 
                             Select::make('opt_2')->hidden(fn(Get $get): bool => !filled($get('opt_1')))
@@ -156,8 +154,6 @@ class ComprehensiveResource extends Resource
                                     }
                                     $set('opt_3', null);
                                     $set('opt_4', null);
-                                    // Update pricing when opt_2 changes
-                                    static::updatePricing($get, $set);
                                 })->live(),
 
                             Select::make('opt_3')->hidden(fn(Get $get): bool => !filled($get('opt_2')) || Thirdparty::where('parent_id', $get('opt_2'))->count() == 0)
@@ -171,8 +167,6 @@ class ComprehensiveResource extends Resource
                                         }
                                     }
                                     $set('opt_4', null);
-                                    // Update pricing when opt_3 changes
-                                    static::updatePricing($get, $set);
                                 })->live(),
 
                             Select::make('opt_4')->hidden(fn(Get $get): bool => !filled($get('opt_3')) || Thirdparty::where('parent_id', $get('opt_3'))->count() == 0)
@@ -185,8 +179,6 @@ class ComprehensiveResource extends Resource
                                             $set('passengers', $max_pass);
                                         }
                                     }
-                                    // Update pricing when opt_4 changes
-                                    static::updatePricing($get, $set);
                                 })->live(),
 
                             Select::make('passengers')->hidden(fn(Get $get): bool => $get('passengers') == null)
@@ -196,51 +188,32 @@ class ComprehensiveResource extends Resource
                                         $options[$i] = $i;
                                     }
                                     return $options;
-                                })->label('Select no. of passengers')
-                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                    // Update pricing when passengers changes
-                                    static::updatePricing($get, $set);
-                                })->live(),
+                                })->label('Select no. of passengers')->live(),
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
                             SpatieMediaLibraryFileUpload::make('image_qid_img')->maxSize(3000)->label(__('QID'))
-                                ->required()->collection('image_qid_img')->columnSpan(2),
+                                ->collection('image_qid_img')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))
-                                ->required()->collection('image_isb_img')->columnSpan(2),
+                                ->collection('image_isb_img')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))
-                                ->required()->collection('image_isf_img')->columnSpan(2),
+                                ->collection('image_isf_img')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_fnt')->maxSize(3000)->label(__('Front'))
-                                ->required()->collection('image_vhl_fnt')->columnSpan(2),
+                                ->collection('image_vhl_fnt')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_bck')->maxSize(3000)->label(__('Back'))
-                                ->required()->collection('image_vhl_bck')->columnSpan(2),
+                                ->collection('image_vhl_bck')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_lft')->maxSize(3000)->label(__('Left'))
-                                ->required()->collection('image_vhl_lft')->columnSpan(2),
+                                ->collection('image_vhl_lft')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_rgt')->maxSize(3000)->label(__('Right'))
-                                ->required()->collection('image_vhl_rgt')->columnSpan(2),
+                                ->collection('image_vhl_rgt')->columnSpan(2),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
-                            TextInput::make('base_amount')->label('Base Price')
-                                ->disabled()
-                                ->readOnly()
-                                ->dehydrated(false),
-                            TextInput::make('pass_amount')->label('Passenger Price')
-                                ->disabled()
-                                ->readOnly()
-                                ->dehydrated(false),
-                            TextInput::make('opt_amount')->label('Optional Price')
-                                ->disabled()
-                                ->readOnly()
-                                ->dehydrated(false),
-                            TextInput::make('discount')->label('Discount')
-                                ->disabled()
-                                ->readOnly()
-                                ->dehydrated(false),
-                            TextInput::make('total_amount')->label('Total')
-                                ->disabled()
-                                ->readOnly()
-                                ->dehydrated(false),
+                            TextInput::make('base_amount')->label('Base Price'),
+                            TextInput::make('pass_amount')->label('Passenger Price'),
+                            TextInput::make('opt_amount')->label('Optional Price'),
+                            TextInput::make('discount')->label('Discount'),
+                            TextInput::make('total_amount')->label('Total'),
                         ]),
                     Wizard\Step::make('Status Details')
                         ->schema([
@@ -315,109 +288,5 @@ class ComprehensiveResource extends Resource
             'create' => Pages\CreateComprehensive::route('/create'),
             'edit' => Pages\EditComprehensive::route('/{record}/edit'),
         ];
-    }
-
-    /**
-     * Update pricing fields when opt_ values change
-     */
-    private static function updatePricing(Get $get, Set $set): void
-    {
-        try {
-            // Get all the opt_ values
-            $opt1 = $get('opt_1');
-            $opt2 = $get('opt_2');
-            $opt3 = $get('opt_3');
-            $opt4 = $get('opt_4');
-            $passengers = $get('passengers') ?? 1;
-            
-            if (null === $opt1 || !$opt1) {
-                $set('base_amount', 0);
-                $set('pass_amount', 0);
-                $set('opt_amount', 0);
-                $set('discount', 0);
-                $set('total_amount', 0);
-                return;
-            }
-
-            $pricingData = [
-                'opt_1' => $opt1,
-                'opt_2' => $opt2,
-                'opt_3' => $opt3,
-                'opt_4' => $opt4,
-                'passengers' => $passengers,
-            ];
-
-            $helper = new \App\Helpers\InsuranceHelper();
-            $result = $helper->getPrice($pricingData);
-            
-            // Update the pricing fields directly
-            $set('base_amount', $result['base_amount'] ?? 0);
-            $set('pass_amount', $result['pass_amount'] ?? 0);
-            $set('opt_amount', $result['opt_amount'] ?? 0);
-            $set('discount', $result['discount'] ?? 0);
-            $set('total_amount', $result['total_amount'] ?? 0);
-            
-        } catch (\Exception $e) {
-            // Set zero values if calculation fails
-            $set('base_amount', 0);
-            $set('pass_amount', 0);
-            $set('opt_amount', 0);
-            $set('discount', 0);
-            $set('total_amount', 0);
-        }
-    }
-
-    /**
-     * Calculate pricing based on opt_ values using InsuranceHelper
-     */
-    private static function calculatePricing(Get $get): array
-    {
-        try {
-            // Get all the opt_ values
-            $opt1 = $get('opt_1');
-            $opt2 = $get('opt_2');
-            $opt3 = $get('opt_3');
-            $opt4 = $get('opt_4');
-            $passengers = $get('passengers') ?? 1;
-            
-            if (null === $opt1 || !$opt1) {
-                return [
-                    'base_amount' => 0,
-                    'pass_amount' => 0,
-                    'opt_amount' => 0,
-                    'discount' => 0,
-                    'total_amount' => 0,
-                ];
-            }
-
-            $pricingData = [
-                'opt_1' => $opt1,
-                'opt_2' => $opt2,
-                'opt_3' => $opt3,
-                'opt_4' => $opt4,
-                'passengers' => $passengers,
-            ];
-
-            $helper = new \App\Helpers\InsuranceHelper();
-            $result = $helper->getPrice($pricingData);
-            
-            // Ensure all required keys exist
-            return [
-                'base_amount' => $result['base_amount'] ?? 0,
-                'pass_amount' => $result['pass_amount'] ?? 0,
-                'opt_amount' => $result['opt_amount'] ?? 0,
-                'discount' => $result['discount'] ?? 0,
-                'total_amount' => $result['total_amount'] ?? 0,
-            ];
-        } catch (\Exception $e) {
-            // Return zero values if calculation fails
-            return [
-                'base_amount' => 0,
-                'pass_amount' => 0,
-                'opt_amount' => 0,
-                'discount' => 0,
-                'total_amount' => 0,
-            ];
-        }
     }
 }
