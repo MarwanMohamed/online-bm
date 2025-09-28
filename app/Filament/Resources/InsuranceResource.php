@@ -98,7 +98,8 @@ class InsuranceResource extends Resource
                                 ->hidden(fn(Get $get): bool => !filled($get('vhl_make'))),
                             Select::make('vhl_body_type')->label('Body Type')
                                 ->options(VehicleBodyType::where('active', 1)->pluck('name', 'id'))
-                                ->searchable(),
+                                ->searchable()
+                                ->required(),
                             TextInput::make('vhl_chassis')->label('Chassis #')->required(),
                             TextInput::make('vhl_engine')->label('Engine #')->required(),
                             TextInput::make('vhl_reg_no')->label('Plate #')->required(),
@@ -245,7 +246,7 @@ class InsuranceResource extends Resource
                                 '2' => 'Paid',
                                 '6' => 'Verification',
                                 '7' => 'Lost'
-                            ])->inline()->reactive(),
+                            ])->inline()->reactive()->default(1),
 
                             TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
                                 ->hidden(fn($get) => $get('status') == 7),
