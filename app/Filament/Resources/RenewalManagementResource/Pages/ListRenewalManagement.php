@@ -39,6 +39,7 @@ class ListRenewalManagement extends ListRecords
                     ExportFormat::Csv,
                     ExportFormat::Xlsx,
                 ])
+                ->columnMapping(false)
                 ->icon('heroicon-o-arrow-up-on-square'),
             //->visible(Auth::user()->hasPermissionTo('export Workspace'))
 

@@ -212,7 +212,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('base_amount')
                                 ->label('Base Price')
                                 ->numeric()
-                                ->live()
+                                ->live(onBlur: true)
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                     $base = (float) ($state ?? 0);
                                     $pass = (float) ($get('pass_amount') ?? 0);
@@ -224,7 +224,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('pass_amount')
                                 ->label('Passenger Price')
                                 ->numeric()
-                                ->live()
+                                ->live(onBlur: true)
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                     $base = (float) ($get('base_amount') ?? 0);
                                     $pass = (float) ($state ?? 0);
@@ -236,7 +236,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('opt_amount')
                                 ->label('Optional Price')
                                 ->numeric()
-                                ->live()
+                                ->live(onBlur: true)
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                     $base = (float) ($get('base_amount') ?? 0);
                                     $pass = (float) ($get('pass_amount') ?? 0);
