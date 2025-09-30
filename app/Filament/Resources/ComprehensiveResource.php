@@ -209,11 +209,57 @@ class ComprehensiveResource extends Resource
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
-                            TextInput::make('base_amount')->label('Base Price'),
-                            TextInput::make('pass_amount')->label('Passenger Price'),
-                            TextInput::make('opt_amount')->label('Optional Price'),
-                            TextInput::make('discount')->label('Discount'),
-                            TextInput::make('total_amount')->label('Total'),
+                            TextInput::make('base_amount')
+                                ->label('Base Price')
+                                ->numeric()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $base = (float) ($state ?? 0);
+                                    $pass = (float) ($get('pass_amount') ?? 0);
+                                    $opt = (float) ($get('opt_amount') ?? 0);
+                                    $discount = (float) ($get('discount') ?? 0);
+                                    $total = max(0, $base + $pass + $opt - $discount);
+                                    $set('total_amount', number_format($total, 2, '.', ''));
+                                }),
+                            TextInput::make('pass_amount')
+                                ->label('Passenger Price')
+                                ->numeric()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $base = (float) ($get('base_amount') ?? 0);
+                                    $pass = (float) ($state ?? 0);
+                                    $opt = (float) ($get('opt_amount') ?? 0);
+                                    $discount = (float) ($get('discount') ?? 0);
+                                    $total = max(0, $base + $pass + $opt - $discount);
+                                    $set('total_amount', number_format($total, 2, '.', ''));
+                                }),
+                            TextInput::make('opt_amount')
+                                ->label('Optional Price')
+                                ->numeric()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $base = (float) ($get('base_amount') ?? 0);
+                                    $pass = (float) ($get('pass_amount') ?? 0);
+                                    $opt = (float) ($state ?? 0);
+                                    $discount = (float) ($get('discount') ?? 0);
+                                    $total = max(0, $base + $pass + $opt - $discount);
+                                    $set('total_amount', number_format($total, 2, '.', ''));
+                                }),
+                            TextInput::make('discount')
+                                ->label('Discount')
+                                ->numeric()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $base = (float) ($get('base_amount') ?? 0);
+                                    $pass = (float) ($get('pass_amount') ?? 0);
+                                    $opt = (float) ($get('opt_amount') ?? 0);
+                                    $discount = (float) ($state ?? 0);
+                                    $total = max(0, $base + $pass + $opt - $discount);
+                                    $set('total_amount', number_format($total, 2, '.', ''));
+                                }),
+                            TextInput::make('total_amount')
+                                ->label('Total')
+                                ->readOnly(),
                         ]),
                     Wizard\Step::make('Status Details')
                         ->schema([
@@ -233,7 +279,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()
+                ])->columnSpanFull()->startOnStep(5)
             ]);
     }
 
