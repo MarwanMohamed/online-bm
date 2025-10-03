@@ -146,7 +146,7 @@ class InsuranceController extends Controller
         $opt_4 = $this->getVehicleType($data['opt_4']);
         $add_opt = Optional::where('id', $data['add_opt'])->first();
         $area = Area::where('id', $data['area'])->first();
-        $data['company'] = Company::where('id', $data['com_id'])->first()->name;
+        $data['company'] = Company::where('id', $data['com_id'])->first()?->name;
         return view('site.insurance.confirm', compact('title', 'data', 'area', 'opt_1', 'opt_2', 'opt_3', 'opt_4', 'add_opt'));
     }
 

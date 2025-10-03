@@ -90,7 +90,7 @@
           </div>
           <div class="col-sm-1">:</div>
           <div class="col-sm-5">
-            <label for="example-text-input" class="col-form-label"><?= $area->area ?></label>
+            <label for="example-text-input" class="col-form-label"><?= $area->area ?? null ?></label>
           </div>
         </div>
         <div class="row">

@@ -37,6 +37,7 @@ Route::get('renew', [RenewController::class, 'renew']);
 Route::get('renew/view', [RenewController::class, 'renewView']);
 Route::post('renew/confirm', [RenewController::class, 'renewConfirm']);
 Route::post('renew/getPolicyDetails', [RenewController::class, 'getPolicyDetails']);
+Route::get('renew/renewal/{insurance}', [RenewController::class, 'generateRenewal']);
 
 
 Route::get('payment/quickpay', [QuickPayController::class, 'quickPay']);

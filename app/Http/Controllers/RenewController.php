@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\InsuranceHelper;
 use App\Models\Area;
 use App\Models\Company;
+use App\Models\Discount;
 use App\Models\Insurance;
 use App\Models\Optional;
 use App\Models\Thirdparty;
 use App\Models\User;
+use App\Models\Vehicle;
+use App\Models\VehicleBodyType;
+use App\Models\VehicleColor;
 use DateTime;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
@@ -16,6 +20,38 @@ use Illuminate\Support\Facades\DB;
 
 class RenewController extends Controller
 {
+    public function generateRenewal($id)
+    {
+        $insurance = $this->getInsuranceRow($id);
+        if (!$insurance) {
+            return response()->json(['error' => 'Insurance not found'], 404);
+        }
+
+        $title = "Thirdparty Insurance";
+        $qb_opt = Optional::where('deleted', 0)
+            ->where('parent_id', 3)->get();
+        $areas = Area::all();
+        $vhlTypes = Thirdparty::where('parent_id', 0)->get();
+        $make = Vehicle::all();
+        $colors = VehicleColor::where('deleted', 0)->get();
+        $bodyTypes = VehicleBodyType::where('active', 1)->get();
+        $companies = Company::where('deleted', 0)->orderBy('priority', 'asc')->where('active', 1)->get();
+        $discount = Discount::where('id', '1')->first();
+        if ($discount->status == '1') {
+            $discount = $discount->percent / 100;
+        } else {
+            $discount = 0;
+        }
+        $opt_1 = $this->getVehicleType($insurance->opt_1);
+        $opt_2 = $this->getVehicleType($insurance->opt_2);
+        $opt_3 = $this->getVehicleType($insurance->opt_3);
+        $opt_4 = $this->getVehicleType($insurance->opt_4);
+        $add_opt = Optional::where('id', $insurance->add_opt)->first();
+
+        return view('site.insurance.renew', compact('title', 'qb_opt', 'areas', 'vhlTypes', 'make', 'colors', 'bodyTypes', 'companies', 'discount', 'insurance', 'opt_1', 'opt_2', 'opt_3', 'opt_4', 'add_opt'));
+
+    }
+
     public function renew()
     {
         $footerchk = 1;
