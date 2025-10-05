@@ -89,7 +89,7 @@
             <!-- Hidden fields for vehicle options (send IDs, not names) -->
             <input type="hidden" name="opt_1" value="{{ $insurance->opt_1 ?? '' }}">
             <input type="hidden" name="opt_2" value="{{ $insurance->opt_2 ?? '' }}">
-            <input type="hidden" name="opt_3" value="{{ $insurance->opt_3 ?? '' }}">
+            <input type="hidden" name="opt_3" value="{{ $insurance->opt_3 ?? '' }}" >
             <input type="hidden" name="opt_4" value="{{ $insurance->opt_4 ?? '' }}">
             <input type="hidden" name="passengers" value="{{ $insurance->passengers ?? '' }}">
             <input type="hidden" name="add_opt" value="{{ $insurance->add_opt ?? 0 }}">
