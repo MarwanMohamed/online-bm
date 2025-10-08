@@ -193,19 +193,19 @@ class ComprehensiveResource extends Resource
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
                             SpatieMediaLibraryFileUpload::make('image_qid_img')->maxSize(3000)->label(__('QID'))
-                                ->required()->collection('image_qid_img')->columnSpan(2),
+                                ->collection('image_qid_img')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))
-                                ->required()->collection('image_isb_img')->columnSpan(2),
+                                ->collection('image_isb_img')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))
-                                ->required()->collection('image_isf_img')->columnSpan(2),
+                                ->collection('image_isf_img')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_vhl_fnt')->maxSize(3000)->label(__('Front'))
-                                ->required()->collection('image_vhl_fnt')->columnSpan(2),
+                                ->collection('image_vhl_fnt')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_vhl_bck')->maxSize(3000)->label(__('Back'))
-                                ->required()->collection('image_vhl_bck')->columnSpan(2),
+                                ->collection('image_vhl_bck')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_vhl_lft')->maxSize(3000)->label(__('Left'))
-                                ->required()->collection('image_vhl_lft')->columnSpan(2),
+                                ->collection('image_vhl_lft')->columnSpan(2)->required(),
                             SpatieMediaLibraryFileUpload::make('image_vhl_rgt')->maxSize(3000)->label(__('Right'))
-                                ->required()->collection('image_vhl_rgt')->columnSpan(2),
+                                ->collection('image_vhl_rgt')->columnSpan(2)->required(),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
