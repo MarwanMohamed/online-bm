@@ -113,7 +113,7 @@ class QuickPayController extends Controller
         $vpc_amount = $request->nmi_total_price;
         $policyRef = $request->nmi_referno;
         $OrderInfo = time();
-        $return_url = '/paymentReturn';
+        $return_url = '/payment/paymentReturn';
         $SECURE_SECRET = $bkdtls->secret_key;
         $transkey = $this->getUniqueTransactionKeyCredit();
         $data = [

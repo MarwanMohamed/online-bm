@@ -6,6 +6,7 @@ use App\Http\Controllers\RenewController;
 use App\Http\Controllers\InsuranceController;
 use App\Imports\VehiclesImport;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 /*
@@ -47,6 +48,11 @@ Route::post('payment/getPolicyPayDetails', [QuickPayController::class, 'getPolic
 Route::post('payment/qcbankpayment', [QuickPayController::class, 'qcbankpayment']);
 Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpayment']);
 
+Route::match(['get', 'post'], 'payment/paymentReturn', function(\Illuminate\Http\Request $request) {
+    Log::info('Payment Return Data:', $request->all());
+    return response('Payment processed successfully', 200);
+});
+
 Route::get('/check-new-recording', function () {
     // Fetch the latest recording from the database
     $latestRecording = \App\Models\Insurance::latest()->first();
@@ -82,9 +88,9 @@ Route::get('/admin/insurances/{id}/delete', function($id) {
 
 // Actual delete route
 Route::post('/admin/insurances/{id}/confirm-delete', function($id) {
-    \Log::info('Delete route called for insurance ID: ' . $id);
+    Log::info('Delete route called for insurance ID: ' . $id);
     $insurance = \App\Models\Insurance::findOrFail($id);
     $insurance->delete();
-    \Log::info('Insurance deleted successfully');
+    Log::info('Insurance deleted successfully');
     return redirect('/admin')->with('success', 'Insurance record deleted successfully');
 })->name('admin.insurances.confirm-delete');
