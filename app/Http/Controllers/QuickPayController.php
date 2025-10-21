@@ -6,6 +6,10 @@ use App\Models\Insurance;
 use App\Models\Quickpay;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use TessPayments\Checkout;
+use TessPayments\Checkout\HashService;
+use TessPayments\Core\Enums\Actions;
+use Illuminate\Support\Facades\Log;
 
 class QuickPayController extends Controller
 {
@@ -59,6 +63,59 @@ class QuickPayController extends Controller
         $policyRef = $request->nmi_referno;
         $footerchk = 1;
         return view('site.payment.select-payment')->with(['title' => 'Select Payment', 'policyRef' => $policyRef, 'total_amount' => $total_amount, 'footerchk' => $footerchk]);
+    }
+
+    public function tesspaymentspgw(Request $request)
+    {
+        $refNo = $request->policy_id;
+        $policyDetails = $this->getPolicyPayDetails($request);
+        //App\Models\Quickpay Object ( [connection:protected] => mysql [table:protected] => quickpay [primaryKey:protected] => id 
+        // [keyType:protected] => int [incrementing] => 1 [with:protected] => Array ( ) [withCount:protected] => Array ( )
+        //  [preventsLazyLoading] => [perPage:protected] => 15 [exists] => 1 [wasRecentlyCreated] => 
+        // [escapeWhenCastingToString:protected] => [attributes:protected] => Array ( [id] => 27201 [category] => [policy_type] => 
+        // [ref_no] => MotTpl2548 [name] => JohnTest [email] => john@yahoo.com [amount] => 1 [description] => Motor TPL | PNo:21425 |2015 
+        // [contact] => 24166587 [created_by] => 25 [created_at] => 2024-09-17 14:26:25 [updated_at] => 0000-00-00 00:00:00 [updated_by] => 
+        // [status] => 1 [deleted] => 0 [policy_type_display] => Insurance ) [original:protected] => Array ( [id] => 27201 [category] => 
+        // [policy_type] => [ref_no] => MotTpl2548 [name] => JohnTest [email] => john@yahoo.com [amount] => 1 [description] => Motor TPL | PNo:21425 
+        // |2015 [contact] => 24166587 [created_by] => 25 [created_at] => 2024-09-17 14:26:25 [updated_at] => 0000-00-00 00:00:00 [updated_by] => [status] => 1 
+        // [deleted] => 0 ) [changes:protected] => Array ( ) [casts:protected] => Array ( ) [classCastCache:protected] => Array ( ) 
+        // [attributeCastCache:protected] => Array ( ) [dateFormat:protected] => [appends:protected] => Array ( ) [dispatchesEvents:protected] => Array ( ) 
+        // [observables:protected] => Array ( ) [relations:protected] => Array ( ) [touches:protected] => Array ( ) [timestamps] => 1 [usesUniqueIds] => 
+        // [hidden:protected] => Array ( ) [visible:protected] => Array ( ) [fillable:protected] => Array ( ) [guarded:protected] => 
+        // Array ( [0] => id [1] => created_at [2] => updated_at ) )
+        $checkout = new \TessPayments\Checkout\CheckoutService();
+        //var_dump(url("/") . "/paymentReturn/TessReturn?status=success");
+        $orderNumber = 'T-' . time() . '-' . $refNo;
+        $tessResponse = $checkout->standardPayment([
+            "operation" => "purchase",
+            "order" => [
+                "number" => $orderNumber,
+                "amount" => number_format($policyDetails['amount'], 2),
+                "currency" => "QAR",
+                "description" => $policyDetails['description'],
+            ],
+            "cancel_url" => url("/") . "/payment/paymentReturn?status=cancelled",
+            "success_url" => url("/") . "/payment/paymentReturn?status=success",
+            "customer" => [
+                "name" => $policyDetails['name'],
+                "email" => $policyDetails['email']
+            ]
+        ]);
+        if(!empty($tessResponse['redirect_url'])){
+            if (isset($refNo)) {
+                Transaction::create([
+                    'policy_ref' => $refNo,
+                    'trans_key' => $orderNumber,
+                    'amount' => number_format($policyDetails['amount'], 2),
+                    'status' => 'Pending',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'txn_type' => 'Other',
+                    'payment_gateway' => 'TESS',
+                    'active' => 1
+                ]);
+            }
+            return redirect($tessResponse['redirect_url']);
+        }
     }
 
     public function qcbankpayment(Request $request)
@@ -168,5 +225,42 @@ class QuickPayController extends Controller
         ];
 
         return $categoryMap[$category] ?? 'General';
+    }
+
+    public function paymentReturn(Request $request)
+    {
+        Log::info('Payment Return Data:', $request->all());
+
+        $transaction = Transaction::where('trans_key', $request->order_id)->first();
+        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        if (!$policyDesc) {
+            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        }
+        Log::info($policyDesc);
+        $params = [
+            'id' => $request->payment_id,
+            'order_number' => $request->order_id,
+            'order_amount' => number_format($transaction->amount, 2),
+            'order_currency' => 'QAR',
+            'order_description' => $policyDesc
+        ];
+        $returnUrlHash = HashService::generate($params, Actions::RETURN_URL);
+        if($request->hash === $returnUrlHash && 'success' === $request->status)
+        {
+            Transaction::where('trans_key', $request->order_id)
+                ->where('policy_ref', $transaction->policy_ref)
+                ->update([
+                    'status' => 'Payment processed successfully',
+                    'transaction_no' => $request->payment_id
+                ]);
+            Quickpay::where('ref_no', $transaction->policy_ref)
+                ->update(['status' => 0]);
+
+            return response('Payment processed successfully', 200);
+        }
+        else
+        {
+            return response('Payment could not be processed', 200);
+        }
     }
 }

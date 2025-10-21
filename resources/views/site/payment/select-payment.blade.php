@@ -19,6 +19,32 @@
 
                 <div class="col-md-12">
 
+                    <!-- Start New PGW -->
+                    <div class="container bordered-container" style="max-width:500px; margin-bottom:30px">
+                        <div class="form-group">
+                            <div>
+                                <span>Reference Number : <strong>{{$policyRef}}</strong></span><br>
+                            </div>
+                            <hr>
+                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format($total_amount, 2)}}</span></h6>
+
+
+                            <label for="payment">Pay using : </label>
+
+
+                            <form  name="SubFrm" action="/payment/tesspaymentspgw"
+                                  method="post">
+                                @csrf
+                                <input type="hidden" name="policy_id" id="policy_id" value="{{$policyRef}}">
+                                
+                                <button class="btn btn-pay fatora_pay_btn" name="submit" type="submit" style="margin: 7px 0 7px 0; padding: 8px 28px;
+    background-color: #8a0b43; "><i class="fa fa-money"></i> TESS Payments Services (تس خدمات الدفع)
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <br><br><br>
+<!-- End New PGW -->
                     <div class="container bordered-container" style="max-width:500px; margin-bottom:30px">
                         <div class="form-group">
                             <div>
