@@ -19,7 +19,6 @@ class EditQuickPay extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        var_dump($data);
         $data['status'] = $data['status'] == 'Paid' ? 0 : 1;
         $data['created_by'] = Auth()->id();
         return $data;
