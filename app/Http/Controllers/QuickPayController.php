@@ -6,6 +6,11 @@ use App\Models\Insurance;
 use App\Models\Quickpay;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use TessPayments\Checkout;
+use TessPayments\Checkout\HashService;
+use TessPayments\Core\Enums\Actions;
+use Illuminate\Support\Facades\Log;
+
 
 class QuickPayController extends Controller
 {
@@ -59,6 +64,54 @@ class QuickPayController extends Controller
         $policyRef = $request->nmi_referno;
         $footerchk = 1;
         return view('site.payment.select-payment')->with(['title' => 'Select Payment', 'policyRef' => $policyRef, 'total_amount' => $total_amount, 'footerchk' => $footerchk]);
+    }
+
+    public function tesspaymentspgw(Request $request)
+    {
+        $refNo = $request->policy_id;
+        $policyDetails = $this->getPolicyPayDetails($request);
+        $checkout = new \TessPayments\Checkout\CheckoutService();
+        $orderNumber = 'T-' . time() . '-' . $refNo;
+        try{
+            $tessResponse = $checkout->standardPayment([
+                "operation" => "purchase",
+                "order" => [
+                    "number" => $orderNumber,
+                    "amount" => number_format($policyDetails['amount'], 2),
+                    "currency" => "QAR",
+                    "description" => $policyDetails['description'],
+                ],
+                "cancel_url" => url("/") . "/payment/paymentReturn?status=cancelled",
+                "success_url" => url("/") . "/payment/paymentReturn?status=success",
+                "customer" => [
+                    "name" => $policyDetails['name'],
+                    "email" => $policyDetails['email']
+                ]
+            ]);
+            unset($checkout);
+            if(!empty($tessResponse['redirect_url'])){
+                if (isset($refNo)) {
+                    Transaction::create([
+                        'policy_ref' => $refNo,
+                        'trans_key' => $orderNumber,
+                        'amount' => number_format($policyDetails['amount'], 2),
+                        'status' => 'Pending',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'txn_type' => 'Other',
+                        'payment_gateway' => 'TESS',
+                        'active' => 1
+                    ]);
+                }
+                return redirect($tessResponse['redirect_url']);
+            }
+        }
+        catch (\Exception $e) {
+            // Log the error
+            Log::error('Checkout API Response:' . $e->getMessage());
+
+            // Return a friendly response
+            return response('Something went wrong. Please try again later.');
+        }
     }
 
     public function qcbankpayment(Request $request)
@@ -168,5 +221,42 @@ class QuickPayController extends Controller
         ];
 
         return $categoryMap[$category] ?? 'General';
+    }
+
+    public function paymentReturn(Request $request)
+    {
+        Log::info('Payment Return Data:', $request->all());
+
+        $transaction = Transaction::where('trans_key', $request->order_id)->first();
+        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        if (!$policyDesc) {
+            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        }
+        Log::info($policyDesc);
+        $params = [
+            'id' => $request->payment_id,
+            'order_number' => $request->order_id,
+            'order_amount' => number_format($transaction->amount, 2),
+            'order_currency' => 'QAR',
+            'order_description' => $policyDesc
+        ];
+        $returnUrlHash = HashService::generate($params, Actions::RETURN_URL);
+        if($request->hash === $returnUrlHash && 'success' === $request->status)
+        {
+            Transaction::where('trans_key', $request->order_id)
+                ->where('policy_ref', $transaction->policy_ref)
+                ->update([
+                    'status' => 'Payment processed successfully',
+                    'transaction_no' => $request->payment_id
+                ]);
+            Quickpay::where('ref_no', $transaction->policy_ref)
+                ->update(['status' => 0]);
+
+            return response('Payment processed successfully', 200);
+        }
+        else
+        {
+            return response('Payment could not be processed', 200);
+        }
     }
 }
