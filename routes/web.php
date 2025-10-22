@@ -47,11 +47,8 @@ Route::get('payment/selectpayment', [QuickPayController::class, 'selectPayment']
 Route::post('payment/getPolicyPayDetails', [QuickPayController::class, 'getPolicyPayDetails']);
 Route::post('payment/qcbankpayment', [QuickPayController::class, 'qcbankpayment']);
 Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpayment']);
-
-Route::match(['get', 'post'], 'payment/paymentReturn', function(\Illuminate\Http\Request $request) {
-    Log::info('Payment Return Data:', $request->all());
-    return response('Payment processed successfully', 200);
-});
+Route::post('payment/tesspaymentspgw', [QuickPayController::class, 'tesspaymentspgw']);
+Route::match(['get', 'post'], 'payment/paymentReturn', [QuickPayController::class, 'paymentReturn']);
 
 Route::get('/check-new-recording', function () {
     // Fetch the latest recording from the database

@@ -29,7 +29,8 @@
         "spatie/laravel-backup": "^8.1",
         "spatie/laravel-enum": "^3.0",
         "spatie/laravel-medialibrary": "^10.15",
-        "ylsideas/feature-flags": "^2.5"
+        "ylsideas/feature-flags": "^2.5",
+        "tesspayments/tess-payments-sdk": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23.1",
