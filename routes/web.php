@@ -50,7 +50,8 @@ Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpaym
 
 Route::match(['get', 'post'], 'payment/paymentReturn', function(\Illuminate\Http\Request $request) {
     Log::info('Payment Return Data:', $request->all());
-    return response('Payment processed successfully', 200);
+    $footerchk = 1;
+    return view('site.payment.payment_confirm', compact('footerchk'));
 });
 
 Route::get('/check-new-recording', function () {
