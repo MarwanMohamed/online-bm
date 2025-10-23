@@ -50,11 +50,6 @@ Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpaym
 Route::post('payment/tesspaymentspgw', [QuickPayController::class, 'tesspaymentspgw']);
 Route::match(['get', 'post'], 'payment/paymentReturn', [QuickPayController::class, 'paymentReturn']);
 
-Route::match(['get', 'post'], 'payment/paymentReturn', function(\Illuminate\Http\Request $request) {
-    Log::info('Payment Return Data:', $request->all());
-    $footerchk = 1;
-    return view('site.payment.payment_confirm', compact('footerchk'));
-});
 
 Route::get('/check-new-recording', function () {
     // Fetch the latest recording from the database
