@@ -50,6 +50,7 @@ Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpaym
 Route::post('payment/tesspaymentspgw', [QuickPayController::class, 'tesspaymentspgw']);
 Route::match(['get', 'post'], 'payment/paymentReturn', [QuickPayController::class, 'paymentReturn']);
 
+
 Route::get('/check-new-recording', function () {
     // Fetch the latest recording from the database
     $latestRecording = \App\Models\Insurance::latest()->first();

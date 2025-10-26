@@ -81,7 +81,7 @@ class QuickPayResource extends Resource
                             $existingContent = $currentDescription;
                         }
                         
-                        $newPrefix = ($category && $policyType) ? "\"{$category}/{$policyType}\"\n" : '';
+                        $newPrefix = ($category && $policyType) ? "{$category}/{$policyType}\n" : '';
                         
                         $set('description', $newPrefix . $existingContent);
                     }),
@@ -95,7 +95,7 @@ class QuickPayResource extends Resource
                 Forms\Components\TextInput::make('amount')->numeric()->step('any')->required(),
                 Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->required()
                     ->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
-                Forms\Components\TextInput::make('email')->required(),
+                Forms\Components\TextInput::make('email')->required()->email(),
                 Forms\Components\TextInput::make('contact')->required()->maxValue(8),
                 Forms\Components\Textarea::make('description')
                     ->required()
@@ -105,7 +105,7 @@ class QuickPayResource extends Resource
                         $policyType = $get('policy_type');
                         
                         if ($category && $policyType) {
-                            $expectedPrefix = "\"{$category}/{$policyType}\"\n";
+                            $expectedPrefix = "{$category}/{$policyType}\n";
                             if (strpos($state, $expectedPrefix) === 0) {
                                 return $state;
                             }
@@ -115,16 +115,7 @@ class QuickPayResource extends Resource
                         return $state;
                     })
                     ->dehydrateStateUsing(function ($state, Forms\Get $get) {
-                        $category = $get('category');
-                        $policyType = $get('policy_type');
-                        
-                        if ($category && $policyType) {
-                            $prefix = "\"{$category}/{$policyType}\"\n";
-                            if (strpos($state, $prefix) === 0) {
-                                return substr($state, strlen($prefix));
-                            }
-                        }
-                        
+                        // Save the full description including the prefix
                         return $state;
                     })
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
@@ -132,7 +123,7 @@ class QuickPayResource extends Resource
                         $policyType = $get('policy_type');
                         
                         if ($category && $policyType) {
-                            $prefix = "\"{$category}/{$policyType}\"\n";
+                            $prefix = "{$category}/{$policyType}\n";
                             if (strpos($state, $prefix) !== 0) {
                                 $set('description', $prefix . $state);
                             }

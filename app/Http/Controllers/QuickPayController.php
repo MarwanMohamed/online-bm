@@ -251,8 +251,8 @@ class QuickPayController extends Controller
                 ]);
             Quickpay::where('ref_no', $transaction->policy_ref)
                 ->update(['status' => 0]);
-
-            return response('Payment processed successfully', 200);
+            $footerchk = 1;
+            return view('site.payment.payment_confirm', compact('footerchk'));
         }
         else
         {
