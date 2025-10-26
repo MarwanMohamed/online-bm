@@ -95,7 +95,7 @@ class QuickPayResource extends Resource
                 Forms\Components\TextInput::make('amount')->numeric()->step('any')->required(),
                 Forms\Components\TextInput::make('status')->readOnly()->hiddenOn('create')->required()
                     ->formatStateUsing(fn($record) => isset($record->status) && $record->status == 0 ? 'Paid' : 'Unpaid'),
-                Forms\Components\TextInput::make('email')->required()->email(),
+                Forms\Components\TextInput::make('email')->required()->email()->rules('email:dns'),
                 Forms\Components\TextInput::make('contact')->required()->maxValue(8),
                 Forms\Components\Textarea::make('description')
                     ->required()
