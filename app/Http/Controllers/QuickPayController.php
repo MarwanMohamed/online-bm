@@ -6,7 +6,7 @@ use App\Models\Insurance;
 use App\Models\Quickpay;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use TessPayments\Checkout;
+use TessPayments\Checkout\CheckoutService;
 use TessPayments\Checkout\HashService;
 use TessPayments\Core\Enums\Actions;
 use Illuminate\Support\Facades\Log;
@@ -70,14 +70,14 @@ class QuickPayController extends Controller
     {
         $refNo = $request->policy_id;
         $policyDetails = $this->getPolicyPayDetails($request);
-        $checkout = new \TessPayments\Checkout\CheckoutService();
+        $checkout = new CheckoutService();
         $orderNumber = 'T-' . time() . '-' . $refNo;
         try{
             $tessResponse = $checkout->standardPayment([
                 "operation" => "purchase",
                 "order" => [
                     "number" => $orderNumber,
-                    "amount" => number_format($policyDetails['amount'], 2),
+                    "amount" => number_format($policyDetails['amount'], 2, '.', ''),
                     "currency" => "QAR",
                     "description" => $policyDetails['description'],
                 ],
@@ -94,7 +94,7 @@ class QuickPayController extends Controller
                     Transaction::create([
                         'policy_ref' => $refNo,
                         'trans_key' => $orderNumber,
-                        'amount' => number_format($policyDetails['amount'], 2),
+                        'amount' => number_format($policyDetails['amount'], 2, '.', ''),
                         'status' => 'Pending',
                         'date' => date('Y-m-d H:i:s', time()),
                         'txn_type' => 'Other',
@@ -232,11 +232,11 @@ class QuickPayController extends Controller
         if (!$policyDesc) {
             $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
         }
-        Log::info($policyDesc);
+        //Log::info($policyDesc);
         $params = [
             'id' => $request->payment_id,
             'order_number' => $request->order_id,
-            'order_amount' => number_format($transaction->amount, 2),
+            'order_amount' => number_format($transaction->amount, 2, '.', ''),
             'order_currency' => 'QAR',
             'order_description' => $policyDesc
         ];
@@ -252,7 +252,15 @@ class QuickPayController extends Controller
             Quickpay::where('ref_no', $transaction->policy_ref)
                 ->update(['status' => 0]);
             $footerchk = 1;
-            return view('site.payment.payment_confirm', compact('footerchk'));
+            $data = [
+                'order_id' => $request->order_id,
+                'policy_ref' => $transaction->policy_ref,
+                'order_info' => $policyDesc,
+                'order_amount' => 'QAR ' . number_format($transaction->amount, 2),
+                'order_status' => ('success' === $request->status ? 'Payment processed successfully.' : 'Payment unsuccessful'),
+                'order_date' => date('d-m-Y', time())
+            ];
+            return view('site.payment.payment_confirm', compact('footerchk'))->with('data', $data);
         }
         else
         {
