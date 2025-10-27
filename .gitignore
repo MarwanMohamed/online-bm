@@ -24,3 +24,9 @@ nbdist/
 .phpunit.result.cache
 /.vscode
 /resources/views/scribe
+docker-compose.yml
+docker-compose.override.yml
+.env
+/public/*
+Dockerfile
+/nginx

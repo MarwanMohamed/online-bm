@@ -52,30 +52,30 @@
                         
                         <tr>
                             <td align="right"><strong><i>Merchant Transaction Reference: </i></strong></td>
-                            <td>111</td>
+                            <td>{{$data['order_id']}}</td>
                         </tr>
                         
                         <tr>
-                            <td align="right"><strong><i>Order Information: </i></strong></td>
-                            <td><?= date('d-m-Y', time()) ?></td>
+                            <td align="right"><strong><i>Policy Reference: </i></strong></td>
+                            <td>{{$data['policy_ref']}}</td>
                         </tr>
                         <tr class="shade">
-                            <td align="right"><strong><i>Purchase Amount: </i></strong></td>
-                            <td>111</td>
+                            <td align="right"><strong><i>Description: </i></strong></td>
+                            <td>{{$data['order_info']}}</td>
                         </tr>
                         
                         <tr class="shade">
-                            <td align="right"><strong><i>Message: </i></strong></td>
-                            <td>222</td>
+                            <td align="right"><strong><i>Transaction Amount: </i></strong></td>
+                            <td>{{$data['order_amount']}}</td>
                         </tr>
 
                         <tr>
-                            <td align="right"><strong><i>Receipt Number: </i></strong></td>
-                            <td>333</td>
+                            <td align="right"><strong><i>Transaction Status: </i></strong></td>
+                            <td>{{$data['order_status']}}</td>
                         </tr>
                         <tr class="shade">
-                            <td align="right"><strong><i>Transaction Number: </i></strong></td>
-                            <td>444</td>
+                            <td align="right"><strong><i>Transaction Date: </i></strong></td>
+                            <td>{{$data['order_date']}}</td>
                         </tr>
     
                         <tr>

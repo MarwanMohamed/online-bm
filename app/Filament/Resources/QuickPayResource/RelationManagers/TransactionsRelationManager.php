@@ -9,6 +9,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use TessPayments\Checkout\CheckoutService;
+use Filament\Notifications\Notification;
 
 class TransactionsRelationManager extends RelationManager
 {
@@ -35,10 +37,10 @@ class TransactionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('txn_type')->label('Transaction Type'),
                 Tables\Columns\TextColumn::make('amount'),
                 Tables\Columns\TextColumn::make('transaction_no')->label('Transaction #'),
-                Tables\Columns\TextColumn::make('status')
-                    ->formatStateUsing(function ($state, $record) {
-                        return $record->refund_status == 1 ? '' : $state;
-                    }),
+                Tables\Columns\TextColumn::make('status'),
+                    // ->formatStateUsing(function ($state, $record) {
+                    //     return $record->refund_status == 1 ? '' : $state;
+                    // }),
                 Tables\Columns\TextColumn::make('refund_status')
                     ->formatStateUsing(function ($state) {
                         return $state == 0 ? 'Not Refunded' : 'Refunded';
@@ -60,14 +62,52 @@ class TransactionsRelationManager extends RelationManager
                     ->modalHeading('Confirm Refund')
                     ->modalDescription('Are you sure you want to refund this transaction?')
                     ->action(function ($record) {
-                        $record->update(['refund_status' => 1]);
+                        // Resolve the CheckoutService (or inject via constructor)
+                        if('Payment processed successfully' === $record['status'])
+                        {
+                            $checkout = app(CheckoutService::class);
+                            
+                            $params = [
+                                'payment_id' => (string) $record['transaction_no'],
+                                'amount'     => (string) number_format($record['amount'], 2, '.', ''),
+                            ];
 
-                        \Filament\Notifications\Notification::make()
-                            ->title('Transaction Refunded')
-                            ->success()
-                            ->send();
+                            try {
+                                $response = $checkout->refundPayment($params);
+                                
+                                if (isset($response['result']) && $response['result'] === 'accepted') {
+                                    $record->update(['refund_status' => '1']);
+                                    Notification::make()
+                                            ->title('Refund Accepted')
+                                            ->success()
+                                            ->body('Payment ID: ' . $response['payment_id'])
+                                            ->send();
+                                    } else {
+                                        Notification::make()
+                                            ->title('Refund Failed')
+                                            ->danger()
+                                            ->body($response['message'] ?? 'Unknown error')
+                                            ->send();
+                                    }
+
+                            } catch (\Exception $e) {
+                                //print_r($record);
+                                //$this->notify('danger', 'Error: ' . $e->getMessage());
+                                Notification::make()
+                                    ->title('Refund Error')
+                                    ->danger()
+                                    ->body($e->getMessage())
+                                    ->send();
+                            }
+                        }
+                        // $record->update(['refund_status' => 1]);
+
+                        // \Filament\Notifications\Notification::make()
+                        //     ->title('Transaction Refunded')
+                        //     ->success()
+                        //     ->send();
                     })
-                    ->visible(fn ($record) => $record->refund_status == 0 && $record->txn_type == 'Debit'),
+                    ->visible(fn ($record) => $record->refund_status == 0 && $record->txn_type == 'Other'),
 //                Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
             ])
