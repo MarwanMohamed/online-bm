@@ -295,34 +295,34 @@
                     <!--********************************************body parent calculation started**********************************************************-->
                     <div class="col-md-12" style="margin-bottom: 10px;" id="">
 
-{{--                        <div class="col-md-4" id="year">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label for="">Vehicle Model Year</label><label class="pull-right">سنه الصنع</label>--}}
-{{--                                <select class="form-control" name="year" id="year_count">--}}
-{{--                                    <option value="">Please Select</option>--}}
+                        <div class="col-md-4" id="year">
+                            <div class="form-group">
+                                <label for="">Vehicle Model Year</label><label class="pull-right">سنه الصنع</label>
+                                <select class="form-control" name="year" id="year_count">
+                                    <option value="">Please Select</option>
 
-{{--                                </select>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+                                </select>
+                            </div>
+                        </div>
 
-{{--                        <div class="col-md-4" id="seats">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label for="">Seats</label><label class="pull-right">عدد الكراسى</label>--}}
-{{--                                <select class="form-control" name="seats" id="seats_count">--}}
-{{--                                    <option value="">Please Select</option>--}}
+                        <div class="col-md-4" id="seats">
+                            <div class="form-group">
+                                <label for="">Seats</label><label class="pull-right">عدد الكراسى</label>
+                                <select class="form-control" name="seats" id="seats_count">
+                                    <option value="">Please Select</option>
 
-{{--                                </select>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-md-4" id="cylinders">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label for=""> no. of cylinders</label><label class="pull-right">عدد السلندرات</label>--}}
-{{--                                <select class="form-control" name="cylinders_count" id="cylinders_count">--}}
-{{--                                    <option value="">Please Select</option>--}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" id="cylinders">
+                            <div class="form-group">
+                                <label for=""> no. of cylinders</label><label class="pull-right">عدد السلندرات</label>
+                                <select class="form-control" name="cylinders_count" id="cylinders_count">
+                                    <option value="">Please Select</option>
 
-{{--                                </select>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-12" style="margin-bottom: 10px;" id="vhl_type_select">
                         <p style="font-weight:500">C. Select vehicle options</p>
