@@ -20,10 +20,10 @@ class RenewalImporter extends Importer
     public static function getColumns(): array
     {
         $columns = [
-            ImportColumn::make('id')
-                ->label('Id')
-                ->requiredMapping()
-                ->rules(['required']),
+//            ImportColumn::make('id')
+//                ->label('Id')
+//                ->requiredMapping()
+//                ->rules(['required']),
             ImportColumn::make('start_date')
                 ->label('Date')
                 ->requiredMapping()
