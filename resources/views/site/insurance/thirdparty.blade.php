@@ -443,6 +443,7 @@
             $('.vhl_opt').on('change', 'select', function (event) {
                 const curId = $(this).attr('id');
                 const selected = $(this).children('option:selected');
+                console.log(selected)
                 const final = selected.data('final');
                 $(this).children('option[value=""]').remove();
                 console.log(curId)
