@@ -36,7 +36,7 @@ class RenewalExporter extends Exporter
 //            ExportColumn::make('discount'),  //->label('Discount (خصم)'),
 //            ExportColumn::make('total_amount'),  //->label('Net (الصافى)'),
 //            ExportColumn::make('vhl_make'),  //->label('Make'),
-
+            ExportColumn::make('id')->label('ID'),
             ExportColumn::make('date')->label('Date'),
             ExportColumn::make('getStatus.status')->label('Reference #'),
             ExportColumn::make('name')->label('Name'),
