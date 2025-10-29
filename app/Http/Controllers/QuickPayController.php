@@ -72,6 +72,7 @@ class QuickPayController extends Controller
         $policyDetails = $this->getPolicyPayDetails($request);
         $checkout = new CheckoutService();
         $orderNumber = 'T-' . time() . '-' . $refNo;
+        $description = !empty($policyDetails['description']) ? $policyDetails['description'] : $refNo;
         try{
             $tessResponse = $checkout->standardPayment([
                 "operation" => "purchase",
@@ -79,7 +80,7 @@ class QuickPayController extends Controller
                     "number" => $orderNumber,
                     "amount" => number_format($policyDetails['amount'], 2, '.', ''),
                     "currency" => "QAR",
-                    "description" => $policyDetails['description'],
+                    "description" => $description,
                 ],
                 "cancel_url" => url("/") . "/payment/paymentReturn?status=cancelled",
                 "success_url" => url("/") . "/payment/paymentReturn?status=success",
