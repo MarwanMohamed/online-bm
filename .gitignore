@@ -29,5 +29,4 @@ docker-compose.override.yml
 .env
 /public/*
 Dockerfile
-composer.lock
 /nginx
