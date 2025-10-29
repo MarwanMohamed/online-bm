@@ -37,9 +37,14 @@
                                 @csrf
                                 <input type="hidden" name="policy_id" id="policy_id" value="{{$policyRef}}">
                                 
-                                <button class="btn btn-pay fatora_pay_btn" name="submit" type="submit" style="margin: 7px 0 7px 0; padding: 8px 28px;
-    background-color: #8a0b43; "><i class="fa fa-money"></i> TESS Payments Services (تس خدمات الدفع)
+                                <div style="text-align: center; margin-top: 30px;">
+                                    <button class="btn btn-pay fatora_pay_btn" name="submit" type="submit" style="margin: 0 0 30px 0; padding: 10px 28px;
+    background-color: #8a0b43; "><i class="fa fa-money"></i> Proceed to Pay (إدفع)
                                 </button>
+
+                                    <img src="{{ asset('assets/images/card-brands.png') }}" alt="Card Brands" style="max-width:300px; width: 100%;
+                                     height: auto; display: inline-block; opacity: 0.95; transition: opacity 0.2s ease-in-out;">
+                                </div>
                                 <br><br>
                                 <input type="button" class="btn btn-dark" name="cancel" id="cancel" value="Cancel"
                                        style="float: right; background: #c1c1c1; color: #000;">
