@@ -54,7 +54,7 @@
                                 <input type="hidden" class="btn btn-dark" name="nmi_total_price" id="total_amount_input"
                                        value="nmi_total_price">
                                 <input type="button" class="btn btn-dark" name="cancel" id="cancel" value="Cancel">
-                                <input type="submit" class="btn btn-common" name="submit" id="submit" value="Pay Now">
+                                <input type="submit" class="btn btn-common" name="submit" id="submit" value="Next">
                             </div>
                     </div>
                 </div>

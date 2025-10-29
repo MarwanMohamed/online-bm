@@ -308,7 +308,7 @@
             <div class="form-group">
               <label for="exampleFormControlInput1"></label>
               <input type="button" class="btn btn-dark" name="cancel" id="cancel" value="Cancel">
-              <input  type="button" class="btn btn-common" name="submit" id="submit" value="Proceed to Pay">
+              <input  type="button" class="btn btn-common" name="submit" id="submit" value="Next">
             </div>
           </div>
         </div>
