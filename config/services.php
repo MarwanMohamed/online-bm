@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'tesspayments' => [
+        'merchant_key' => env('MERCHANT_KEY'),
+        'merchant_password' => env('MERCHANT_PASSWORD'),
+        'checkout_url' => env('CHECKOUT_URL'),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

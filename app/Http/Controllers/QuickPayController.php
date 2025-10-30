@@ -228,6 +228,10 @@ class QuickPayController extends Controller
     {
         Log::info('Payment Return Data:', $request->all());
 
+        if('cancelled' === $request->status) {
+            return response('Payment was cancelled by the customer.', 200);
+        }
+
         $transaction = Transaction::where('trans_key', $request->order_id)->first();
         $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
         if (!$policyDesc) {
