@@ -51,7 +51,7 @@ class RenewalExporter extends Exporter
     public static function modifyQuery(Builder $query): Builder
     {
         return Insurance::query()
-            ->selectRaw('0 as id')
+            ->selectRaw('0 as dummy')
             ->limit(1);
     }
 
