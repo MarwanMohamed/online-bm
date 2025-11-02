@@ -73,12 +73,14 @@ class QuickPayController extends Controller
         $checkout = new CheckoutService();
         $orderNumber = 'T-' . time() . '-' . $refNo;
         $description = !empty($policyDetails['description']) ? $policyDetails['description'] : $refNo;
+        $amount = $policyDetails['amount'] ?? $policyDetails['total_amount'];
+        //Log::info("Amount Type: " . print_r($policyDetails, true));
         try{
             $tessResponse = $checkout->standardPayment([
                 "operation" => "purchase",
                 "order" => [
                     "number" => $orderNumber,
-                    "amount" => number_format($policyDetails['amount'], 2, '.', ''),
+                    "amount" => number_format($amount, 2, '.', ''),
                     "currency" => "QAR",
                     "description" => $description,
                 ],
@@ -237,7 +239,7 @@ class QuickPayController extends Controller
         if (!$policyDesc) {
             $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
         }
-        //Log::info($policyDesc);
+        //Log::info("Policy Desc: " . $policyDesc);
         $params = [
             'id' => $request->payment_id,
             'order_number' => $request->order_id,
