@@ -25,7 +25,6 @@ class QuickPayController extends Controller
         $isExist = Insurance::where('policy_id', $request->policy_id)->where('deleted', 0)->first();
         if (!$isExist) {
             $isExist = Quickpay::where('ref_no', $request->policy_id)->where('deleted', 0)->first();
-
         }
 
         if (isset($isExist)) {
@@ -233,11 +232,12 @@ class QuickPayController extends Controller
         if('cancelled' === $request->status) {
             return response('Payment was cancelled by the customer.', 200);
         }
-
+        $isQuickPay = true;
         $transaction = Transaction::where('trans_key', $request->order_id)->first();
         $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
         if (!$policyDesc) {
             $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
+            $isQuickPay = false;
         }
         $description = !empty($policyDesc) ? $policyDesc : $transaction['policy_ref'];
         //Log::info("Transaction: " . print_r($transaction,true));
@@ -258,8 +258,14 @@ class QuickPayController extends Controller
                     'status' => 'Payment processed successfully',
                     'transaction_no' => $request->payment_id
                 ]);
-            Quickpay::where('ref_no', $transaction->policy_ref)
-                ->update(['status' => 0]);
+            if($isQuickPay) {
+                Quickpay::where('ref_no', $transaction->policy_ref)
+                    ->update(['status' => 0]);
+            }
+            else {
+                Insurance::where('policy_id', $transaction->policy_ref)
+                    ->update(['payment_status' => 1, 'status' => 2]);
+            }
             $footerchk = 1;
             $data = [
                 'order_id' => $request->order_id,
