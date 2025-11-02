@@ -235,17 +235,20 @@ class QuickPayController extends Controller
         }
 
         $transaction = Transaction::where('trans_key', $request->order_id)->first();
-        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->select('description','amount')->first();
         if (!$policyDesc) {
-            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
+            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->select('description','total_amount')->first();
         }
-        //Log::info("Policy Desc: " . $policyDesc);
+        $description = !empty($policyDesc['description']) ? $policyDesc['description'] : $transaction['policy_ref'];
+        $amount = $policyDesc['amount'] ?? $policyDesc['total_amount'];
+        //Log::info("Transaction: " . print_r($transaction,true));
+        //Log::info("Policy Desc: " . print_r($policyDesc,true));
         $params = [
             'id' => $request->payment_id,
             'order_number' => $request->order_id,
-            'order_amount' => number_format($transaction->amount, 2, '.', ''),
+            'order_amount' => number_format($amount, 2, '.', ''),
             'order_currency' => 'QAR',
-            'order_description' => $policyDesc
+            'order_description' => $description
         ];
         $returnUrlHash = HashService::generate($params, Actions::RETURN_URL);
         if($request->hash === $returnUrlHash && 'success' === $request->status)
@@ -262,7 +265,7 @@ class QuickPayController extends Controller
             $data = [
                 'order_id' => $request->order_id,
                 'policy_ref' => $transaction->policy_ref,
-                'order_info' => $policyDesc,
+                'order_info' => $description,
                 'order_amount' => 'QAR ' . number_format($transaction->amount, 2),
                 'order_status' => ('success' === $request->status ? 'Payment processed successfully.' : 'Payment unsuccessful'),
                 'order_date' => date('d-m-Y', time())
