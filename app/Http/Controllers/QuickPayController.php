@@ -266,7 +266,7 @@ class QuickPayController extends Controller
                 'order_id' => $request->order_id,
                 'policy_ref' => $transaction->policy_ref,
                 'order_info' => $description,
-                'order_amount' => 'QAR ' . number_format($transaction->amount, 2),
+                'order_amount' => 'QAR ' . number_format($amount, 2),
                 'order_status' => ('success' === $request->status ? 'Payment processed successfully.' : 'Payment unsuccessful'),
                 'order_date' => date('d-m-Y', time())
             ];
