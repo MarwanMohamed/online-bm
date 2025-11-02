@@ -97,7 +97,7 @@ class QuickPayController extends Controller
                     Transaction::create([
                         'policy_ref' => $refNo,
                         'trans_key' => $orderNumber,
-                        'amount' => number_format($policyDetails['amount'], 2, '.', ''),
+                        'amount' => number_format($amount, 2, '.', ''),
                         'status' => 'Pending',
                         'date' => date('Y-m-d H:i:s', time()),
                         'txn_type' => 'Other',
@@ -235,18 +235,17 @@ class QuickPayController extends Controller
         }
 
         $transaction = Transaction::where('trans_key', $request->order_id)->first();
-        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->select('description','amount')->first();
+        $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
         if (!$policyDesc) {
-            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->select('description','total_amount')->first();
+            $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
         }
-        $description = !empty($policyDesc['description']) ? $policyDesc['description'] : $transaction['policy_ref'];
-        $amount = $policyDesc['amount'] ?? $policyDesc['total_amount'];
+        $description = !empty($policyDesc) ? $policyDesc : $transaction['policy_ref'];
         //Log::info("Transaction: " . print_r($transaction,true));
         //Log::info("Policy Desc: " . print_r($policyDesc,true));
         $params = [
             'id' => $request->payment_id,
             'order_number' => $request->order_id,
-            'order_amount' => number_format($amount, 2, '.', ''),
+            'order_amount' => number_format($transaction->amount, 2, '.', ''),
             'order_currency' => 'QAR',
             'order_description' => $description
         ];
@@ -266,7 +265,7 @@ class QuickPayController extends Controller
                 'order_id' => $request->order_id,
                 'policy_ref' => $transaction->policy_ref,
                 'order_info' => $description,
-                'order_amount' => 'QAR ' . number_format($amount, 2),
+                'order_amount' => 'QAR ' . number_format($transaction->amount, 2),
                 'order_status' => ('success' === $request->status ? 'Payment processed successfully.' : 'Payment unsuccessful'),
                 'order_date' => date('d-m-Y', time())
             ];
