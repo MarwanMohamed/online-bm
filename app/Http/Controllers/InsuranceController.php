@@ -174,8 +174,84 @@ class InsuranceController extends Controller
         return Blacklist::where('qid', $qid)->first();
     }
 
-    public function comprehensive()
+    public function comprehensive(Request $request)
     {
+        if ($request->isMethod('post')) {
+            $this->validate($request, [
+                'name' => 'required',
+                'email' => 'required|email',
+                'mobile' => 'required',
+                'vhl_chassis' => 'required',
+                'opt_1' => 'required',
+                'com_id' => 'required',
+                'vhl_reg_no' => 'required',
+            ]);
+
+            $isBlacklisted = $this->isBlacklisted(($request->input('owner_type') == 'I') ? $request->input('qid') : $request->input('eid'));
+            if (!empty($isBlacklisted)) {
+                return redirect()->back()->with(['error' => "You're blacklisted, Please contact support"]);
+            }
+
+            $data = array(
+                'ins_type' => 'Comprehensive',
+                'owner_type' => $request->input('owner_type'),
+                'name' => $request->input('name'),
+                'phone' => $request->input('phone'),
+                'mobile' => $request->input('mobile'),
+                'email' => $request->input('email'),
+                'area' => $request->input('area'),
+                'vhl_make' => $request->input('vhl_make'),
+                'vhl_class' => $request->input('vhl_class'),
+                'vhl_year' => $request->input('vhl_year'),
+                'vhl_color' => $request->input('vhl_color'),
+                'vhl_body_type' => $request->input('vhl_body_type'),
+                'vhl_chassis' => $request->input('vhl_chassis'),
+                'vhl_engine' => $request->input('vhl_engine'),
+                'vhl_reg_no' => $request->input('vhl_reg_no'),
+                'com_id' => $request->input('com_id'),
+                'opt_1' => $request->input('opt_1'),
+                'opt_2' => $request->input('opt_2'),
+                'opt_3' => (!empty($request->input('opt_3'))) ? $request->input('opt_3') : 0,
+                'opt_4' => (!empty($request->input('opt_4'))) ? $request->input('opt_4') : 0,
+                'add_opt' => $request->input('add_opt'),
+                'passengers' => (!empty($request->input('passengers'))) ? $request->input('passengers') : 0,
+                'pb_no' => $request->input('pb_no'),
+                'base_amount' => $request->input('base_amount', 0),
+                'pass_amount' => $request->input('pass_amount', 0),
+                'opt_amount' => $request->input('opt_amount', 0),
+                'discount' => $request->input('discount', 0),
+                'total_amount' => $request->input('total_amount', 0),
+                'status' => 4
+            );
+
+            $startDt = strtotime(str_replace('/', '-', $request->input('start_date')));
+            $endDt = strtotime('+1 year -1 day', $startDt);
+            $data['start_date'] = date("Y-m-d", $startDt);
+            $data['end_date'] = date("Y-m-d", $endDt);
+
+            $data['qid'] = ($data['owner_type'] == 'I') ? $request->input('qid') : $request->input('eid');
+            $data['policy_id'] = (new InsuranceHelper)->getUniqueRefNo();
+            $data['read'] = 0;
+
+            Insurance::create($data);
+
+            $recipients = User::all();
+            Notification::make()
+                ->title('Comprehensive Insurance Created')
+                ->sendToDatabase($recipients);
+
+            $title = "Comprehensive Insurance - Confirmation";
+            $opt_1 = $this->getVehicleType($data['opt_1']);
+            $opt_2 = $this->getVehicleType($data['opt_2']);
+            $opt_3 = $this->getVehicleType($data['opt_3']);
+            $opt_4 = $this->getVehicleType($data['opt_4']);
+            $add_opt = Optional::where('id', $data['add_opt'])->first();
+            $area = Area::where('id', $data['area'])->first();
+            $data['company'] = Company::where('id', $data['com_id'])->first()?->name;
+
+            return view('site.insurance.confirm', compact('title', 'data', 'area', 'opt_1', 'opt_2', 'opt_3', 'opt_4', 'add_opt'));
+        }
+
         $title = "Comprehensive Insurance";
         $qb_opt = Optional::where('deleted', 0)->where('parent_id', 3)->get();
         $areas = Area::all();
