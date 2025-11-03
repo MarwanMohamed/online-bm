@@ -32,6 +32,7 @@ Route::post('/insurance/confirm', [InsuranceController::class, 'confirm']);
 
 
 Route::get('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
+Route::post('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
 
 
 Route::get('renew', [RenewController::class, 'renew']);
