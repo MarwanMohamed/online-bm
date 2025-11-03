@@ -81,8 +81,9 @@
     </div>
     <div id="free-promo">
         <form id="thirdPartFrm" autocomplete="off" name="thirdPartFrm"
-              action="https://qbima.qa/insurance/addcomprehensive" method="post" enctype="multipart/form-data"
+              action="/insurance/comprehensive" method="post" enctype="multipart/form-data"
               novalidate="novalidate">
+            @csrf
             <div class="container">
                 <div class="row">
                     <h6 style="color:#b50555"><strong>Owner Details</strong></h6>
