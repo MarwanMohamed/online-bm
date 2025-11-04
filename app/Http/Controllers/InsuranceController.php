@@ -18,6 +18,7 @@ use App\Models\VehicleModel;
 use App\Models\VehicleModelDetails;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InsuranceController extends Controller
 {
@@ -177,15 +178,40 @@ class InsuranceController extends Controller
     public function comprehensive(Request $request)
     {
         if ($request->isMethod('post')) {
-            $this->validate($request, [
+            // Debug: Log the request data
+            Log::info('Comprehensive Insurance Form Submission', [
+                'request_data' => $request->all(),
+                'files' => $request->allFiles()
+            ]);
+            // Validate based on owner type
+            $validationRules = [
                 'name' => 'required',
                 'email' => 'required|email',
                 'mobile' => 'required',
-                'vhl_chassis' => 'required',
                 'opt_1' => 'required',
                 'com_id' => 'required',
                 'vhl_reg_no' => 'required',
-            ]);
+                'vhl_make' => 'required',
+                'vhl_class' => 'required',
+                'vhl_year' => 'required',
+                'vhl_color' => 'required',
+                'vhl_body_type' => 'required',
+                'area' => 'required',
+                'start_date' => 'required',
+                'qid_front' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+                'ist_front' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+                'ist_back' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            ];
+
+            // Add conditional validation based on owner type
+            if ($request->input('owner_type') == 'I') {
+                $validationRules['qid'] = 'required|digits:11';
+            } else {
+                $validationRules['eid'] = 'required|digits:8';
+                $validationRules['pb_no'] = 'required';
+            }
+
+            $this->validate($request, $validationRules);
 
             $isBlacklisted = $this->isBlacklisted(($request->input('owner_type') == 'I') ? $request->input('qid') : $request->input('eid'));
             if (!empty($isBlacklisted)) {
@@ -196,7 +222,7 @@ class InsuranceController extends Controller
                 'ins_type' => 'Comprehensive',
                 'owner_type' => $request->input('owner_type'),
                 'name' => $request->input('name'),
-                'phone' => $request->input('phone'),
+                'phone' => $request->input('phone') ?: null,
                 'mobile' => $request->input('mobile'),
                 'email' => $request->input('email'),
                 'area' => $request->input('area'),
@@ -205,15 +231,15 @@ class InsuranceController extends Controller
                 'vhl_year' => $request->input('vhl_year'),
                 'vhl_color' => $request->input('vhl_color'),
                 'vhl_body_type' => $request->input('vhl_body_type'),
-                'vhl_chassis' => $request->input('vhl_chassis'),
-                'vhl_engine' => $request->input('vhl_engine'),
+                'vhl_chassis' => 1, 
+                'vhl_engine' => 1,  
                 'vhl_reg_no' => $request->input('vhl_reg_no'),
                 'com_id' => $request->input('com_id'),
                 'opt_1' => $request->input('opt_1'),
-                'opt_2' => $request->input('opt_2'),
+                'opt_2' => (!empty($request->input('opt_2'))) ? $request->input('opt_2') : 0,
                 'opt_3' => (!empty($request->input('opt_3'))) ? $request->input('opt_3') : 0,
                 'opt_4' => (!empty($request->input('opt_4'))) ? $request->input('opt_4') : 0,
-                'add_opt' => $request->input('add_opt'),
+                'add_opt' => $request->input('add_opt', 0),
                 'passengers' => (!empty($request->input('passengers'))) ? $request->input('passengers') : 0,
                 'pb_no' => $request->input('pb_no'),
                 'base_amount' => $request->input('base_amount', 0),
@@ -233,25 +259,40 @@ class InsuranceController extends Controller
             $data['policy_id'] = (new InsuranceHelper)->getUniqueRefNo();
             $data['read'] = 0;
 
-            Insurance::create($data);
+            $insurance = Insurance::create($data);
+
+            // Handle file uploads
+            if ($request->hasFile('qid_front')) {
+                $insurance->addMediaFromRequest('qid_front')
+                    ->toMediaCollection('qid_front');
+            }
+            
+            if ($request->hasFile('ist_front')) {
+                $insurance->addMediaFromRequest('ist_front')
+                    ->toMediaCollection('ist_front');
+            }
+            
+            if ($request->hasFile('ist_back')) {
+                $insurance->addMediaFromRequest('ist_back')
+                    ->toMediaCollection('ist_back');
+            }
 
             $recipients = User::all();
             Notification::make()
                 ->title('Comprehensive Insurance Created')
                 ->sendToDatabase($recipients);
 
-            $title = "Comprehensive Insurance - Confirmation";
-            $opt_1 = $this->getVehicleType($data['opt_1']);
-            $opt_2 = $this->getVehicleType($data['opt_2']);
-            $opt_3 = $this->getVehicleType($data['opt_3']);
-            $opt_4 = $this->getVehicleType($data['opt_4']);
-            $add_opt = Optional::where('id', $data['add_opt'])->first();
-            $area = Area::where('id', $data['area'])->first();
-            $data['company'] = Company::where('id', $data['com_id'])->first()?->name;
+            Log::info('Comprehensive Insurance Created Successfully', [
+                'policy_id' => $insurance->policy_id,
+                'insurance_id' => $insurance->id
+            ]);
 
-            return view('site.insurance.confirm', compact('title', 'data', 'area', 'opt_1', 'opt_2', 'opt_3', 'opt_4', 'add_opt'));
+            // Redirect back to form with success message
+            return redirect('/insurance/comprehensive')
+                ->with('success', 'Comprehensive insurance application submitted successfully! Policy ID: ' . $insurance->policy_id);
         }
 
+        // GET request - Show the form
         $title = "Comprehensive Insurance";
         $qb_opt = Optional::where('deleted', 0)->where('parent_id', 3)->get();
         $areas = Area::all();
