@@ -265,11 +265,11 @@
                                         <a class="insurance_logo"
                                            {{($result['active'] == 0) ? 'style="pointer-events:none;filter: contrast(0.7);"' : '' }}
                                            data-id="{{ $result['id']}}">
-                                            @if($result['logo'])
-                                            <img src="/assets/img/insurancelogos/{{ $result['logo']}}"
-                                                 alt="{{$result['name']}}" class="img-uploads img-thumbnail">
-                                            @else
+                                            @if($result->getFirstMediaUrl())
                                                 <img src="{{ $result->getFirstMediaUrl()}}"
+                                                     alt="{{$result['name']}}" class="img-uploads img-thumbnail">
+                                            @else
+                                                <img src="/assets/img/insurancelogos/{{ $result['logo']}}"
                                                      alt="{{$result['name']}}" class="img-uploads img-thumbnail">
                                             @endif
                                         </a>
