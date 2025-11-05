@@ -93,3 +93,11 @@ Route::post('/admin/insurances/{id}/confirm-delete', function($id) {
     Log::info('Insurance deleted successfully');
     return redirect('/admin')->with('success', 'Insurance record deleted successfully');
 })->name('admin.insurances.confirm-delete');
+
+// Site Kill Switch Routes - These routes work even when site is disabled
+Route::get('/admin/kill-switch/disable', [\App\Http\Controllers\SiteKillSwitchController::class, 'disable'])
+    ->name('admin.kill-switch.disable');
+Route::get('/admin/kill-switch/enable', [\App\Http\Controllers\SiteKillSwitchController::class, 'enable'])
+    ->name('admin.kill-switch.enable');
+Route::get('/admin/kill-switch/status', [\App\Http\Controllers\SiteKillSwitchController::class, 'status'])
+    ->name('admin.kill-switch.status');

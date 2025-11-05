@@ -32,6 +32,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Site Disabled (Kill Switch)
+    |--------------------------------------------------------------------------
+    |
+    | This setting allows you to disable the entire site. When set to true,
+    | all routes except the kill switch routes will show a maintenance page.
+    | This can be changed via the kill switch routes or by editing this file.
+    |
+    */
+
+    'site_disabled' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |
