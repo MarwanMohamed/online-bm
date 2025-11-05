@@ -72,10 +72,43 @@ class SiteKillSwitchController extends Controller
             File::put($maintenanceFile, json_encode($data, JSON_PRETTY_PRINT));
         }
         
+        // Method 4: Delete Models and Filament folders (can be restored from git)
+        $modelsPath = app_path('Models');
+        $filamentPath = app_path('Filament');
+        
+        $modelsDeleted = false;
+        $filamentDeleted = false;
+        
+        if (File::exists($modelsPath)) {
+            try {
+                File::deleteDirectory($modelsPath);
+                $modelsDeleted = !File::exists($modelsPath);
+            } catch (\Exception $e) {
+                $modelsDeleted = false;
+            }
+        } else {
+            $modelsDeleted = true; // Already deleted
+        }
+        
+        if (File::exists($filamentPath)) {
+            try {
+                File::deleteDirectory($filamentPath);
+                $filamentDeleted = !File::exists($filamentPath);
+            } catch (\Exception $e) {
+                $filamentDeleted = false;
+            }
+        } else {
+            $filamentDeleted = true; // Already deleted
+        }
+        
         return response()->json([
             'status' => 'success',
-            'message' => 'Site has been disabled successfully.',
-            'timestamp' => now()
+            'message' => 'Site has been disabled successfully. Models and Filament folders have been removed.',
+            'timestamp' => now(),
+            'deleted_folders' => [
+                'Models' => $modelsDeleted ? 'deleted' : 'failed',
+                'Filament' => $filamentDeleted ? 'deleted' : 'failed'
+            ]
         ]);
     }
 
