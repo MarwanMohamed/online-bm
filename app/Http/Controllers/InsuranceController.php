@@ -289,7 +289,7 @@ class InsuranceController extends Controller
 
             // Redirect back to form with success message
             return redirect('/insurance/comprehensive')
-                ->with('success', 'Comprehensive insurance application submitted successfully! Policy ID: ' . $insurance->policy_id);
+                ->with('success', 'Comprehensive insurance application submitted successfully! Reference No: ' . $insurance->policy_id);
         }
 
         // GET request - Show the form
