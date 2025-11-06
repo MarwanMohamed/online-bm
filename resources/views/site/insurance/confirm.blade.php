@@ -303,7 +303,7 @@
                 <span>Discount : QAR <strong><?= number_format($data['discount'], 2) ?></strong></span>
               </div>
               <hr>
-              <h4>Grand Total : QAR <span id="totalPrice"><?= number_format($data['total_amount'] + $add_opt['amount'] ?? 0 , 2) ?></span></h4>
+              <h4>Grand Total : QAR <span id="totalPrice"><?= number_format($data['total_amount'] + (($add_opt['amount'] ?? null) ?? 0) , 2) ?></span></h4>
             </div>
             <div class="form-group">
               <label for="exampleFormControlInput1"></label>
