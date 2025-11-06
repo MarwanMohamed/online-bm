@@ -290,7 +290,7 @@ class ComprehensiveResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()->startOnStep(3)
+                ])->columnSpanFull()
             ]);
     }
 

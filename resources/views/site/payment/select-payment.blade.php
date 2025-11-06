@@ -26,8 +26,7 @@
                                 <span>Reference Number : <strong>{{$policyRef}}</strong></span><br>
                             </div>
                             <hr>
-                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format($total_amount, 2)}}</span></h6>
-
+                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format((float) str_replace(',', '', $total_amount), 2)}}</span></h6>
 
                             <label for="payment">Pay using : </label>
 
@@ -60,7 +59,7 @@
                                 <span>Reference Number : <strong>{{$policyRef}}</strong></span><br>
                             </div>
                             <hr>
-                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format($total_amount, 2)}}</span></h6>
+                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format((float) str_replace(',', '', $total_amount), 2)}}</span></h6>
 
 
                             <label for="payment">Pay using : </label>

@@ -127,7 +127,18 @@ class InsuranceResource extends Resource
                             RadioButtonImage::make('com_id')->required()
                                 ->label('Company')
                                 ->options(
-                                    Company::orderBy('priority')->where('active', 1)->get()->pluck('logo', 'id')->toArray()
+                                    Company::orderBy('priority')
+                                        ->where('active', 1)
+                                        ->get()
+                                        ->mapWithKeys(function ($company) {
+                                            $media = $company->getFirstMedia();
+                                            $imageUrl = $media
+                                                ? '../../storage/' . $media->id . '/' . $media->file_name
+                                                :  $company->logo;
+
+                                            return [$company->id => $imageUrl];
+                                        })
+                                        ->toArray()
                                 ),
 
                             Select::make('opt_1')->label('Type of Vehicle ')->searchable()->required()
