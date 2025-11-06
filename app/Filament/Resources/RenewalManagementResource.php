@@ -46,7 +46,6 @@ class RenewalManagementResource extends Resource
     {
         return parent::getEloquentQuery()->where('deleted', 0)
             ->where('pb_no', "renewal")
-            ->whereHas('transaction')
             ->with('user');
             //->orderBy('id', 'desc');
     }
@@ -356,7 +355,7 @@ class RenewalManagementResource extends Resource
                         //     ->success()
                         //     ->send();
                     })
-                    ->visible(fn($record) => $record->refund_status == 0 && $record->txn_type == 'Other'),
+                   ->visible(fn($record) => $record->refund_status == 0 && $record->txn_type == 'Other'),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -380,6 +379,7 @@ class RenewalManagementResource extends Resource
         return [
             'index' => Pages\ListRenewalManagement::route('/'),
             'create' => Pages\CreateRenewalManagement::route('/create'),
+            'view' => Pages\ViewRenewalManagement::route('/{record}'),
             'edit' => Pages\EditRenewalManagement::route('/{record}/edit'),
         ];
     }
