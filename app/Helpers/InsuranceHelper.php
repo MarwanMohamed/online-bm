@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Discount;
 use App\Models\Insurance;
+use App\Models\Optional;
 use App\Models\Thirdparty;
 
 class InsuranceHelper
@@ -19,6 +20,9 @@ class InsuranceHelper
             $priceId = $data['opt_2'];
         }
         $discount = $this->getDiscount();
+        if (isset($data['add_opt'])) {
+            $optional = Optional::find($data['add_opt']);
+        }
         $priceData = Thirdparty::where('id', $priceId)->first();
         $data = [
             'base_amount' => $priceData->base,
@@ -28,6 +32,10 @@ class InsuranceHelper
         $subTotal = $data['base_amount'] + $data['pass_amount'] + $data['opt_amount'];
         $data['discount'] = $subTotal * $discount;
         $data['total_amount'] = $data['base_amount'] + $data['pass_amount'] + $data['opt_amount'] - $data['discount'];
+
+        if (isset($optional)) {
+            $data['total_amount'] = $data['total_amount'] + $optional->amount;
+        }
         return $data;
     }
 
