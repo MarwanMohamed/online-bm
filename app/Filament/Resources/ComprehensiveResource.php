@@ -302,7 +302,7 @@ class ComprehensiveResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
-                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->disabledClick()->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\IconColumn::make('active')->label('Status')->searchable()->sortable()
                     ->icon(fn(string $state): string => match ($state) {

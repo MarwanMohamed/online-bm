@@ -261,7 +261,7 @@ class RenewalManagementResource extends Resource
                 Tables\Columns\TextColumn::make('start_date')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->start_date))),
 
-                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->disabledClick()->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('qid')->label('Qatar ID')->searchable()->sortable(),
 

@@ -15,7 +15,6 @@
         <div class="container">
 
             <div class="row" style="margin-bottom: 20px;">
-                <h6 style="color:#b50555; text-align:center">Choose your preferred mode of payment</h6><br>
 
                 <div class="col-md-12">
 

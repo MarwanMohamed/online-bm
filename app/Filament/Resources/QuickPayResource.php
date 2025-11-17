@@ -152,7 +152,8 @@ class QuickPayResource extends Resource
                 TextColumn::make('policy_type')->label('Policy Type')->searchable()->sortable()
                     ->badge()
                     ->color('info'),
-                TextColumn::make('ref_no')->label('Reference #')->searchable()->sortable(),
+                TextColumn::make('ref_no')->label('Reference #')
+                    ->searchable()->sortable()->disabledClick(),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('amount')->searchable()->sortable(),
                 TextColumn::make('status')->label('Status')
