@@ -59,10 +59,7 @@
                     </div>
                 </div>
             </div>
-            <div class="back-button">
-                <a href="/">
-                    <i class="fa fa-chevron-left">&nbsp;&nbsp;</i> Back to Home </a>
-            </div>
+
         </div>
     </div>
 @stop

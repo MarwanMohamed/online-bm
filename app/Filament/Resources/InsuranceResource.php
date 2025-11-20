@@ -256,7 +256,8 @@ class InsuranceResource extends Resource
                                 '4' => 'In Progress',
                                 '2' => 'Paid',
                                 '6' => 'Verification',
-                                '7' => 'Lost'
+                                '7' => 'Lost',
+                                '3' => 'Issued',
                             ])->inline()->reactive()->default(1),
 
                             TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
@@ -264,7 +265,7 @@ class InsuranceResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()
+                ])->columnSpanFull()->startOnStep(6)
             ]);
     }
 
