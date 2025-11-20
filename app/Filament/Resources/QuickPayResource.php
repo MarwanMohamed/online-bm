@@ -247,6 +247,7 @@ class QuickPayResource extends Resource
                 'Comprehensive',
                 'Export',
                 'Third Party',
+                'Extension',
             ],
             'Marine' => [
                 'Cargo',
