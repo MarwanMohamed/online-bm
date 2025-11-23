@@ -1,161 +1,284 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>E-Receipt - Quick Pay</title>
+    <title>Payment Confirmation - Quick Pay</title>
+    <meta charset="utf-8">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12pt;
+            font-family: Arial, Verdana, sans-serif;
+            font-size: 10pt;
             color: #08185A;
             background-color: #FFFFFF;
-            margin: 20px;
+            line-height: 1.6;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #08185A;
-            padding-bottom: 20px;
-        }
-        .header h1 {
-            color: #08185A;
-            font-size: 24pt;
-            margin: 0;
-        }
-        .header h2 {
-            color: #08185A;
-            font-size: 18pt;
-            margin: 10px 0 0 0;
-        }
-        .receipt-info {
-            margin: 20px 0;
-        }
-        .receipt-info table {
-            width: 100%;
-            border-collapse: collapse;
+        .header-section {
+            padding: 20px 40px;
+            border-bottom: 2px solid #E1E1E1;
             margin-bottom: 20px;
         }
-        .receipt-info th {
-            background-color: #E1E1E1;
-            padding: 10px;
-            text-align: left;
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+        .logo-container {
+            display: table-cell;
+            vertical-align: middle;
+            width: 120px;
+            padding-right: 20px;
+        }
+        .logo-container img {
+            max-width: 100px;
+            max-height: 80px;
+            height: auto;
+        }
+        .company-info {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .company-name {
+            font-size: 18pt;
+            color: #08185A;
             font-weight: bold;
-            border: 1px solid #08185A;
+            margin-bottom: 5px;
         }
-        .receipt-info td {
-            padding: 10px;
-            border: 1px solid #08185A;
-        }
-        .receipt-info tr.shade {
-            background-color: #F5F5F5;
-        }
-        .amount-section {
-            margin-top: 30px;
-            text-align: right;
+        .company-name-arabic {
             font-size: 14pt;
-            font-weight: bold;
+            color: #08185A;
+            direction: rtl;
+            text-align: right;
+            margin-bottom: 5px;
         }
-        .footer {
-            margin-top: 50px;
-            text-align: center;
+        .company-tagline {
             font-size: 10pt;
             color: #666;
-            border-top: 1px solid #08185A;
-            padding-top: 20px;
         }
-        .status-badge {
-            padding: 5px 15px;
-            background-color: #00AA00;
-            color: white;
-            border-radius: 5px;
+        .breadcrumb {
+            padding: 10px 40px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #E1E1E1;
+            margin-bottom: 30px;
+        }
+        .breadcrumb-item {
+            color: #08185A;
+            text-decoration: none;
+            font-size: 9pt;
+        }
+        .breadcrumb-item.active {
+            color: #666;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        .payment-details {
+            margin: 30px 0;
+        }
+        .payment-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .payment-details td {
+            padding: 12px 15px;
+            border: 1px solid #E1E1E1;
+            font-size: 10pt;
+        }
+        .payment-details td:first-child {
+            width: 40%;
+            text-align: left;
             font-weight: bold;
+        }
+        .payment-details td:last-child {
+            width: 60%;
+            text-align: left;
+        }
+        .payment-details tr:nth-child(even) {
+            background-color: #F5F5F5;
+        }
+        .payment-details tr:nth-child(odd) {
+            background-color: #FFFFFF;
+        }
+        .status-success {
+            color: #00AA00;
+            font-weight: bold;
+        }
+        .action-buttons {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background-color: #b50555;
+            color: #FFFFFF;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            font-size: 11pt;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #8d0442;
+        }
+        .btn-print {
+            background-color: #b50555;
+        }
+        .btn-order {
+            background-color: #b50555;
+            padding: 12px 40px;
+        }
+        .footer-links {
+            margin: 40px 0 20px 0;
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #E1E1E1;
+        }
+        .footer-links a {
+            color: #08185A;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 9pt;
+        }
+        .footer-links a:hover {
+            color: #b50555;
+        }
+        .general-insurance {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 10pt;
+            color: #08185A;
+        }
+        .copyright {
+            background-color: #b50555;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 9pt;
+        }
+        @media print {
+            .btn {
+                display: none;
+            }
+            .action-buttons {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>E-RECEIPT</h1>
-        <h2>Quick Pay Payment Receipt</h2>
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="header-content">
+            <div class="logo-container">
+                @php
+                    $logoPath = public_path('assets/img/logo.png');
+                @endphp
+                @if(file_exists($logoPath))
+                <img src="file://{{ str_replace('\\', '/', $logoPath) }}" alt="Qatar Bima Logo" style="max-width: 100px; max-height: 80px;">
+                @endif
+            </div>
+            <div class="company-info">
+                <div class="company-name">Qatar Bima International W.L.L</div>
+                <div class="company-name-arabic">بيمة قطر العالمية ذ.م.م.</div>
+                <div class="company-tagline">وسطاء تأمين - Insurance Brokers</div>
+            </div>
+        </div>
     </div>
 
-    <div class="receipt-info">
-        <table>
-            <tr class="title">
-                <th colspan="2">Payment Details</th>
-            </tr>
-            <tr>
-                <td width="40%"><strong>Reference Number:</strong></td>
-                <td>{{ $quickpay->ref_no }}</td>
-            </tr>
-            <tr class="shade">
-                <td><strong>Policy Group:</strong></td>
-                <td>{{ $quickpay->category ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <td><strong>Policy Type:</strong></td>
-                <td>{{ $quickpay->policy_type ?? 'N/A' }}</td>
-            </tr>
-            <tr class="shade">
-                <td><strong>Customer Name:</strong></td>
-                <td>{{ $quickpay->name }}</td>
-            </tr>
-            <tr>
-                <td><strong>Email:</strong></td>
-                <td>{{ $quickpay->email }}</td>
-            </tr>
-            <tr class="shade">
-                <td><strong>Contact:</strong></td>
-                <td>{{ $quickpay->contact }}</td>
-            </tr>
-            <tr>
-                <td><strong>Description:</strong></td>
-                <td>{{ $quickpay->description }}</td>
-            </tr>
-            @if($transaction)
-            <tr class="shade">
-                <td><strong>Transaction Key:</strong></td>
-                <td>{{ $transaction->trans_key }}</td>
-            </tr>
-            <tr>
-                <td><strong>Transaction Number:</strong></td>
-                <td>{{ $transaction->transaction_no ?? 'N/A' }}</td>
-            </tr>
-            <tr class="shade">
-                <td><strong>Transaction Date:</strong></td>
-                <td>{{ \Carbon\Carbon::parse($transaction->date ?? $quickpay->created_at)->format('d/m/Y h:i A') }}</td>
-            </tr>
-            @endif
-            <tr>
-                <td><strong>Payment Status:</strong></td>
-                <td>
-                    <span class="status-badge">{{ $quickpay->status == 0 ? 'Paid' : 'Unpaid' }}</span>
-                </td>
-            </tr>
-            <tr class="shade">
-                <td><strong>Created Date:</strong></td>
-                <td>{{ \Carbon\Carbon::parse($quickpay->created_at)->format('d/m/Y h:i A') }}</td>
-            </tr>
-            @if($quickpay->user)
-            <tr>
-                <td><strong>Agent:</strong></td>
-                <td>{{ $quickpay->user->name }}</td>
-            </tr>
-            @endif
-        </table>
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb">
+        <a class="breadcrumb-item" href="/">Home</a>
+        <span style="color: #666; margin: 0 5px;">></span>
+        <span class="breadcrumb-item active">Payment Confirm</span>
     </div>
 
-    <div class="amount-section">
-        <table style="width: 50%; margin-left: auto;">
-            <tr>
-                <td style="text-align: right; padding: 10px; border: 1px solid #08185A;"><strong>Total Amount:</strong></td>
-                <td style="text-align: right; padding: 10px; border: 1px solid #08185A; background-color: #E1E1E1;"><strong>QAR {{ number_format($quickpay->amount, 2) }}</strong></td>
-            </tr>
-        </table>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="payment-details">
+            <table>
+                <tr>
+                    <td>Policy Reference</td>
+                    <td>{{ $quickpay->ref_no }}</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>{{ $quickpay->description ?? ($quickpay->category ?? 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td><strong>QAR {{ number_format($quickpay->amount, 2) }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td class="status-success">{{ $quickpay->status == 0 ? 'Success' : 'Unpaid' }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->date ?? $quickpay->created_at)->format('d-m-Y') }}</td>
+                </tr>
+                @if($quickpay->name)
+                <tr>
+                    <td>Customer Name</td>
+                    <td>{{ $quickpay->name }}</td>
+                </tr>
+                @endif
+                @if($quickpay->email)
+                <tr>
+                    <td>Email</td>
+                    <td>{{ $quickpay->email }}</td>
+                </tr>
+                @endif
+                @if($quickpay->contact)
+                <tr>
+                    <td>Contact</td>
+                    <td>{{ $quickpay->contact }}</td>
+                </tr>
+                @endif
+                @if($transaction && $transaction->trans_key)
+                <tr>
+                    <td>Transaction Key</td>
+                    <td>{{ $transaction->trans_key }}</td>
+                </tr>
+                @endif
+                @if($transaction && $transaction->transaction_no)
+                <tr>
+                    <td>Transaction Number</td>
+                    <td>{{ $transaction->transaction_no }}</td>
+                </tr>
+                @endif
+            </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-print" onclick="window.print();">Print Receipt</button>
+            <button class="btn btn-order" onclick="window.location.href='/payment/quickpay';">Order Again</button>
+        </div>
     </div>
 
-    <div class="footer">
-        <p>This is an electronically generated receipt. No signature is required.</p>
-        <p>Generated on: {{ \Carbon\Carbon::now()->format('d/m/Y h:i A') }}</p>
+    <!-- Footer Links -->
+    <div class="footer-links">
+        <a href="#">Terms & Condition</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">About us</a>
+    </div>
+
+    <!-- General Insurance Section -->
+    <div class="general-insurance">
+        <strong>General Insurance</strong>
+    </div>
+
+    <!-- Copyright Footer -->
+    <div class="copyright">
+        © {{ date('Y') }} Qatar Bima International W.L.L
     </div>
 </body>
 </html>
-

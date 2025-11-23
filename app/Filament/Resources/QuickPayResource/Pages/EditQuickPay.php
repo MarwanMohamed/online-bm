@@ -19,21 +19,8 @@ class EditQuickPay extends EditRecord
                 ->label('Print E-Receipt')
                 ->icon('heroicon-o-printer')
                 ->color('info')
-                ->action(function () {
-                    $quickpay = $this->record;
-                    $transaction = Transaction::where('policy_ref', $quickpay->ref_no)
-                        ->where('status', 'Payment processed successfully')
-                        ->first();
-                    
-                    $pdf = PDF::loadView('pdf.quickpay-receipt', [
-                        'quickpay' => $quickpay,
-                        'transaction' => $transaction,
-                    ]);
-                    
-                    return response()->streamDownload(function () use ($pdf) {
-                        echo $pdf->stream();
-                    }, 'quickpay-receipt-' . $quickpay->ref_no . '.pdf');
-                })
+                ->url(fn () => route('quickpay.receipt', $this->record->id))
+                ->openUrlInNewTab()
                 ->visible(fn () => $this->record && $this->record->status == 0),
             Actions\DeleteAction::make(),
         ];
@@ -50,21 +37,8 @@ class EditQuickPay extends EditRecord
                 ->label('Print')
                 ->icon('heroicon-o-printer')
                 ->color('info')
-                ->action(function () {
-                    $quickpay = $this->record;
-                    $transaction = Transaction::where('policy_ref', $quickpay->ref_no)
-//                        ->where('status', 'Payment processed successfully')
-                        ->first();
-
-                    $pdf = PDF::loadView('pdf.quickpay-receipt', [
-                        'quickpay' => $quickpay,
-                        'transaction' => $transaction,
-                    ]);
-
-                    return response()->streamDownload(function () use ($pdf) {
-                        echo $pdf->stream();
-                    }, 'quickpay-receipt-' . $quickpay->ref_no . '.pdf');
-                }),
+                ->url(fn () => route('quickpay.receipt', $this->record->id))
+                ->openUrlInNewTab(),
 //                ->visible(fn () => $this->record && $this->record->status == 0), // Only show when payment is processed successfully
 
         ];
