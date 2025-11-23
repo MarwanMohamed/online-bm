@@ -46,13 +46,6 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
-        .company-name-arabic {
-            font-size: 14pt;
-            color: #08185A;
-            direction: rtl;
-            text-align: right;
-            margin-bottom: 5px;
-        }
         .company-tagline {
             font-size: 10pt;
             color: #666;
@@ -98,42 +91,21 @@
             width: 60%;
             text-align: left;
         }
-        .payment-details tr:nth-child(even) {
+        .payment-details tr:nth-child(even) td:first-child {
             background-color: #F5F5F5;
         }
-        .payment-details tr:nth-child(odd) {
+        .payment-details tr:nth-child(even) td:last-child {
+            background-color: #F5F5F5;
+        }
+        .payment-details tr:nth-child(odd) td:first-child {
+            background-color: #FFFFFF;
+        }
+        .payment-details tr:nth-child(odd) td:last-child {
             background-color: #FFFFFF;
         }
         .status-success {
             color: #00AA00;
             font-weight: bold;
-        }
-        .action-buttons {
-            margin: 30px 0;
-            text-align: center;
-        }
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            margin: 0 10px;
-            background-color: #b50555;
-            color: #FFFFFF;
-            text-decoration: none;
-            border: none;
-            border-radius: 4px;
-            font-size: 11pt;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #8d0442;
-        }
-        .btn-print {
-            background-color: #b50555;
-        }
-        .btn-order {
-            background-color: #b50555;
-            padding: 12px 40px;
         }
         .footer-links {
             margin: 40px 0 20px 0;
@@ -146,15 +118,14 @@
             text-decoration: none;
             margin: 0 15px;
             font-size: 9pt;
-        }
-        .footer-links a:hover {
-            color: #b50555;
+            font-weight: bold;
         }
         .general-insurance {
             text-align: center;
             margin: 20px 0;
             font-size: 10pt;
             color: #08185A;
+            font-weight: bold;
         }
         .copyright {
             background-color: #b50555;
@@ -163,13 +134,9 @@
             padding: 15px 0;
             font-size: 9pt;
         }
-        @media print {
-            .btn {
-                display: none;
-            }
-            .action-buttons {
-                display: none;
-            }
+        .copyright a {
+            color: #FFFFFF;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -187,15 +154,14 @@
             </div>
             <div class="company-info">
                 <div class="company-name">Qatar Bima International W.L.L</div>
-                <div class="company-name-arabic">بيمة قطر العالمية ذ.م.م.</div>
-                <div class="company-tagline">وسطاء تأمين - Insurance Brokers</div>
+                <div class="company-tagline">Insurance Brokers</div>
             </div>
         </div>
     </div>
 
     <!-- Breadcrumb Navigation -->
     <div class="breadcrumb">
-        <a class="breadcrumb-item" href="/">Home</a>
+        <span class="breadcrumb-item">Home</span>
         <span style="color: #666; margin: 0 5px;">></span>
         <span class="breadcrumb-item active">Payment Confirm</span>
     </div>
@@ -256,12 +222,6 @@
                 @endif
             </table>
         </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="btn btn-print" onclick="window.print();">Print Receipt</button>
-            <button class="btn btn-order" onclick="window.location.href='/payment/quickpay';">Order Again</button>
-        </div>
     </div>
 
     <!-- Footer Links -->
@@ -273,12 +233,12 @@
 
     <!-- General Insurance Section -->
     <div class="general-insurance">
-        <strong>General Insurance</strong>
+        General Insurance
     </div>
 
     <!-- Copyright Footer -->
     <div class="copyright">
-        © {{ date('Y') }} Qatar Bima International W.L.L
+        © {{ date('Y') }} Qatar Bima International W.L.L - Design and Development by <a href="http://bluelynx.qa" target="_blank">Blue Lynx</a>
     </div>
 </body>
 </html>

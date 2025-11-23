@@ -26,23 +26,6 @@ class EditQuickPay extends EditRecord
         ];
     }
 
-    protected function getFormActions(): array
-    {
-        return [
-            Actions\Action::make('save')
-                ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->submit('save'),
-
-            Actions\Action::make('print')
-                ->label('Print')
-                ->icon('heroicon-o-printer')
-                ->color('info')
-                ->url(fn () => route('quickpay.receipt', $this->record->id))
-                ->openUrlInNewTab(),
-//                ->visible(fn () => $this->record && $this->record->status == 0), // Only show when payment is processed successfully
-
-        ];
-    }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
