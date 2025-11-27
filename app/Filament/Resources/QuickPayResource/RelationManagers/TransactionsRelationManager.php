@@ -77,6 +77,7 @@ class TransactionsRelationManager extends RelationManager
                                 
                                 if (isset($response['result']) && $response['result'] === 'accepted') {
                                     $record->update(['refund_status' => '1']);
+                                    $record->quickPay->update(['status' => '8']);
                                     Notification::make()
                                             ->title('Refund Accepted')
                                             ->success()

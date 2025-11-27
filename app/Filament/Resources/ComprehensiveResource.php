@@ -127,7 +127,18 @@ class ComprehensiveResource extends Resource
                                 ->label('Company')
                                 ->required()
                                 ->options(
-                                    Company::orderBy('priority')->where('active', 1)->get()->pluck('logo', 'id')->toArray()
+                                    Company::orderBy('priority')
+                                        ->where('active', 1)
+                                        ->get()
+                                        ->mapWithKeys(function ($company) {
+                                            $media = $company->getFirstMedia();
+                                            $imageUrl = $media
+                                                ? '../../storage/' . $media->id . '/' . $media->file_name
+                                                :  $company->logo;
+
+                                            return [$company->id => $imageUrl];
+                                        })
+                                        ->toArray()
                                 ),
 
                 Select::make('opt_1')->label('Type of Vehicle ')->searchable()
@@ -192,20 +203,20 @@ class ComprehensiveResource extends Resource
                         ]),
                     Wizard\Step::make('Images')->icon('phosphor-images')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('image_qid_img')->maxSize(3000)->label(__('QID'))
-                                ->collection('image_qid_img')->columnSpan(2)->required(),
-                            SpatieMediaLibraryFileUpload::make('image_isb_img')->maxSize(3000)->label(__('ISTIMARA Back'))
-                                ->collection('image_isb_img')->columnSpan(2)->required(),
-                            SpatieMediaLibraryFileUpload::make('image_isf_img')->maxSize(3000)->label(__('ISTIMARA Front'))
-                                ->collection('image_isf_img')->columnSpan(2)->required(),
+                            SpatieMediaLibraryFileUpload::make('qid_front')->maxSize(3000)->label(__('QID'))
+                                ->collection('qid_front')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('ist_back')->maxSize(3000)->label(__('ISTIMARA Back'))
+                                ->collection('ist_back')->columnSpan(2),
+                            SpatieMediaLibraryFileUpload::make('ist_front')->maxSize(3000)->label(__('ISTIMARA Front'))
+                                ->collection('ist_front')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_fnt')->maxSize(3000)->label(__('Front'))
-                                ->collection('image_vhl_fnt')->columnSpan(2)->required(),
+                                ->collection('image_vhl_fnt')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_bck')->maxSize(3000)->label(__('Back'))
-                                ->collection('image_vhl_bck')->columnSpan(2)->required(),
+                                ->collection('image_vhl_bck')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_lft')->maxSize(3000)->label(__('Left'))
-                                ->collection('image_vhl_lft')->columnSpan(2)->required(),
+                                ->collection('image_vhl_lft')->columnSpan(2),
                             SpatieMediaLibraryFileUpload::make('image_vhl_rgt')->maxSize(3000)->label(__('Right'))
-                                ->collection('image_vhl_rgt')->columnSpan(2)->required(),
+                                ->collection('image_vhl_rgt')->columnSpan(2),
                         ]),
                     Wizard\Step::make('Premium Details')
                         ->schema([
@@ -291,7 +302,7 @@ class ComprehensiveResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
-                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->disabledClick()->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\IconColumn::make('active')->label('Status')->searchable()->sortable()
                     ->icon(fn(string $state): string => match ($state) {

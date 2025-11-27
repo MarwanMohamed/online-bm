@@ -282,4 +282,37 @@ class QuickPayController extends Controller
             return response('Payment could not be processed', 200);
         }
     }
+
+    public function showReceipt($id)
+    {
+
+        $quickpay = Quickpay::findOrFail($id);
+        $transaction = Transaction::where('policy_ref', $quickpay->ref_no)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $footerchk = 0;
+        return view('site.payment.quickpay-receipt', [
+            'quickpay' => $quickpay,
+            'transaction' => $transaction,
+            'footerchk' => $footerchk
+        ]);
+    }
+
+    public function downloadReceiptPdf($id)
+    {
+        $quickpay = Quickpay::findOrFail($id);
+        $transaction = Transaction::where('policy_ref', $quickpay->ref_no)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.quickpay-receipt', [
+            'quickpay' => $quickpay,
+            'transaction' => $transaction,
+        ]);
+        
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'quickpay-receipt-' . $quickpay->ref_no . '.pdf');
+    }
 }

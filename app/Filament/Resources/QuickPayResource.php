@@ -43,7 +43,7 @@ class QuickPayResource extends Resource
                     ->options([
                         'Motor' => 'Motor',
                         'General' => 'General',
-                        'Health' => 'Health',
+                        'Medical' => 'Medical',
                         'Marine' => 'Marine',
                         'Personal Accident' => 'Personal Accident',
                     ])->required()
@@ -143,7 +143,7 @@ class QuickPayResource extends Resource
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'General' => 'gray',
-                        'Health' => 'success',
+                        'Medical' => 'success',
                         'Motor' => 'warning',
                         'Marine' => 'info',
                         'Personal Accident' => 'primary',
@@ -152,7 +152,8 @@ class QuickPayResource extends Resource
                 TextColumn::make('policy_type')->label('Policy Type')->searchable()->sortable()
                     ->badge()
                     ->color('info'),
-                TextColumn::make('ref_no')->label('Reference #')->searchable()->sortable(),
+                TextColumn::make('ref_no')->label('Reference #')
+                    ->searchable()->sortable()->disabledClick(),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('amount')->searchable()->sortable(),
                 TextColumn::make('status')->label('Status')
@@ -194,7 +195,7 @@ class QuickPayResource extends Resource
                     ->label('Policy Group')
                     ->options([
                         'General' => 'General',
-                        'Health' => 'Health',
+                        'Medical' => 'Medical',
                         'Motor' => 'Motor',
                         'Marine' => 'Marine',
                         'Personal Accident' => 'Personal Accident',
@@ -246,15 +247,16 @@ class QuickPayResource extends Resource
                 'Comprehensive',
                 'Export',
                 'Third Party',
+                'Extension',
             ],
             'Marine' => [
                 'Cargo',
                 'Hull & Machinery',
             ],
-            'Health' => [
+            'Medical' => [
                 'Individual Medical Insurance',
                 'MRHI (60+)',
-                'Travel Insurance Inbound',
+                'Travel Insurance Inbound (MVHI)',
                 'Travel Insurance Outbound',
             ],
             'General' => [

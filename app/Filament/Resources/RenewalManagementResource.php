@@ -21,12 +21,14 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use IbrahimBougaoua\RadioButtonImage\Actions\RadioButtonImage;
 use Illuminate\Database\Eloquent\Builder;
+use TessPayments\Checkout\CheckoutService;
 
 class RenewalManagementResource extends Resource
 {
@@ -259,7 +261,7 @@ class RenewalManagementResource extends Resource
                 Tables\Columns\TextColumn::make('start_date')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->start_date))),
 
-                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->disabledClick()->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('qid')->label('Qatar ID')->searchable()->sortable(),
 
@@ -295,6 +297,65 @@ class RenewalManagementResource extends Resource
                     ->placeholder('Select Status')
             ])
             ->actions([
+                Tables\Actions\Action::make('refund')
+                    ->label('Refund')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Refund')
+                    ->modalDescription('Are you sure you want to refund this transaction?')
+                    ->action(function ($record) {
+                        if(!$record->transaction){
+                            return;
+                        }
+                        $renewal = $record;
+                        $record = $record->transaction;
+                        // Resolve the CheckoutService (or inject via constructor)
+                        if('Payment processed successfully' === $record['status']){
+                            $checkout = app(CheckoutService::class);
+
+                            $params = [
+                                'payment_id' => (string)$record['transaction_no'],
+                                'amount' => (string)number_format($record['amount'], 2, '.', ''),
+                            ];
+
+                            $response = $checkout->refundPayment($params);
+                            try {
+
+                                if (isset($response['result']) && $response['result'] === 'accepted') {
+                                    $record->update(['refund_status' => '1']);
+                                    $renewal->update(['status' => '8']);
+                                    Notification::make()
+                                        ->title('Refund Accepted')
+                                        ->success()
+                                        ->body('Payment ID: ' . $response['payment_id'])
+                                        ->send();
+                                } else {
+                                    Notification::make()
+                                        ->title('Refund Failed')
+                                        ->danger()
+                                        ->body($response['message'] ?? 'Unknown error')
+                                        ->send();
+                                }
+
+                            } catch (\Exception $e) {
+                                //print_r($record);
+                                //$this->notify('danger', 'Error: ' . $e->getMessage());
+                                Notification::make()
+                                    ->title('Refund Error')
+                                    ->danger()
+                                    ->body($e->getMessage())
+                                    ->send();
+                            }
+                        }
+                        // $record->update(['refund_status' => 1]);
+
+                        // \Filament\Notifications\Notification::make()
+                        //     ->title('Transaction Refunded')
+                        //     ->success()
+                        //     ->send();
+                    })
+                   ->visible(fn($record) => $record->refund_status == 0 && $record->txn_type == 'Other'),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -318,6 +379,7 @@ class RenewalManagementResource extends Resource
         return [
             'index' => Pages\ListRenewalManagement::route('/'),
             'create' => Pages\CreateRenewalManagement::route('/create'),
+            'view' => Pages\ViewRenewalManagement::route('/{record}'),
             'edit' => Pages\EditRenewalManagement::route('/{record}/edit'),
         ];
     }
