@@ -65,6 +65,113 @@
         .colorSearchResult li:hover {
             cursor: pointer;
         }
+
+        .file-preview {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .file-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .file-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .form-control.success {
+            border-color: #28a745;
+        }
+
+        .form-control.error {
+            border-color: #dc3545;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+
+        .insurance_logo {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .insurance_logo:hover img {
+            transform: scale(1.05);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+      
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 3px solid #e9ecef;
+            color: #6c757d;
+        }
+
+        .progress-step.active {
+            border-bottom-color: #b50555;
+            color: #b50555;
+            font-weight: bold;
+        }
+
+        .progress-step.completed {
+            border-bottom-color: #28a745;
+            color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .progress-indicator {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                flex-basis: 50%;
+                margin-bottom: 10px;
+                font-size: 12px;
+            }
+            
+            .form-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .col-md-3, .col-md-4 {
+                margin-bottom: 15px;
+            }
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner i {
+            font-size: 24px;
+            color: #b50555;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <div class="breadcrumb">
         <div class="container">
@@ -81,9 +188,29 @@
     </div>
     <div id="free-promo">
         <form id="thirdPartFrm" autocomplete="off" name="thirdPartFrm"
-              action="https://qbima.qa/insurance/addcomprehensive" method="post" enctype="multipart/form-data"
+              action="/insurance/comprehensive" method="post" enctype="multipart/form-data"
               novalidate="novalidate">
+            @csrf
             <div class="container">
+                <!-- Display Validation Errors -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <h6><strong>Please fix the following errors:</strong></h6>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- Display Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                <!-- Progress Indicator -->
                 <div class="row">
                     <h6 style="color:#b50555"><strong>Owner Details</strong></h6>
                     <p>Please enter vehicle owner details (يرجى إدخال البيانات الشخصية لمالك السيارة)</p>
@@ -165,8 +292,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <hr/>
+                <div class="row" id="vehicle-section">
                     <h6 style="color:#b50555"><strong>Insurance Details</strong></h6>
                     <div class="col-md-12">
                         <p style="font-weight:500">A. Enter vehicle details (يرجى إدخال بيانات السيارة)</p>
@@ -267,12 +393,27 @@
                                         <a class="insurance_logo"
                                            {{($result['active'] == 0) ? 'style="pointer-events:none;filter: contrast(0.7);"' : '' }}
                                            data-id="{{ $result['id']}}">
+                                            @if($result->getFirstMediaUrl())
+                                                <img src="{{ $result->getFirstMediaUrl()}}"
+                                                     alt="{{$result['name']}}" class="img-uploads img-thumbnail">
+                                            @else
                                             <img src="/assets/img/insurancelogos/{{ $result['logo']}}"
                                                  alt="{{$result['name']}}" class="img-uploads img-thumbnail">
+                                            @endif
                                         </a>
                                     </div>
                                 @endforeach
                                 <input type="hidden" name="com_id" id="com_id" value="">
+                                <input type="hidden" name="add_opt" id="add_opt" value="0">
+                                <input type="hidden" name="opt_2" id="opt_2" value="0">
+                                <input type="hidden" name="opt_3" id="opt_3" value="0">
+                                <input type="hidden" name="opt_4" id="opt_4" value="0">
+                                <input type="hidden" name="passengers" id="passengers" value="0">
+                                <input type="hidden" name="base_amount" id="base_amount" value="0">
+                                <input type="hidden" name="pass_amount" id="pass_amount" value="0">
+                                <input type="hidden" name="opt_amount" id="opt_amount" value="0">
+                                <input type="hidden" name="discount" id="discount" value="0">
+                                <input type="hidden" name="total_amount" id="total_amount" value="0">
                             </div>
                         </div>
                     </div>
@@ -305,6 +446,32 @@
                 </div>
                 <div class="row" style="margin-bottom: 20px;">
                     <hr>
+                    <h6 style="color:#b50555"><strong>Document Upload</strong></h6>
+                    <p style="font-weight:500">D. Upload Documents (تحميل المستندات)</p>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="qid_front">Qatar ID Front</label><label class="pull-right" 
+                                                                               for="qid_front">البطاقة الشخصية أمامي</label>
+                            <input type="file" class="form-control" name="qid_front" id="qid_front" accept="image/*,.pdf">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="ist_front">Isthimara Front</label><label class="pull-right" 
+                                                                                 for="ist_front">الاستمارة أمامي</label>
+                            <input type="file" class="form-control" name="ist_front" id="ist_front" accept="image/*,.pdf">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="ist_back">Isthimara Back</label><label class="pull-right" 
+                                                                              for="ist_back">الاستمارة خلفي</label>
+                            <input type="file" class="form-control" name="ist_back" id="ist_back" accept="image/*,.pdf">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 20px;">
+                    <hr>
                     <!-- <h6 style="color:#b50555"><strong>Payment Details</strong></h6> -->
                     <div class="col-md-12">
                         <div class="container bordered-container" style="max-width:500px">
@@ -321,6 +488,21 @@
                               <h5 style="color:#b50555"><b>Grand Total : QAR <span id="grandTotalPrice">0.00</span></b></h5><br>
                             </div> -->
                             <div class="form-group">
+                                <div id="form-summary" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
+                                    <h6 style="color: #b50555; margin-bottom: 10px;"><strong>Form Summary</strong></h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small><strong>Owner:</strong> <span id="summary-owner"></span></small><br>
+                                            <small><strong>Email:</strong> <span id="summary-email"></span></small><br>
+                                            <small><strong>Mobile:</strong> <span id="summary-mobile"></span></small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small><strong>Vehicle:</strong> <span id="summary-vehicle"></span></small><br>
+                                            <small><strong>Year:</strong> <span id="summary-year"></span></small><br>
+                                            <small><strong>Company:</strong> <span id="summary-company"></span></small>
+                                        </div>
+                                    </div>
+                                </div>
                                 <label for="exampleFormControlInput1"></label>
                                 <input type="button" class="btn btn-dark" name="cancel" id="cancel"
                                        value="Cancel (إلغاء)">
@@ -390,13 +572,59 @@
                     $.get("/insurance/getVhlModels/" + make_id, function (data) {
                         let vehicles = data
                         $('#vhl_class option').slice(1).remove();
+                        $('#vhl_body_type option').slice(1).remove();
                         if (vehicles.length) {
                             let models = vehicles.map((vhl) => '<option value="' + vhl.model_name + '">' + vhl.model_name + '</option>');
                             $('#vhl_class').append(models.join(''));
                         }
                     });
+                } else {
+                    $('#vhl_class option').slice(1).remove();
+                    $('#vhl_body_type option').slice(1).remove();
                 }
             });
+
+            // Add body type handling when model is selected
+            $('#vhl_class').change(function (event) {
+                let make = $('#vhl_make').val();
+                let model = $(this).val();
+                if (make && model) {
+                    // Try to get dynamic body types based on make/model
+                    $.get("/insurance/getBodyTypes/" + make + "/" + model, function (data) {
+                        $('#vhl_body_type option').slice(1).remove();
+                        if (data && data.length) {
+                            let bodyTypes = data.map((bodyType) => '<option value="' + bodyType.name + '">' + bodyType.name + '</option>');
+                            $('#vhl_body_type').append(bodyTypes.join(''));
+                        }
+                    }).fail(function() {
+                        // If API fails, populate with common body types based on make
+                        $('#vhl_body_type option').slice(1).remove();
+                        let commonBodyTypes = getCommonBodyTypes(make.toLowerCase());
+                        let bodyTypeOptions = commonBodyTypes.map((bodyType) => '<option value="' + bodyType + '">' + bodyType + '</option>');
+                        $('#vhl_body_type').append(bodyTypeOptions.join(''));
+                    });
+                } else {
+                    $('#vhl_body_type option').slice(1).remove();
+                }
+            });
+
+            // Function to get common body types based on vehicle make
+            function getCommonBodyTypes(make) {
+                const bodyTypesByMake = {
+                    'toyota': ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Truck'],
+                    'nissan': ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Truck'],
+                    'bmw': ['Sedan', 'SUV', 'Coupe', 'Convertible', 'Hatchback'],
+                    'mercedes': ['Sedan', 'SUV', 'Coupe', 'Convertible', 'Wagon'],
+                    'audi': ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible'],
+                    'honda': ['Sedan', 'SUV', 'Hatchback', 'Coupe'],
+                    'hyundai': ['Sedan', 'SUV', 'Hatchback'],
+                    'kia': ['Sedan', 'SUV', 'Hatchback'],
+                    'ford': ['Sedan', 'SUV', 'Hatchback', 'Truck', 'Coupe'],
+                    'chevrolet': ['Sedan', 'SUV', 'Hatchback', 'Truck', 'Coupe']
+                };
+                
+                return bodyTypesByMake[make] || ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible', 'Truck', 'Van', 'Wagon'];
+            }
             //start date end date from bootstrap
             $('#start_date').datepicker({
                 dateFormat: 'dd/mm/yy',
@@ -555,14 +783,6 @@
                         minlength: 1,
                         required: true
                     },
-                    vhl_chassis: {
-                        required: true,
-                        minlength: 3
-                    },
-                    vhl_engine: {
-                        required: true,
-                        minlength: 3
-                    },
                     vhl_reg_no: {
                         required: true,
                         minlength: 3
@@ -570,7 +790,10 @@
                     vhl_year: {
                         required: true
                     },
-                    nmi_color: {
+                    vhl_color: {
+                        required: true
+                    },
+                    vhl_body_type: {
                         required: true
                     },
                     opt_1: {
@@ -594,6 +817,12 @@
                         required: true
                     },
                     start_date: {
+                        required: true
+                    },
+                    qid_front: {
+                        required: true
+                    },
+                    ist_front: {
                         required: true
                     }
                 },
@@ -639,14 +868,6 @@
                         required: "Select Model of vehicle",
                         minlength: "Select Model of vehicle"
                     },
-                    vhl_chassis: {
-                        required: "Enter Chassis No",
-                        minlength: "Enter minimum 3 characters"
-                    },
-                    vhl_engine: {
-                        required: "Enter Engine No.",
-                        minlength: "Enter minimum 3 characters"
-                    },
                     vhl_reg_no: {
                         required: "Enter vehicle number",
                         minlength: "Enter minimum 3 characters"
@@ -682,10 +903,201 @@
                     },
                     start_date: {
                         required: "Enter start date"
+                    },
+                    qid_front: {
+                        required: "Upload Qatar ID front"
+                    },
+                    ist_front: {
+                        required: "Upload Isthimara front"
                     }
                 },
                 submitHandler: submitHandler
             });
+
+            // File upload preview functionality
+            $('input[type="file"]').change(function() {
+                const file = this.files[0];
+                const $input = $(this);
+                const $preview = $input.siblings('.file-preview');
+                
+                if ($preview.length === 0) {
+                    $input.after('<div class="file-preview"></div>');
+                }
+                
+                const $previewContainer = $input.siblings('.file-preview');
+                
+                if (file) {
+                    $previewContainer.show();
+                    
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            $previewContainer.html(`
+                                <img src="${e.target.result}" alt="Preview">
+                                <div class="file-info">${file.name} (${(file.size / 1024).toFixed(2)} KB)</div>
+                            `);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        $previewContainer.html(`
+                            <div class="file-info">
+                                <i class="fa fa-file"></i> ${file.name} (${(file.size / 1024).toFixed(2)} KB)
+                            </div>
+                        `);
+                    }
+                } else {
+                    $previewContainer.hide();
+                }
+            });
+
+            // Clear file previews when form is reset
+            $('#cancel').click(function() {
+                $('.file-preview').hide();
+                $('input[type="file"]').val('');
+                if (confirm('Are you sure you want to cancel and clear all data?')) {
+                    $('#thirdPartFrm')[0].reset();
+                    $('.insurance_active').removeClass('insurance_active');
+                    $('#com_id').val('');
+                    clearPrice(1);
+                }
+            });
+
+            // Enhanced form validation with better UX
+            $('#thirdPartFrm input, #thirdPartFrm select').on('blur', function() {
+                $(this).valid();
+            });
+
+            // Auto-format Qatar ID input
+            $('#qid, #eid').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                $(this).val(value);
+            });
+
+            // Auto-format phone numbers
+            $('#phone, #mobile').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                $(this).val(value);
+            });
+
+            // Real-time validation feedback
+            $('#qid').on('input', function() {
+                let qid = $(this).val();
+                if (qid.length === 11) {
+                    $(this).removeClass('error').addClass('success');
+                } else if (qid.length > 0) {
+                    $(this).removeClass('success').addClass('error');
+                }
+            });
+
+            // Ensure proper form submission
+            $('#thirdPartFrm').on('submit', function(e) {
+                if (!$('#com_id').val()) {
+                    e.preventDefault();
+                    alert('Please select an insurance company');
+                    $('html, body').animate({
+                        scrollTop: $('#insMain').offset().top
+                    }, 1000);
+                    return false;
+                }
+                updateProgressStep(5);
+            });
+
+            // Progress indicator functionality
+            function updateProgressStep(stepNumber) {
+                $('.progress-step').removeClass('active completed');
+                for (let i = 1; i < stepNumber; i++) {
+                    $('#step' + i).addClass('completed');
+                }
+                $('#step' + stepNumber).addClass('active');
+            }
+
+            // Update progress based on form completion
+            $('#owner-section input, #owner-section select').on('change blur', function() {
+                if (isOwnerSectionComplete()) {
+                    updateProgressStep(2);
+                }
+            });
+
+            $('#vehicle-section input, #vehicle-section select').on('change', function() {
+                if (isVehicleSectionComplete()) {
+                    updateProgressStep(3);
+                }
+            });
+
+            $('#insMain .insurance_logo').on('click', function() {
+                if ($('#com_id').val()) {
+                    updateProgressStep(4);
+                }
+            });
+
+            $('input[type="file"]').on('change', function() {
+                if (areRequiredDocumentsUploaded()) {
+                    updateProgressStep(5);
+                }
+            });
+
+            // Helper functions to check section completion
+            function isOwnerSectionComplete() {
+                const requiredFields = ['name', 'email', 'mobile', 'area'];
+                const ownerType = $('input[name="owner_type"]:checked').val();
+                
+                if (ownerType === 'I') {
+                    requiredFields.push('qid');
+                } else {
+                    requiredFields.push('eid', 'pb_no');
+                }
+
+                return requiredFields.every(field => {
+                    const value = $(`#${field}`).val() || $(`[name="${field}"]`).val();
+                    return value && value.trim() !== '';
+                });
+            }
+
+            function isVehicleSectionComplete() {
+                const requiredFields = ['vhl_make', 'vhl_class', 'vhl_reg_no', 'vhl_color', 'vhl_body_type', 'vhl_year', 'start_date'];
+                return requiredFields.every(field => {
+                    const value = $(`#${field}`).val();
+                    return value && value.trim() !== '';
+                });
+            }
+
+            function areRequiredDocumentsUploaded() {
+                return $('#qid_front')[0].files.length > 0 && $('#ist_front')[0].files.length > 0;
+            }
+
+            // Loading helper functions
+            function showLoading(selector) {
+                $(selector).append('<div class="loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
+            }
+
+            function hideLoading(selector) {
+                $(selector + ' .loading-spinner').remove();
+            }
+
+            // Update form summary
+            function updateFormSummary() {
+                const ownerName = $('#nmi_fullname').val();
+                const email = $('#email').val();
+                const mobile = $('#mobile').val();
+                const make = $('#vhl_make').val();
+                const model = $('#vhl_class').val();
+                const year = $('#vhl_year').val();
+                const companyName = $('#insMain .insurance_active').closest('.col-md-3').find('h6').text();
+
+                if (ownerName && email && mobile && make && model && year) {
+                    $('#summary-owner').text(ownerName);
+                    $('#summary-email').text(email);
+                    $('#summary-mobile').text(mobile);
+                    $('#summary-vehicle').text(make + ' ' + model);
+                    $('#summary-year').text(year);
+                    $('#summary-company').text(companyName || 'Not selected');
+                    $('#form-summary').show();
+                }
+            }
+
+            // Update summary when relevant fields change
+            $('#nmi_fullname, #email, #mobile, #vhl_make, #vhl_class, #vhl_year').on('change blur', updateFormSummary);
+            $('#insMain .insurance_logo').on('click', updateFormSummary);
         });
     </script>
 

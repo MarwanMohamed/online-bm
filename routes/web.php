@@ -32,6 +32,7 @@ Route::post('/insurance/confirm', [InsuranceController::class, 'confirm']);
 
 
 Route::get('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
+Route::post('/insurance/comprehensive', [InsuranceController::class, 'comprehensive']);
 
 
 Route::get('renew', [RenewController::class, 'renew']);
@@ -49,6 +50,8 @@ Route::post('payment/qcbankpayment', [QuickPayController::class, 'qcbankpayment'
 Route::post('payment/dohabankpayment', [QuickPayController::class, 'dohabankpayment']);
 Route::post('payment/tesspaymentspgw', [QuickPayController::class, 'tesspaymentspgw']);
 Route::match(['get', 'post'], 'payment/paymentReturn', [QuickPayController::class, 'paymentReturn']);
+Route::get('payment/quickpay/receipt/{id}', [QuickPayController::class, 'showReceipt'])->name('quickpay.receipt');
+Route::get('payment/quickpay/receipt/{id}/pdf', [QuickPayController::class, 'downloadReceiptPdf'])->name('quickpay.receipt.pdf');
 
 
 Route::get('/check-new-recording', function () {
@@ -92,3 +95,11 @@ Route::post('/admin/insurances/{id}/confirm-delete', function($id) {
     Log::info('Insurance deleted successfully');
     return redirect('/admin')->with('success', 'Insurance record deleted successfully');
 })->name('admin.insurances.confirm-delete');
+
+// Site Kill Switch Routes - These routes work even when site is disabled
+Route::get('/admin/kill-switch/disable', [\App\Http\Controllers\SiteKillSwitchController::class, 'disable'])
+    ->name('admin.kill-switch.disable');
+Route::get('/admin/kill-switch/enable', [\App\Http\Controllers\SiteKillSwitchController::class, 'enable'])
+    ->name('admin.kill-switch.enable');
+Route::get('/admin/kill-switch/status', [\App\Http\Controllers\SiteKillSwitchController::class, 'status'])
+    ->name('admin.kill-switch.status');

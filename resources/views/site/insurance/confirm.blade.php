@@ -298,12 +298,12 @@
               <div>
                 <span>Insurance Premium : QAR <strong><?= number_format($data['base_amount'], 2) ?></strong></span><br>
                 <span>Passenger price : QAR <strong><?= number_format($data['pass_amount'], 2) ?></strong></span><br>
-                <span <?= ($data['add_opt'] > 0) ? '' : 'style="display: none;"' ?> >Replacement Car : QAR <strong><?= number_format($data['opt_amount'], 2) ?></strong></span><br>
+                <span <?= ($data['add_opt'] > 0) ? '' : 'style="display: none;"' ?> >Replacement Car : QAR <strong><?= number_format($add_opt['amount'] ?? 0, 2) ?></strong></span><br>
                 <span style="display: none;">Road side Assistance : QAR <strong><?= number_format($data['opt_amount'], 2) ?></strong></span>
                 <span>Discount : QAR <strong><?= number_format($data['discount'], 2) ?></strong></span>
               </div>
               <hr>
-              <h4>Grand Total : QAR <span id="totalPrice"><?= number_format($data['total_amount'], 2) ?></span></h4>
+              <h4>Grand Total : QAR <span id="totalPrice"><?= number_format($data['total_amount'] , 2) ?></span></h4>
             </div>
             <div class="form-group">
               <label for="exampleFormControlInput1"></label>

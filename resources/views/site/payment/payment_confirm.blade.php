@@ -59,10 +59,6 @@
                             <td align="right"><strong><i>Policy Reference: </i></strong></td>
                             <td>{{$data['policy_ref']}}</td>
                         </tr>
-                        <tr class="shade">
-                            <td align="right"><strong><i>Description: </i></strong></td>
-                            <td>{{$data['order_info']}}</td>
-                        </tr>
                         
                         <tr class="shade">
                             <td align="right"><strong><i>Transaction Amount: </i></strong></td>

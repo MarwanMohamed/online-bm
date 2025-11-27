@@ -15,7 +15,6 @@
         <div class="container">
 
             <div class="row" style="margin-bottom: 20px;">
-                <h6 style="color:#b50555; text-align:center">Choose your preferred mode of payment</h6><br>
 
                 <div class="col-md-12">
 
@@ -26,8 +25,7 @@
                                 <span>Reference Number : <strong>{{$policyRef}}</strong></span><br>
                             </div>
                             <hr>
-                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format($total_amount, 2)}}</span></h6>
-
+                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format((float) str_replace(',', '', $total_amount), 2)}}</span></h6>
 
                             <label for="payment">Pay using : </label>
 
@@ -60,7 +58,7 @@
                                 <span>Reference Number : <strong>{{$policyRef}}</strong></span><br>
                             </div>
                             <hr>
-                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format($total_amount, 2)}}</span></h6>
+                            <h6>Grand Total: QAR <span id="totalPrice">{{number_format((float) str_replace(',', '', $total_amount), 2)}}</span></h6>
 
 
                             <label for="payment">Pay using : </label>

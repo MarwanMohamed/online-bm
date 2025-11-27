@@ -18,6 +18,7 @@ use App\Models\VehicleModel;
 use App\Models\VehicleModelDetails;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InsuranceController extends Controller
 {
@@ -174,8 +175,124 @@ class InsuranceController extends Controller
         return Blacklist::where('qid', $qid)->first();
     }
 
-    public function comprehensive()
+    public function comprehensive(Request $request)
     {
+        if ($request->isMethod('post')) {
+            // Debug: Log the request data
+            Log::info('Comprehensive Insurance Form Submission', [
+                'request_data' => $request->all(),
+                'files' => $request->allFiles()
+            ]);
+            // Validate based on owner type
+            $validationRules = [
+                'name' => 'required',
+                'email' => 'required|email',
+                'mobile' => 'required',
+                'opt_1' => 'required',
+                'com_id' => 'required',
+                'vhl_reg_no' => 'required',
+                'vhl_make' => 'required',
+                'vhl_class' => 'required',
+                'vhl_year' => 'required',
+                'vhl_color' => 'required',
+                'vhl_body_type' => 'required',
+                'area' => 'required',
+                'start_date' => 'required',
+                'qid_front' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+                'ist_front' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+                'ist_back' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            ];
+
+            // Add conditional validation based on owner type
+            if ($request->input('owner_type') == 'I') {
+                $validationRules['qid'] = 'required|digits:11';
+            } else {
+                $validationRules['eid'] = 'required|digits:8';
+                $validationRules['pb_no'] = 'required';
+            }
+
+            $this->validate($request, $validationRules);
+
+            $isBlacklisted = $this->isBlacklisted(($request->input('owner_type') == 'I') ? $request->input('qid') : $request->input('eid'));
+            if (!empty($isBlacklisted)) {
+                return redirect()->back()->with(['error' => "You're blacklisted, Please contact support"]);
+            }
+
+            $data = array(
+                'ins_type' => 'Comprehensive',
+                'owner_type' => $request->input('owner_type'),
+                'name' => $request->input('name'),
+                'phone' => $request->input('phone') ?: null,
+                'mobile' => $request->input('mobile'),
+                'email' => $request->input('email'),
+                'area' => $request->input('area'),
+                'vhl_make' => $request->input('vhl_make'),
+                'vhl_class' => $request->input('vhl_class'),
+                'vhl_year' => $request->input('vhl_year'),
+                'vhl_color' => $request->input('vhl_color'),
+                'vhl_body_type' => $request->input('vhl_body_type'),
+                'vhl_chassis' => 1, 
+                'vhl_engine' => 1,  
+                'vhl_reg_no' => $request->input('vhl_reg_no'),
+                'com_id' => $request->input('com_id'),
+                'opt_1' => $request->input('opt_1'),
+                'opt_2' => (!empty($request->input('opt_2'))) ? $request->input('opt_2') : 0,
+                'opt_3' => (!empty($request->input('opt_3'))) ? $request->input('opt_3') : 0,
+                'opt_4' => (!empty($request->input('opt_4'))) ? $request->input('opt_4') : 0,
+                'add_opt' => $request->input('add_opt', 0),
+                'passengers' => (!empty($request->input('passengers'))) ? $request->input('passengers') : 0,
+                'pb_no' => $request->input('pb_no'),
+                'base_amount' => $request->input('base_amount', 0),
+                'pass_amount' => $request->input('pass_amount', 0),
+                'opt_amount' => $request->input('opt_amount', 0),
+                'discount' => $request->input('discount', 0),
+                'total_amount' => $request->input('total_amount', 0),
+                'status' => 4
+            );
+
+            $startDt = strtotime(str_replace('/', '-', $request->input('start_date')));
+            $endDt = strtotime('+1 year -1 day', $startDt);
+            $data['start_date'] = date("Y-m-d", $startDt);
+            $data['end_date'] = date("Y-m-d", $endDt);
+
+            $data['qid'] = ($data['owner_type'] == 'I') ? $request->input('qid') : $request->input('eid');
+            $data['policy_id'] = (new InsuranceHelper)->getUniqueRefNo();
+            $data['read'] = 0;
+
+            $insurance = Insurance::create($data);
+
+            // Handle file uploads
+            if ($request->hasFile('qid_front')) {
+                $insurance->addMediaFromRequest('qid_front')
+                    ->toMediaCollection('qid_front');
+            }
+            
+            if ($request->hasFile('ist_front')) {
+                $insurance->addMediaFromRequest('ist_front')
+                    ->toMediaCollection('ist_front');
+            }
+            
+            if ($request->hasFile('ist_back')) {
+                $insurance->addMediaFromRequest('ist_back')
+                    ->toMediaCollection('ist_back');
+            }
+
+            $recipients = User::all();
+            Notification::make()
+                ->title('Comprehensive Insurance Created')
+                ->sendToDatabase($recipients);
+
+            Log::info('Comprehensive Insurance Created Successfully', [
+                'policy_id' => $insurance->policy_id,
+                'insurance_id' => $insurance->id
+            ]);
+
+            // Redirect back to form with success message
+            return redirect('/insurance/comprehensive')
+                ->with('success', 'Comprehensive insurance application submitted successfully! Reference No: ' . $insurance->policy_id);
+        }
+
+        // GET request - Show the form
         $title = "Comprehensive Insurance";
         $qb_opt = Optional::where('deleted', 0)->where('parent_id', 3)->get();
         $areas = Area::all();

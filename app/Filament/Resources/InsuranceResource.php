@@ -127,7 +127,18 @@ class InsuranceResource extends Resource
                             RadioButtonImage::make('com_id')->required()
                                 ->label('Company')
                                 ->options(
-                                    Company::orderBy('priority')->where('active', 1)->get()->pluck('logo', 'id')->toArray()
+                                    Company::orderBy('priority')
+                                        ->where('active', 1)
+                                        ->get()
+                                        ->mapWithKeys(function ($company) {
+                                            $media = $company->getFirstMedia();
+                                            $imageUrl = $media
+                                                ? '../../storage/' . $media->id . '/' . $media->file_name
+                                                :  $company->logo;
+
+                                            return [$company->id => $imageUrl];
+                                        })
+                                        ->toArray()
                                 ),
 
                             Select::make('opt_1')->label('Type of Vehicle ')->searchable()->required()
@@ -245,7 +256,8 @@ class InsuranceResource extends Resource
                                 '4' => 'In Progress',
                                 '2' => 'Paid',
                                 '6' => 'Verification',
-                                '7' => 'Lost'
+                                '7' => 'Lost',
+                                '3' => 'Issued',
                             ])->inline()->reactive()->default(1),
 
                             TextInput::make('vendor_policy_no')->label('Vendor Policy No.')
@@ -253,7 +265,7 @@ class InsuranceResource extends Resource
                             TextInput::make('description')->label('Reason')
                                 ->visible(fn($get) => $get('status') == 7),
                         ]),
-                ])->columnSpanFull()
+                ])->columnSpanFull()->startOnStep(6)
             ]);
     }
 
@@ -265,7 +277,7 @@ class InsuranceResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->label('Date')->searchable()->sortable()
                     ->getStateUsing(fn($record) => date('d/m/Y h:i A', strtotime($record->created_at))),
 
-                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('policy_id')->label('Reference #')->disabledClick()->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 Tables\Columns\IconColumn::make('active')->label('Status')->searchable()->sortable()
                     ->icon(fn(string $state): string => match ($state) {
