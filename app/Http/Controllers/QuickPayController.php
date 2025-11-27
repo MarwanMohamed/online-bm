@@ -86,7 +86,6 @@ class QuickPayController extends Controller
                 "cancel_url" => url("/") . "/payment/paymentReturn?status=cancelled",
                 "success_url" => url("/") . "/payment/paymentReturn?status=success",
                 "customer" => [
-                    "name" => $policyDetails['name'],
                     "email" => $policyDetails['email']
                 ]
             ]);
