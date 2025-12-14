@@ -65,7 +65,7 @@ class StatsOverview extends BaseWidget
                 ->url(QuickPayResource::getUrl('index') . '?tableFilters[status][value]=1'),
 
             Stat::make('Total Sales Today', 'QAR ' . number_format(Transaction::where('date', '>=', Carbon::today())
-                    ->where('status', 'Approved')->sum('amount'), 2))
+                    ->where('status', 'Payment processed successfully')->sum('amount'), 2))
                 ->description('Revenue generated today')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->chart([100, 150, 200, 180, 250, 300, 350])
