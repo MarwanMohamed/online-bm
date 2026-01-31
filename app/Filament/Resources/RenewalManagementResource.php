@@ -46,8 +46,8 @@ class RenewalManagementResource extends Resource
     {
         return parent::getEloquentQuery()->where('deleted', 0)
             ->where('pb_no', "renewal")
-            ->with('user');
-            //->orderBy('id', 'desc');
+            ->with('user')
+            ->orderBy('id', 'desc');
     }
 
 //    public static function getNavigationBadge(): ?string
@@ -107,7 +107,6 @@ class RenewalManagementResource extends Resource
 
                             DatePicker::make('start_date')->native(false)->required()
                                 ->reactive()
-                                ->minDate(today())
                                 ->default(today())
                                 ->afterStateUpdated(function ($state, $set) {
                                     $startDate = Carbon::parse($state);

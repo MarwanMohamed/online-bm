@@ -1,109 +1,150 @@
 @extends('site.layout')
 
 @section('content')
-
     <style>
-        <style type="text/css">
-        <!--
-        h1       { font-family:Arial,sans-serif; font-size:24pt; color:#08185A; font-weight:100}
-        h2.co    { font-family:Arial,sans-serif; font-size:24pt; color:#08185A; margin-top:0.1em; margin-bottom:0.1em; font-weight:100}
-        h3.co    { font-family:Arial,sans-serif; font-size:16pt; color:#000000; margin-top:0.1em; margin-bottom:0.1em; font-weight:100}
-        body     { font-family:Verdana,Arial,sans-serif; font-size:10pt; color:#08185A;background-color:#FFFFFF }
-        p        { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#FFFFFF }
-        a:link   { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A }
-        a:visited{ font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A }
-        a:hover  { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#FF0000 }
-        a:active { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#FF0000 }
-        tr       { height:25px; }
-        tr.shade { height:25px; background-color:#E1E1E1 }
-        tr.title { height:25px; background-color:#C1C1C1 }
-        td       { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A }
-        td.red   { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#FF0066 }
-        td.green { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#00AA00 }
-        th       { font-family:Verdana,Arial,sans-serif; font-size:10pt; color:#08185A; font-weight:bold; background-color:#E1E1E1; padding-top:0.5em; padding-bottom:0.5em}
-        input    { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A; background-color:#E1E1E1; font-weight:bold }
-        select   { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A; background-color:#E1E1E1; font-weight:bold; width:463 }
-        textarea { font-family:Verdana,Arial,sans-serif; font-size:8pt; color:#08185A; background-color:#E1E1E1; font-weight:normal; scrollbar-arrow-color:#08185A; scrollbar-base-color:#E1E1E1 }
-        -->
+        .receipt-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #FFFFFF;
+            padding: 20px;
+        }
+        .payment-details {
+            margin: 30px 0;
+        }
+        .payment-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .payment-details td {
+            padding: 12px 15px;
+            border: 1px solid #E1E1E1;
+            font-size: 10pt;
+        }
+        .payment-details td:first-child {
+            width: 40%;
+            text-align: left;
+            font-weight: bold;
+            background-color: #F5F5F5;
+        }
+        .payment-details td:last-child {
+            width: 60%;
+            text-align: left;
+            background-color: #FFFFFF;
+        }
+        .payment-details tr:nth-child(even) td:first-child {
+            background-color: #F5F5F5;
+        }
+        .payment-details tr:nth-child(even) td:last-child {
+            background-color: #F5F5F5;
+        }
+        .payment-details tr:nth-child(odd) td:first-child {
+            background-color: #FFFFFF;
+        }
+        .payment-details tr:nth-child(odd) td:last-child {
+            background-color: #FFFFFF;
+        }
+        .status-success {
+            color: #00AA00;
+            font-weight: bold;
+        }
+        .action-buttons {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background-color: #b50555;
+            color: #FFFFFF;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            font-size: 11pt;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #8d0442;
+        }
+        .btn-print {
+            background-color: #b50555;
+        }
+        .btn-pdf {
+            background-color: #b50555;
+        }
+        .btn-order {
+            background-color: #b50555;
+            padding: 12px 40px;
+        }
+        @media print {
+            .action-buttons {
+                display: none;
+            }
+            .breadcrumb {
+                display: none;
+            }
+        }
     </style>
 
-    </style>
-<div class="breadcrumb">
-    <div class="container">
-        <div class="row">
-            <nav>
-                <a class="breadcrumb-item" href="/"><i class="fa fa-home"></i> Home&nbsp;<i class="fa fa-angle-right"></i></a>
-                <span class="breadcrumb-item active" href="/home/payment">Payment Confirm</span>
-            </nav> 
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="row">
+                <nav>
+                    <a class="breadcrumb-item" href="/"><i class="fa fa-home"></i> Home&nbsp;<i class="fa fa-angle-right"></i></a>
+                    <span class="breadcrumb-item active">Payment Receipt</span>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
-<div id="free-promo">
-   
-    <form class="cmxform" id="paymentFrm" name="paymentFrm" action="/customer/register" method="post">
+
+    <div id="free-promo">
         <div class="container">
-
-            <div class="row">
-                <div class="col-md-12">
-                    <table width="85%" align="center" cellpadding="5" border="0">
-                        <tr class="title">
-                            <td colspan="2" height="25"><P><strong>&nbsp;Basic Transaction Details</strong></P></td>
-                        </tr>
-                        
+            <div class="receipt-container">
+                <div class="payment-details">
+                    <table>
                         <tr>
-                            <td align="right"><strong><i>Merchant Transaction Reference: </i></strong></td>
-                            <td>{{$data['order_id']}}</td>
+                            <td>Policy Reference</td>
+                            <td>{{ $data['policy_ref'] }}</td>
                         </tr>
-                        
                         <tr>
-                            <td align="right"><strong><i>Policy Reference: </i></strong></td>
-                            <td>{{$data['policy_ref']}}</td>
+                            <td>Description</td>
+                            <td>{{ $data['order_info'] ?? 'N/A' }}</td>
                         </tr>
-                        
-                        <tr class="shade">
-                            <td align="right"><strong><i>Transaction Amount: </i></strong></td>
-                            <td>{{$data['order_amount']}}</td>
-                        </tr>
-
                         <tr>
-                            <td align="right"><strong><i>Transaction Status: </i></strong></td>
-                            <td>{{$data['order_status']}}</td>
+                            <td>Amount</td>
+                            <td><strong>{{ $data['order_amount'] }}</strong></td>
                         </tr>
-                        <tr class="shade">
-                            <td align="right"><strong><i>Transaction Date: </i></strong></td>
-                            <td>{{$data['order_date']}}</td>
-                        </tr>
-    
                         <tr>
-                            <td align="right">&nbsp;</td>
-                        <input type="hidden" name="policyRef" value="1111">
-                            <td><input type="button" class="btn btn-common" name="Backorder" id="Backorder" value="Order Again">
-{{--                                <input type="submit" class="btn btn-common" name="registerNow" id="registerNow" value="Register Now">--}}
-                            </td>
-
+                            <td>Status</td>
+                            <td class="status-success">{{ $data['order_status'] == 0 ? 'Success' : 'Unpaid' }}</td>
+                        </tr>
+                        <tr>
+                            <td>Date</td>
+                            <td>{{ \Carbon\Carbon::parse($data['order_date'])->format('d-m-Y') }}</td>
                         </tr>
                     </table>
                 </div>
-            </div>
 
-        </div> 
-    </form>
-</div>
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-print" onclick="window.print();">Print Receipt</button>
+                    <a href="{{ route('quickpay.receipt.pdf', $data['order_id']) }}" class="btn btn-pdf" target="_blank">Download PDF</a>
+                    <a href="/payment/quickpay" class="btn btn-order">Order Again</a>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('script')
-<script type="text/javascript">
-//disable back button browser
-    history.pushState(null, null, location.href);
-    window.onpopstate = function () {
-        history.go(1);
-    };
-    //cancel button click------------------------------------------
-    $("#Backorder").click(() => {
-        window.location.href = "/";
-
-    });
-</script>
-
-
+    <script type="text/javascript">
+        //disable back button browser
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+    </script>
 @stop
+

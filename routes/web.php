@@ -5,9 +5,14 @@ use App\Http\Controllers\QuickPayController;
 use App\Http\Controllers\RenewController;
 use App\Http\Controllers\InsuranceController;
 use App\Imports\VehiclesImport;
+use App\Models\Insurance;
+use App\Models\Quickpay;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use TessPayments\Checkout\HashService;
+use TessPayments\Core\Enums\Actions;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +24,59 @@ use Maatwebsite\Excel\Facades\Excel;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('test', function () {
+
+    $request = request();
+    $request->order_id = 'TR72086';
+    $request->payment_id = '1';
+    $transaction = Transaction::where('trans_key', $request->order_id)->first();
+//    dd($transaction->policy_ref);
+    $policyDesc = Quickpay::where('ref_no', $transaction->policy_ref)->where('deleted', 0)->value('description');
+    if (!$policyDesc) {
+        $policyDesc = Insurance::where('policy_id', $transaction->policy_ref)->where('deleted', 0)->value('description');
+        $isQuickPay = false;
+    }
+
+    $description = !empty($policyDesc) ? $policyDesc : $transaction['policy_ref'];
+    //Log::info("Transaction: " . print_r($transaction,true));
+    //Log::info("Policy Desc: " . print_r($policyDesc,true));
+    $params = [
+        'id' => $request->payment_id,
+        'order_number' => $request->order_id,
+        'order_amount' => number_format($transaction->amount, 2, '.', ''),
+        'order_currency' => 'QAR',
+        'order_description' => $description
+    ];
+
+    $returnUrlHash = HashService::generate($params, Actions::RETURN_URL);
+//    if($request->hash === $returnUrlHash && 'success' === $request->status) {
+        Transaction::where('trans_key', $request->order_id)
+            ->where('policy_ref', $transaction->policy_ref)
+            ->update([
+                'status' => 'Payment processed successfully',
+                'transaction_no' => $request->payment_id
+            ]);
+        if ($isQuickPay) {
+            Quickpay::where('ref_no', $transaction->policy_ref)
+                ->update(['status' => 0]);
+        } else {
+            Insurance::where('policy_id', $transaction->policy_ref)
+                ->update(['payment_status' => 1, 'status' => 2]);
+        }
+        $footerchk = 1;
+        $data = [
+            'order_id' => $request->order_id,
+            'policy_ref' => $transaction->policy_ref,
+            'order_info' => $description,
+            'order_amount' => 'QAR ' . number_format($transaction->amount, 2),
+            'order_status' => ('success' === $request->status ? 'Payment processed successfully.' : 'Payment unsuccessful'),
+            'order_date' => date('d-m-Y', time())
+        ];
+
+        return view('site.payment.payment_confirm', compact('footerchk'))->with('data', $data);
+//    }
+});
 
 Route::get('/', [HomeController::class, 'index']);
 
