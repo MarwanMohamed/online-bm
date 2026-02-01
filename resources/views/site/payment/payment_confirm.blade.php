@@ -118,7 +118,7 @@
                         </tr>
                         <tr>
                             <td>Status</td>
-                            <td class="status-success">{{ $data['order_status'] == 0 ? 'Success' : 'Unpaid' }}</td>
+                            <td class="status-success">{{ $data['order_status'] }}</td>
                         </tr>
                         <tr>
                             <td>Date</td>
